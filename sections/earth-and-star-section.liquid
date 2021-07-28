@@ -1,0 +1,226 @@
+<div class='studies' style="background: {{ section.settings.studies_background_color }}">
+  <div class="studies-section page-width">
+    <div class="grid">
+    {% for block in section.blocks %}
+      <div class="grid__item one-half small--one-whole" {{ block.shopify_attributes }}>
+        <div class="heading">
+          <div class='image-div'>
+            <div class="align-all">
+              <div class='header-div'>
+                  <h2 class="header-text" style="color: {{ block.settings.header_color }}">{{ block.settings.header_text }}</h2>
+              </div>
+              {% if block.settings.background_img != blank %}
+                  <img class="background-image Image--lazyLoad" src="{{ block.settings.background_img | img_url: "675x"}}">
+              {% endif %}
+            </div>
+            <div class="input-fields">
+          <ul class='ul input-field'>
+              {% if block.settings.link_url_1 != blank or block.settings.link_name_1 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_1 }}" target="_blank">{{ block.settings.link_name_1 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_2 != blank or block.settings.link_name_2 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_2 }}" target="_blank">{{ block.settings.link_name_2 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_3 != blank or block.settings.link_name_3 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_3 }}" target="_blank">{{ block.settings.link_name_3 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_4 != blank or block.settings.link_name_4 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_4 }}" target="_blank">{{ block.settings.link_name_4 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_5 != blank or block.settings.link_name_5 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_5 }}" target="_blank">{{ block.settings.link_name_5 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_6 != blank or block.settings.link_name_6 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_6 }}" target="_blank">{{ block.settings.link_name_6 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_7 != blank or block.settings.link_name_7 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_7 }}" target="_blank">{{ block.settings.link_name_7 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_8 != blank or block.settings.link_name_8 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_8 }}" target="_blank">{{ block.settings.link_name_8 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_9 != blank or block.settings.link_name_9 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_9 }}" target="_blank">{{ block.settings.link_name_9 }}</a>
+                  </li>
+              {% endif %}
+              {% if block.settings.link_url_10 != blank or block.settings.link_name_10 != blank %}
+                  <li>
+                    <a href="{{ block.settings.link_url_10 }}" target="_blank">{{ block.settings.link_name_10 }}</a>
+                  </li>
+              {% endif %}
+          </ul>
+        </div>
+          </div>
+        </div>
+
+
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Studies",
+    "settings": [
+		{
+			"id": "studies_background_color",
+			"type": "color",
+			"label": "Section Background Color"
+		}
+	],
+	"presets": [
+      {
+        "category": "Earth and Star",
+        "name": "Studies"
+	   }
+	],
+	"blocks": [
+      {
+        "type": "item",
+        "name": "Item",
+        "settings": [
+          {
+            "id": "header_text",
+            "type": "text",
+            "label": "Header Text"
+          },
+		  {
+			"id": "header_color",
+			"type": "color",
+			"label": "Header Text Color"
+		  },
+		  {
+		  	"id": "background_img",
+			"type": "image_picker",
+			"label": "Background Image"
+		  },
+		  {
+			"id": "link_url_1",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_1",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_2",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_2",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_3",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_3",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_4",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_4",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_5",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_5",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_6",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_6",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_7",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_7",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_8",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_8",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_9",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_9",
+			"type": "text",
+			"label": "Link Name"
+		  },
+		  {
+			"id": "link_url_10",
+			"type": "url",
+			"label": "Link"
+		  },
+		  {
+			"id": "link_name_10",
+			"type": "text",
+			"label": "Link Name"
+		  }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
