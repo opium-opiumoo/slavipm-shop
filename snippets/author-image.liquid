@@ -1,4 +1,0 @@
-{%- capture author_image -%}{%- for tag in current_tags -%}{%- if tag contains "authorimage_" -%}{{- tag | split: "_" | last -}}{% break %}{% endif %}{% endfor %}{%- endcapture -%}
-{% if author_image %}
-<img data-src="{{author_image}}" class="author_image lazyload">
-{% endif %}

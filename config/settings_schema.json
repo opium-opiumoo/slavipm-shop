@@ -1,1 +1,283 @@
-[{"name":"theme_info","theme_name":"Ira","theme_author":"Fluorescent","theme_version":"2.8.0","theme_documentation_url":"http:\/\/www.fluorescent.co\/ira","theme_support_url":"http:\/\/www.fluorescent.co\/ira\/#support"},{"name":"Customization","settings":[{"type":"checkbox","id":"checkout_customization","label":"Enables the checkout customization","default":true}]},{"name":"Social image","settings":[{"type":"image_picker","id":"og_image_homepage","label":"Homepage Link Image"}]},{"name":"Colors","settings":[{"type":"paragraph","content":"Navigation, slideshow, featured content and footer colors can be adjusted in their respective Sections."},{"type":"color","id":"color_primary","label":"Accent","default":"#f06340","info":"Used for text links, buttons and the header message."},{"type":"color","id":"color_body_bg","label":"Background","default":"#ffffff"},{"type":"color","id":"color_borders","label":"Border","default":"#e2e2e2"},{"type":"color","id":"color_header","label":"Headings","default":"#232323"},{"type":"color","id":"color_body_text","label":"Text","default":"#424242"},{"type":"color","id":"color_button_text","label":"Button text","default":"#ffffff"},{"type":"color","id":"color_image_cta_background","label":"Image overlay background","info":"When a customer hovers over a product or collection on your site, the price and title will be overlayed using these colors.","default":"#ffffff"},{"type":"color","id":"color_image_cta_text","label":"Image overlay text","default":"#444444"}]},{"name":"Slider Speed","settings":[{"type":"text","id":"slider_speed","label":"Slider Speed"}]},{"name":"Typography","settings":[{"type":"font_picker","id":"type_logo","label":"Logo","default":"source_sans_pro_n4"},{"type":"font_picker","id":"type_header","label":"Heading","default":"source_sans_pro_n4"},{"type":"font_picker","id":"type_base","label":"Body","default":"source_sans_pro_n4"}]},{"name":"Favicon","settings":[{"type":"paragraph","content":"Favicons are tiny icons that appear next to your site's title or URL in browser tabs, bookmark menus, and address bars."},{"type":"image_picker","id":"favicon_image","label":"Favicon","info":"32 x 32px .png required"}]},{"name":"Create Account Page","settings":[{"type":"text","id":"acco_create_heading","label":"Heading"},{"type":"textarea","id":"acco_create_descprition","label":"Description"},{"type":"text","id":"acco_create_point_1","label":"Point 1"},{"type":"text","id":"acco_create_point_2","label":"Point 2"},{"type":"text","id":"acco_create_point_3","label":"Point 3"},{"type":"text","id":"acco_create_point_4","label":"Point 4"},{"type":"text","id":"acco_create_form_heading","label":"Create Account Form Heading"},{"type":"textarea","id":"acco_create_form_checkbox","label":"Checkbox content"},{"type":"textarea","id":"acco_create_form_note","label":"Form Note"}]},{"name":"Login Page","settings":[{"type":"text","id":"acco_login_heading","label":"Heading"},{"type":"richtext","id":"acco_login_descprition","label":"Description"},{"type":"text","id":"acco_login_point_1","label":"Create account Text"},{"type":"text","id":"acco_login_form_text","label":"Login Form Text"}]},{"name":"Contact Page","settings":[{"type":"checkbox","id":"show_contact_two","label":"Show CONTACT on two lines","default":true},{"type":"text","id":"Contact_top_Title","label":"Contact Heading"},{"type":"textarea","id":"Contact_top_despc","label":"Contact Description"},{"type":"image_picker","id":"Contact_top_image","label":"Contact Right Side Image"},{"type":"richtext","id":"contact_heading","label":"Heading"},{"type":"richtext","id":"mobile_contact_heading","label":"Mobile Heading"},{"type":"link_list","id":"contact_linklist","label":"Contact List"},{"type":"text","id":"contact_form_heading","label":"Contact Form Heading"},{"type":"text","id":"contact_btn_text","label":"Contact Button Text"}]},{"name":"Article Page Join the Circle Content","settings":[{"type":"image_picker","id":"Article_Join_image","label":"Join the Circle Image"},{"type":"text","id":"Article_Join_heading","label":"Join the Circle Heading"},{"type":"text","id":"Article_Join_order","label":"Join the Circle Order Text ( UK )"},{"type":"text","id":"Article_Join_order_non_uk","label":"Join the Circle Order Text ( Non-UK )"},{"type":"text","id":"Article_Join_cir_para","label":"Join the Circle Content"},{"type":"textarea","id":"Article_Join_chk_text","label":"Join the Circle Checkbox Text"}]},{"name":"Cart USP Bar","settings":[{"type":"image_picker","id":"usp_img_1","label":"USP Bar Image 1"},{"type":"text","id":"usp_heading_1","label":"USP Bar Heading 1"},{"type":"richtext","id":"usp_text_1","label":"USP Bar Text 1"},{"type":"image_picker","id":"usp_img_2","label":"USP Bar Image 2"},{"type":"text","id":"usp_heading_2","label":"USP Bar Heading 2"},{"type":"richtext","id":"usp_text_2","label":"USP Bar Text 2"},{"type":"image_picker","id":"usp_img_3","label":"USP Bar Image 3"},{"type":"text","id":"usp_heading_3","label":"USP Bar Heading 3"},{"type":"richtext","id":"usp_text_3","label":"USP Bar Text 3"}]},{"name":"Cart","settings":[{"type":"checkbox","id":"cart_notes_enable","label":"Enable order notes"},{"type":"checkbox","id":"cart_vendor_enable","label":"Show product vendor"}]},{"name":"Social media","settings":[{"type":"paragraph","content":"Social links can be displayed in the Header message and Footer sections."},{"type":"text","id":"social_twitter_link","label":"Twitter","info":"https:\/\/twitter.com\/shopify"},{"type":"text","id":"social_facebook_link","label":"Facebook","info":"https:\/\/facebook.com\/shopify"},{"type":"text","id":"social_pinterest_link","label":"Pinterest","info":"https:\/\/pinterest.com\/shopify"},{"type":"text","id":"social_instagram_link","label":"Instagram","info":"http:\/\/instagram.com\/shopify"},{"type":"text","id":"social_tumblr_link","label":"Tumblr","info":"http:\/\/shopify.tumblr.com"},{"type":"text","id":"social_youtube_link","label":"YouTube","info":"https:\/\/www.youtube.com\/shopify"},{"type":"text","id":"social_vimeo_link","label":"Vimeo","info":"https:\/\/vimeo.com\/shopify"}]},{"name":"Currency","settings":[{"type":"paragraph","content":"The currency converter can be enabled in your header as part of the promotions bar. To offer multiple currencies on your online store, you must first [edit your store's currency formatting](https:\/\/help.shopify.com\/manual\/using-themes\/troubleshooting\/help-script-find-money-formats)."},{"type":"checkbox","id":"show_multiple_currencies","label":"Enable currency conversion","default":true,"info":"Even though prices are displayed in different currencies, orders will still be processed in your store's currency."},{"type":"select","id":"currency_format","label":"Format","options":[{"value":"money_format","label":"Without currency ($10.00)"},{"value":"money_with_currency_format","label":"With currency ($10.00 CAD)"}],"default":"money_with_currency_format"},{"type":"text","id":"supported_currencies","label":"Supported currencies","default":"INR GBP CAD USD AUD EUR JPY","info":"Use the country's ISO [currency code](http:\/\/www.xe.com\/iso4217.php). Separate your currency codes with a space."},{"type":"text","id":"default_currency","label":"Default currency","default":"USD"}]},{"name":"Password page","settings":[{"id":"password_page_title","type":"text","label":"Title","default":"Opening Soon"},{"id":"password_page_subtitle","type":"richtext","label":"Subtitle","default":"<p>Find out when we open:<\/p>"}]},{"name":"Blog","settings":[{"type":"product","id":"products_featured_collection","label":"Featured products in sidebar"},{"type":"header","content":"Blog Fliter Content"},{"type":"image_picker","id":"Blog_filter_img_1","label":"Blog Filter Image 1"},{"type":"text","id":"Blog_filter_text_1","label":"Blog Filter Text 1"},{"type":"image_picker","id":"Blog_filter_img_2","label":"Blog Filter Image 2"},{"type":"text","id":"Blog_filter_text_2","label":"Blog Filter Text 2"},{"type":"image_picker","id":"Blog_filter_img_3","label":"Blog Filter Image 3"},{"type":"text","id":"Blog_filter_text_3","label":"Blog Filter Text 3"},{"type":"image_picker","id":"Blog_filter_img_4","label":"Blog Filter Image 4"},{"type":"text","id":"Blog_filter_text_4","label":"Blog Filter Text 4"},{"type":"image_picker","id":"Blog_filter_img_5","label":"Blog Filter Image 5"},{"type":"text","id":"Blog_filter_text_5","label":"Blog Filter Text 5"},{"type":"image_picker","id":"Blog_filter_img_6","label":"Blog Filter Image 6"},{"type":"text","id":"Blog_filter_text_6","label":"Blog Filter Text 6"},{"type":"image_picker","id":"Blog_filter_img_7","label":"Blog Filter Image 7"},{"type":"text","id":"Blog_filter_text_7","label":"Blog Filter Text 7"},{"type":"image_picker","id":"Blog_filter_img_8","label":"Blog Filter Image 8"},{"type":"text","id":"Blog_filter_text_8","label":"Blog Filter Text 8"},{"type":"image_picker","id":"Blog_filter_img_9","label":"Blog Filter Image 9"},{"type":"text","id":"Blog_filter_text_9","label":"Blog Filter Text 9"},{"type":"image_picker","id":"Blog_filter_img_10","label":"Blog Filter Image 10"},{"type":"text","id":"Blog_filter_text_10","label":"Blog Filter Text 10"}]}]
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Dawn",
+    "theme_version": "1.1.0",
+    "theme_author": "Shopify",
+    "theme_documentation_url": "https://shopify.dev/themes/tools/dawn",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "t:settings_schema.colors.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.settings.header__1.content"
+      },
+      {
+        "type": "color",
+        "id": "colors_solid_button_labels",
+        "default": "#FFFFFF",
+        "label": "t:settings_schema.colors.settings.colors_solid_button_labels.label",
+        "info": "t:settings_schema.colors.settings.colors_solid_button_labels.info"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent_1",
+        "default": "#445958",
+        "label": "t:settings_schema.colors.settings.colors_accent_1.label",
+        "info": "t:settings_schema.colors.settings.colors_accent_1.info"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent_2",
+        "default": "#9D572C",
+        "label": "t:settings_schema.colors.settings.colors_accent_2.label"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.colors.settings.header__2.content"
+      },
+      {
+        "type": "color",
+        "id": "colors_text",
+        "default": "#1A1B18",
+        "label": "t:settings_schema.colors.settings.colors_text.label",
+        "info": "t:settings_schema.colors.settings.colors_text.info"
+      },
+      {
+        "type": "color",
+        "id": "colors_outline_button_labels",
+        "default": "#445958",
+        "label": "t:settings_schema.colors.settings.colors_outline_button_labels.label",
+        "info": "t:settings_schema.colors.settings.colors_outline_button_labels.info"
+      },
+      {
+        "type": "color",
+        "id": "colors_background_1",
+        "default": "#FFFFFF",
+        "label": "t:settings_schema.colors.settings.colors_background_1.label"
+      },
+      {
+        "type": "color",
+        "id": "colors_background_2",
+        "default": "#FAF1E9",
+        "label": "t:settings_schema.colors.settings.colors_background_2.label"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.typography.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header__1.content"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "default": "sans-serif",
+        "label": "t:settings_schema.typography.settings.type_header_font.label",
+        "info": "t:settings_schema.typography.settings.type_header_font.info"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.typography.settings.header__2.content"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "default": "sans-serif",
+        "label": "t:settings_schema.typography.settings.type_body_font.label",
+        "info": "t:settings_schema.typography.settings.type_body_font.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.styles.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.styles.settings.header__1.content"
+      },
+      {
+        "type": "select",
+        "id": "sale_badge_color_scheme",
+        "options": [
+          {
+            "value": "accent-1",
+            "label": "t:settings_schema.styles.settings.sale_badge_color_scheme.options__2.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:settings_schema.styles.settings.sale_badge_color_scheme.options__3.label"
+          },
+          {
+            "value": "background-2",
+            "label": "t:settings_schema.styles.settings.sale_badge_color_scheme.options__1.label"
+          }
+        ],
+        "default": "accent-2",
+        "label": "t:settings_schema.styles.settings.sale_badge_color_scheme.label"
+      },
+      {
+        "type": "select",
+        "id": "sold_out_badge_color_scheme",
+        "options": [
+          {
+            "value": "background-1",
+            "label": "t:settings_schema.styles.settings.sold_out_badge_color_scheme.options__1.label"
+          },
+          {
+            "value": "inverse",
+            "label": "t:settings_schema.styles.settings.sold_out_badge_color_scheme.options__2.label"
+          }
+        ],
+        "default": "inverse",
+        "label": "t:settings_schema.styles.settings.sold_out_badge_color_scheme.label"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.styles.settings.header__2.content"
+      },
+      {
+        "type": "select",
+        "id": "accent_icons",
+        "options": [
+          {
+            "value": "accent-1",
+            "label": "t:settings_schema.styles.settings.accent_icons.options__1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:settings_schema.styles.settings.accent_icons.options__2.label"
+          },
+          {
+            "value": "outline-button",
+            "label": "t:settings_schema.styles.settings.accent_icons.options__3.label"
+          },
+          {
+            "value": "text",
+            "label": "t:settings_schema.styles.settings.accent_icons.options__4.label"
+          }
+        ],
+        "default": "text",
+        "label": "t:settings_schema.styles.settings.accent_icons.label"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.layout.name",
+    "settings": [
+      {
+        "type": "select",
+        "id": "page_width",
+        "options": [
+          {
+            "value": "1200",
+            "label": "t:settings_schema.layout.settings.page_width.options__1.label"
+          },
+          {
+            "value": "1600",
+            "label": "t:settings_schema.layout.settings.page_width.options__2.label"
+          }
+        ],
+        "default": "1600",
+        "label": "t:settings_schema.layout.settings.page_width.label"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.social-media.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.social-media.settings.header.content"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "t:settings_schema.social-media.settings.social_twitter_link.label",
+        "info": "t:settings_schema.social-media.settings.social_twitter_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "t:settings_schema.social-media.settings.social_facebook_link.label",
+        "info": "t:settings_schema.social-media.settings.social_facebook_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "t:settings_schema.social-media.settings.social_pinterest_link.label",
+        "info": "t:settings_schema.social-media.settings.social_pinterest_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "t:settings_schema.social-media.settings.social_instagram_link.label",
+        "info": "t:settings_schema.social-media.settings.social_instagram_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "t:settings_schema.social-media.settings.social_tiktok_link.label",
+        "info": "t:settings_schema.social-media.settings.social_tiktok_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_tumblr_link",
+        "label": "t:settings_schema.social-media.settings.social_tumblr_link.label",
+        "info": "t:settings_schema.social-media.settings.social_tumblr_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat_link",
+        "label": "t:settings_schema.social-media.settings.social_snapchat_link.label",
+        "info": "t:settings_schema.social-media.settings.social_snapchat_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "t:settings_schema.social-media.settings.social_youtube_link.label",
+        "info": "t:settings_schema.social-media.settings.social_youtube_link.info"
+      },
+      {
+        "type": "text",
+        "id": "social_vimeo_link",
+        "label": "t:settings_schema.social-media.settings.social_vimeo_link.label",
+        "info": "t:settings_schema.social-media.settings.social_vimeo_link.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.favicon.name",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:settings_schema.favicon.settings.favicon.label",
+        "info": "t:settings_schema.favicon.settings.favicon.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.currency_format.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:settings_schema.currency_format.settings.content"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.currency_format.settings.paragraph"
+      },
+      {
+        "type": "checkbox",
+        "id": "currency_code_enabled",
+        "label": "t:settings_schema.currency_format.settings.currency_code_enabled.label",
+        "default": true
+      }
+    ]
+  }
+]

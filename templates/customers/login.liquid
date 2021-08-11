@@ -1,104 +1,148 @@
-<style>
-  .site-footers #featured-blog, .site-footers .instragram_feed, .site-footers .live_more { display: none !important; }
-</style>
+{{ 'customer.css' | asset_url | stylesheet_tag }}
 
-<div class="account_page">
-  <div class="account_page_left">
-    <h3>{{ settings.acco_login_form_text }}</h3>
-    <div>
-      <div class="note form-success" id="ResetSuccess" style="display:none;">
+<div class="customer login">
+  <h1 id="recover" tabindex="-1">
+    {{ 'customer.recover_password.title' | t }}
+  </h1>
+  <div>
+    <p>
+      {{ 'customer.recover_password.subtext' | t }}
+    </p>
+
+    {%- form 'recover_customer_password' -%}
+      {% assign recover_success = form.posted_successfully? %}
+      <div class="field">
+        <input type="email"
+          value=""
+          name="email"
+          id="RecoverEmail"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="email"
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="RecoverEmail-email-error"
+            autofocus
+          {% endif %}
+          placeholder="{{ 'customer.login_page.email' | t }}"
+        >
+        <label for="RecoverEmail">
+          {{ 'customer.login_page.email' | t }}
+        </label>
+      </div>
+      {%- if form.errors -%}
+        <small id="RecoverEmail-email-error" class="form__message">
+          <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+            <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+            <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+            <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+          </svg>
+          {{ form.errors.messages['form'] }}
+        </small>
+      {%- endif -%}
+
+      <button>
+        {{ 'customer.login_page.submit' | t }}
+      </button>
+
+      <a href="#login">
+        {{ 'customer.login_page.cancel' | t }}
+      </a>
+    {%- endform -%}
+  </div>
+
+  <h1 id="login" tabindex="-1">
+    {{ 'customer.login_page.title' | t }}
+  </h1>
+  <div>
+    {%- if recover_success == true -%}
+      <h3 class="form__message" tabindex="-1" autofocus>
+        <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 13 13">
+          <path d="M6.5 12.35C9.73087 12.35 12.35 9.73086 12.35 6.5C12.35 3.26913 9.73087 0.65 6.5 0.65C3.26913 0.65 0.65 3.26913 0.65 6.5C0.65 9.73086 3.26913 12.35 6.5 12.35Z" fill="#428445" stroke="white" stroke-width="0.7"/>
+          <path d="M5.53271 8.66357L9.25213 4.68197" stroke="white"/>
+          <path d="M4.10645 6.7688L6.13766 8.62553" stroke="white">
+        </svg>
         {{ 'customer.recover_password.success' | t }}
+      </h3>
+    {%- endif -%}
+    {%- form 'customer_login', novalidate: 'novalidate' -%}
+      {%- if form.errors -%}
+        <h2 class="form__message" tabindex="-1" autofocus>
+          <span class="visually-hidden">{{ 'accessibility.error' | t }} </span>
+          <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+            <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+            <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+            <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+          </svg>
+          {{ 'templates.contact.form.error_heading' | t }}
+        </h2>
+        {{ form.errors | default_errors }}
+      {%- endif -%}
+
+      <div class="field">        
+        <input
+          type="email"
+          name="customer[email]"
+          id="CustomerEmail"
+          autocomplete="email"
+          autocorrect="off"
+          autocapitalize="off"
+          {% if form.errors contains 'form' %}
+            aria-invalid="true"
+          {% endif %}
+          placeholder="{{ 'customer.login_page.email' | t }}"
+        >
+        <label for="CustomerEmail">
+          {{ 'customer.login_page.email' | t }}
+        </label>
       </div>
 
-      <div id="CustomerLoginForm" class="form-vertical">
-        {% form 'customer_login' %}
-          {{ form.errors | default_errors }}
-
-       {% comment %}   <label for="CustomerEmail" class="hidden-label">Email address</label> {% endcomment %}
-          <input type="email" name="customer[email]" id="CustomerEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" autofocus>
-
-          {% if form.password_needed %}
-        {% comment %}    <label for="CustomerPassword" class="hidden-label">Password</label> {% endcomment %}
-            <input type="password" value="" name="customer[password]" id="CustomerPassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{ 'customer.login.password' | t }}">
-          {% endif %}
-
-          <p class="log_2">
-            <input type="submit" class="btn btn--full create_button create_button2" value="LOGIN">
-          </p>
-
-          {% if form.password_needed %}
-            <p><a href="#recover" id="RecoverPassword">{{ 'customer.login.forgot_password' | t }}</a></p>
-          {% endif %}
-        {% endform %}
-      </div>
-
-      <div id="RecoverPasswordForm" style="display: none;">
-      {% comment %}  <h2>{{ 'customer.recover_password.title' | t }}</h2> {% endcomment %}
-        <p>{{ 'customer.recover_password.subtext' | t }}</p>
-
-        <div class="form-vertical">
-          {% form 'recover_customer_password' %}
-            {{ form.errors | default_errors }}
-
-            {% if form.posted_successfully? %}
-              {% assign resetPassword = true %}
+      {%- if form.password_needed -%}
+        <div class="field">          
+          <input
+            type="password"
+            value=""
+            name="customer[password]"
+            id="CustomerPassword"
+            autocomplete="current-password"
+            {% if form.errors contains 'form' %}
+              aria-invalid="true"
             {% endif %}
-
-{% comment %}       <label for="RecoverEmail" class="hidden-label">{{ 'customer.recover_password.email' | t }}</label> {% endcomment %}
-            <input type="email" value="" name="email" id="RecoverEmail" class="input-full" placeholder="{{ 'customer.recover_password.email' | t }}" autocorrect="off" autocapitalize="off">
-
-            <p>
-              <input type="submit" class="btn btn--full create_button create_button3" value="{{ 'customer.recover_password.submit' | t }}">
-            </p>
-            <button type="button" id="HideRecoverPasswordLink">{{ 'customer.recover_password.cancel' | t }}</button>
-          {% endform %}
+            placeholder="{{ 'customer.login_page.password' | t }}"
+          >
+          <label for="CustomerPassword">
+            {{ 'customer.login_page.password' | t }}
+          </label>
         </div>
-      </div>
-    </div>
+
+        <a href="#recover">
+          {{ 'customer.login_page.forgot_password' | t }}
+        </a>
+      {%- endif -%}
+
+      <button>
+        {{ 'customer.login_page.sign_in' | t }}
+      </button>
+
+      <a href="{{ routes.account_register_url }}">
+        {{ 'customer.login_page.create_account' | t }}
+      </a>
+      
+    {%- endform -%}
   </div>
+  
+  {%- if shop.checkout.guest_login -%}
+    <div>
+      <hr>
+      <h2>{{ 'customer.login_page.guest_title' | t }}</h2>
 
-  <div class="account_page_right">
-    <h3>{{ settings.acco_login_point_1 }}</h3>
-    
-    <div class="form-vertical">
-      {% form 'create_customer' %}
-      <div class="grid">
-        <div class="grid__item large--one-half">
-      {% comment %}   <label for="FirstName" class="hidden-label">{{ 'customer.register.first_name' | t }}</label> {% endcomment %}
-      <input type="text" name="customer[first_name]" id="FirstName" class="input-full" placeholder="{{ 'customer.register.first_name' | t }}" autocapitalize="words" autofocus> </div>
-	   <div class="grid__item large--one-half">
-{% comment %}   <label for="LastName" class="hidden-label">{{ 'customer.register.last_name' | t }}</label> {% endcomment %}
-     <input type="text" name="customer[last_name]" id="LastName" class="input-full" placeholder="{{ 'customer.register.last_name' | t }}" autocapitalize="words">
-        </div>
-      </div>
-      
-    
-      
-      <div class="grid">
-        <div class="grid__item large--one-whole">  
-  {% comment %}      <label for="Email" class="hidden-label">Email Address</label> {% endcomment %}
-        <input type="email" name="customer[email]" id="Email" class="input-full" placeholder="{{ 'customer.register.email' | t }}" autocorrect="off" autocapitalize="off">
-        </div>
-          
-       
-        <div class="grid__item large--one-whole">
-   {% comment %}     <label for="CreatePassword" class="hidden-label">Password</label> {% endcomment %}
-        <input type="password" name="customer[password]" id="CreatePassword" class="input-full" placeholder="{{ 'customer.register.password' | t }}">
-      </div>
-      </div>
-      
-        {% comment %}
-      	<div class="checkbox_acc">
-          <p><input type="checkbox"><span>{{ settings.acco_create_form_checkbox }}</span></p>
-        </div>
-      {% endcomment %}
-         <p class="only-UK-announcment">Please note that accounts can only be created by UK customers for now.</p>
-        <p>
-          <input type="submit" value="Create account" class="btn btn--full create_button">
-        </p>
-      
-        <a href="javascript:void(0);" class="acco_desp">{{ settings.acco_create_form_note }}</a>
-      {% endform %}
+      {%- form 'guest_login' -%}
+        <button>
+          {{ 'customer.login_page.guest_continue' | t }}
+        </button>
+      {%- endform -%}
     </div>
-  </div>
+  {%- endif -%}
 </div>
