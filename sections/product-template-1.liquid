@@ -1,0 +1,673 @@
+{% comment %}
+
+  Rich snippets (itemscope, itemtype, etc.) for products are a theme requirement,
+  and allow search engines to easily understand what the content is.
+
+  For more information on these Scheme.org tags, visit:
+    - http://schema.org/docs/gs.html
+
+{% endcomment %}
+
+{% comment %} CLS Fixes {% endcomment %}
+<style>
+  .accordion_content{
+    display: none;
+  }
+</style>
+
+{% include "attribute-product-image-box-ratio-max" %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign Description = product.description | split:'<!-- split -->' %}
+
+
+{% assign on_sale = false %}
+
+{% if current_variant.compare_at_price > current_variant.price %}
+  {% unless hide_on_sale_badge %}
+    {% assign on_sale = true %}
+  {% endunless %}
+{% endif %}
+
+<div
+  data-product-container
+  itemscope
+  itemtype="http://schema.org/Product"
+  {% if current_variant.image %}
+    data-initial-image-position="{{ current_variant.image.position | json | minus: 1 }}"
+  {% endif %}
+  data-shop-default-currency="{{ shop.currency }}"
+  data-product-options-size="{{ product.options.size }}"
+  data-product-options-first="{{ product.options.first }}"
+  data-product-variants-size="{{ product.variants.size }}"
+  data-product-variants-first="{{ product.variants.first.title }}">
+
+  <script data-product-json type="application/json">
+    {{ product | json }}
+  </script>
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  <div class="grid--inline product-single">
+    
+    {% comment %}
+    <div class="breadcrumb-wrapper content-wrapper--squished content-wrapper--half-top medium-down--text-center medium-down--hide">
+      {% include 'breadcrumb' %}
+    </div>
+    {% endcomment %}
+
+    <div class="product_left" id="PhotoContent" {% if product.metafields.products.bg-color != blank %} style="background-color:{{ product.metafields.products.bg-color }};"{% endif %}>
+
+      <div class="medium-down--hides">
+        {% if section.settings.image_layout_style == "stacked_images" or section.settings.image_layout_style == "stacked_images_sticky_sidebar" %}
+          <div id="ProductGalleryStacked" class="product-single__photos large--one-whole">
+            {% for image in product.images %}
+              {% include "attribute-image-box-ratio" %}
+
+              {% include "filter-rias-img-url" input: image %}
+              {% assign image_url = output %}
+
+              <div class="box-ratio" style="padding-bottom: {{ image_box_ratio }};" data-image-id="{{ image.id }}">
+                <img
+                  data-src="{{ image_url }}"
+                  data-sizes="auto"
+                  class="lazyload lazyload-fade"
+                  alt="{{ image.alt | escape }}">
+
+                <noscript>
+                  <img data-src="{{ image | img_url: '1200x' }}" alt="{{ image.alt }}" class="lazyload"/>
+                </noscript>
+              </div>
+            {% else %}
+              <img data-src="//cdn.shopify.com/s/images/themes/product-1.png" class="lazyload">
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="product-multiple__photos large--one-tenth" id="ProductThumbs">
+            {% for image in product.images %}
+              <button class="product-thumbnail-button" data-product-thumbnail>
+                <img data-src="{{ image | img_url: '400x' }}" alt="{{ image.alt | escape }}" class="lazyload">
+              </button>
+            {% else %}
+              <button class="product-thumbnail-button" data-product-thumbnail>
+                <img data-src="//cdn.shopify.com/s/images/themes/product-1.png" class="lazyload">
+              </button>
+            {% endfor %}
+          </div>
+
+          <div class="product-single__photos {% if product.images.size > 1 %}large--nine-tenths{% else %}large--one-whole{% endif %}">
+            <div class="image-container image-layers box-ratio" style="padding-bottom: {{ product_image_box_ratio_max }};">
+              {% for image in product.images %}
+                {% include "filter-rias-img-url" input: image %}
+                {% assign image_url = output %}
+
+                <img
+                  data-src="{{ image_url }}"
+                  data-sizes="auto"
+                  class="lazyload lazypreload lazyload-fade"
+                  id="ProductPhotoImg"
+                  alt="{{ image.alt | escape }}"
+                  {% unless forloop.first %}style="display: none;"{% endunless %}
+                  data-product-image
+                  data-image-id="{{ image.id }}">
+
+                <noscript>
+                  <img data-src="{{ image | img_url: '1000x' }}" alt="{{ image.alt }}" class="lazyload" />
+                </noscript>
+              {% else %}
+                <img data-src="//cdn.shopify.com/s/images/themes/product-1.png" class="lazyload" >
+              {% endfor %}
+            </div>
+
+            <button class="product-lightbox-button-open" data-product-lightbox-button="open"><span class="product-lightbox-button open">
+              <svg><use xlink:href="#icon-glass"></use></svg></span>
+            </button>
+          </div>
+
+          {% include "product-lightbox" %}
+        {% endif %}
+      </div>
+
+      {% comment %}
+        Now create the mobile slideshow.
+      {% endcomment %}
+
+      <div class="large--hide" style="display:none;">
+        <div class="product-single__photos" id="ProductPhotoSlideshow">
+          {% for image in product.images %}
+            {% include "filter-rias-img-url" input: image %}
+            {% assign image_url = output %}
+
+            <img
+              data-src="{{ image_url }}"
+              data-sizes="auto"
+              class="lazyload lazyload-fade"
+              alt="{{ image.alt | escape }}"
+              data-image-id="{{ image.id }}">
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="product_right  {% if section.settings.image_layout_style == 'stacked_images_sticky_sidebar' %}sticky-sidebar{% endif %}" id='sidebarColumn'>
+      <div class="sidebarColumn-inner">
+        <div class="js-fix-on-scroll--target fix-on-scroll--large-only">
+          {% include 'breadcrumb' %}
+          
+          <h1 itemprop="name" class='medium-down--text-center product-title'>{{ product.title }}</h1>
+          <div class="reviews_full">
+            <img data-src="{{ 'star.png' | asset_url }}" class="lazyload">
+          </div>
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+            <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+            <div id="AddToCartForm" class="product-form form-vertical">
+              {% form 'product', product %}
+                
+                <p class="medium-down--text-center">
+                  <span class='faded medium-down--text-center money' itemprop="price" data-product-price>
+                    {% if settings.currency_format == "money_format" %}
+                      {{ current_variant.price | money }}
+                    {% else %}
+                      {{ current_variant.price | money_with_currency }}
+                    {% endif %}
+                  </span>
+                  {% if product.compare_at_price_max > product.price %}
+                    <span class='strikethrough faded medium-down--text-center money' data-compare-price>
+                      {% if settings.currency_format == "money_format" %}
+                        {{ current_variant.compare_at_price | money }}
+                      {% else %}
+                        {{ current_variant.compare_at_price | money_with_currency }}
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                </p>
+                 <div class="product_desp">
+                  {{ product.description | split:'<!-- split -->' | first }}
+                 </div>
+                {% comment %}
+                  Add product variants as a dropdown.
+                    - By default, each variant (or combination of variants) will display as its own <option>
+                    - To separate these into multiple steps, which we suggest, use option_selection.js (see below)
+
+                  You can leverage jQuery to add a callback on page load and each time the select element changes:
+                    - Include option_selection.js (as seen at the bottom of this file)
+                    - This allows you to use JavaScript anytime the variant dropdown changes
+                    - This also separates out your variant options (ie. size, color, etc.) to separate select elements
+
+                  For more information on products with multiple options, visit:
+                    - http://docs.shopify.com/support/your-website/themes/can-i-make-my-theme-use-products-with-multiple-options#update-product-liquid
+                {% endcomment %}
+              
+                <select name="id" id="productSelect-{{ product.id }}" class="product-single__variants" >
+                           {% for variant in product.variants %}
+                           {% if variant.available %}
+
+                           {% comment %}
+                           Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                           {% endcomment %}
+                           <option {% if variant == current_variant %} selected="selected" {% endif %} value="{{ variant.id }}" data-sku="{{ variant.sku }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                           {% else %}
+                           <option disabled="disabled">
+                             {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                           </option>
+                           {% endif %}
+                           {% endfor %}
+                           </select>
+                  
+				
+                  
+             	 <div class="product_size">
+                   
+                   <div class="product_size_main">
+                     <div class="product_quan_main_left">
+                       <p>Quantity</p>
+                     </div>
+                     <div class="product_quan_main_right">
+                     <button type='button' value='-' class='qtyminus' field='product-quantity-{{ product.id }}'>-</button>
+					 <input name="quantity" id="product-quantity-{{product.id}}" type="text" value="1"/>
+                     <button type='button' value='+' class='qtyplus' field='product-quantity-{{ product.id }}'>+</button>                         
+                     </div>
+                     <div class="product_quan_main_last 1">
+                       
+                       <button type="submit" id="AddToCart" name="add" class="btn create_button {% if section.settings.enable_payment_button %}btn-secondary{% endif %}">
+                         <span data-add-to-cart-texts>{{ 'products.product.add_to_cart' | t }} <span class="pluss">+</span></span>
+                       </button>
+                       
+                     </div>
+                   </div>
+                </div>
+                  
+                <div class="accord">
+                  <div class="accord_main">
+                    {{ Description[2] }}
+                  </div>
+                </div>   
+              
+                
+              
+              {% endform %}
+            </div>
+          </div>
+
+            {% comment %}
+          {% if section.blocks.size > 0 %}
+            <section class="product-tabs" {{ block.shopify_attributes }}>
+
+              <ul class="product-tab-wrapper">
+                {% unless product.description == empty %}
+                  <li class="product-tab {% if section.settings.expand_first_tab %}active{% endif %}" data-product-tab>
+                    <button class="product-tab-title" data-product-tab-title>
+                      {{ "products.product.description" | t }}
+                    </button>
+                    <div class="product-description rte product-tab-content" itemprop="description" data-product-tab-content>
+                      <div data-product-tab-content-inner>
+                        {{ product.description }}
+                      </div>
+                      <button class="product-tab-read-more hidden" data-read-more="{{ 'products.product.read_less' | t }}">
+                        {{ "products.product.read_more" | t }}
+                      </button>
+                    </div>
+                  </li>
+                {% endunless %}
+
+                {% for block in section.blocks %}
+                  {% if block.type == "tab" %}
+                    {% assign page = pages[block.settings.product_tab_page] | default: false %}
+
+                    {% if page %}
+                      <li class="product-tab" data-product-tab>
+                        <button class="product-tab-title" data-product-tab-title>
+                          {{ page.title }}
+                        </button>
+                        <div class="product-returns product-tab-content rte" data-product-tab-content>
+                          <div data-product-tab-content-inner>
+                            {{ page.content }}
+                          </div>
+                          <button class="product-tab-read-more hidden" data-read-more="{{ 'products.product.read_less' | t }}">
+                            {{ "products.product.read_more" | t }}
+                          </button>
+                        </div>
+                      </li>
+                    {% endif %}
+                  {% elsif block.type == "share" %}
+                    <li class="product-tab" data-product-tab>
+                      <button class="product-tab-title" data-product-tab-title>{{ "general.share.share_this" | t }}</button>
+
+                      <div class="product-tab-content rte" data-product-tab-content>
+                        {% if block.settings.share_facebook %}
+                          {% assign facebook = true %}
+                        {% endif %}
+                        {% if block.settings.share_pinterest %}
+                          {% assign pinterest = true %}
+                        {% endif %}
+                        {% if block.settings.share_google %}
+                          {% assign google = true %}
+                        {% endif %}
+                        {% if block.settings.share_twitter %}
+                          {% assign twitter = true %}
+                        {% endif %}
+                        {% if block.settings.share_tumblr %}
+                          {% assign tumblr = true %}
+                        {% endif %}
+
+                        <div id="shareBox">
+                          {% if facebook %}
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" class='facebook'>
+                              <button>
+                                <div class="icon-fallback-text">
+                                  <span class="icon icon-facebook"></span>
+                                  <span class="fallback-text">Facebook</span>
+                                 </div>
+                              </button>
+                            </a>
+                          {% endif %}
+
+                          {% if pinterest %}
+                            <a href="http://pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&media={{ featured_image | img_url: 'large' }}&description={{ featured_image.alt | escape }}" target="_blank" class='pinterest'>
+                              <button>
+                                <div class="icon-fallback-text">
+                                  <span class="icon icon-pinterest"></span>
+                                  <span class="fallback-text">Pinterest</span>
+                                </div>
+                              </button>
+                            </a>
+                          {% endif %}
+
+                          {% if google %}
+                            <a href="https://plus.google.com/share?url={{ shop.url }}{{ product.url }}" target="_blank" class='google'>
+                              <button>
+                                <div class="icon-fallback-text">
+                                  <span class="icon icon-google-plus"></span>
+                                  <span class="fallback-text">Google</span>
+                                </div>
+                              </button>
+                            </a>
+                          {% endif %}
+
+                          {% if twitter %}
+                            <a href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ product.url }}&text={{ product.title }}" target="_blank" class='twitter'>
+                              <button>
+                                <div class="icon-fallback-text">
+                                  <span class="icon icon-twitter"></span>
+                                  <span class="fallback-text">Twitter</span>
+                                </div>
+                              </button>
+                            </a>
+                          {% endif %}
+
+                          {% if tumblr %}
+                            <a href="http://www.tumblr.com/share/link?url={{ shop.url }}{{ product.url }}" target="_blank"  class='tumblr'>
+                              <button>
+                                <div class="icon-fallback-text">
+                                  <span class="icon icon-tumblr"></span>
+                                  <span class="fallback-text">Tumblr</span>
+                                </div>
+                              </button>
+                            </a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+
+            </section>
+          {% else %}
+            <div class="product-description rte" id="description" itemprop="description">
+              {{ product.description }}
+            </div>
+          {% endif %}
+            {% endcomment %}
+         </div>
+      </div>
+    </div>
+  </div>
+
+    {% if section.settings.product_related %}
+    {% include "product-related" %}
+    {% endif %}
+   
+   
+</div>
+
+  <div class="product_logos">
+    <div class="product_brand">
+      <div class="product_brand_left product_brand_lefts">
+        <h3>{{ section.settings.key_title }}</h3>
+        {{ Description[1] }}
+      </div>
+      <div class="product_brand_right">
+        <h3>{{ section.settings.Claims_title }}</h3>
+        <div class="pro_box1">
+          {%- if product.metafields.claims.claims-1 != blank -%}
+          <h6>{{ product.metafields.claims.claims-1 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-2 != blank -%}
+          <h6>{{ product.metafields.claims.claims-2 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-3 != blank -%}
+          <h6>{{ product.metafields.claims.claims-3 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-4 != blank -%}
+          <h6>{{ product.metafields.claims.claims-4 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-5 != blank -%}
+          <h6>{{ product.metafields.claims.claims-5 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-6 != blank -%}
+          <h6>{{ product.metafields.claims.claims-6 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-7 != blank -%}
+          <h6>{{ product.metafields.claims.claims-7 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-8 != blank -%}
+          <h6>{{ product.metafields.claims.claims-8 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-9 != blank -%}
+          <h6>{{ product.metafields.claims.claims-9 }}</h6>
+          {%- endif -%}
+          {%- if product.metafields.claims.claims-10 != blank -%}
+          <h6>{{ product.metafields.claims.claims-10 }}</h6>
+          {%- endif -%}
+        </div>
+        <h4>{{ section.settings.Featured_title }}</h4>
+        <div class="pro_box2">
+          {%- if product.metafields.featured-in.featured-in-1 != blank -%}
+          <img data-src="{{ product.metafields.featured-in.featured-in-1 }}" class="lazyload">
+          {%- endif -%}
+          {%- if product.metafields.featured-in.featured-in-2 != blank -%}
+          <img data-src="{{ product.metafields.featured-in.featured-in-2 }}" class="lazyload">
+          {%- endif -%}
+          {%- if product.metafields.featured-in.featured-in-3 != blank -%}
+          <img data-src="{{ product.metafields.featured-in.featured-in-3 }}" class="lazyload">
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="product_video">
+    <div class="product_video_left">
+      {%- if product.metafields.product-left.img != blank -%}
+     	 <img data-src="{{ product.metafields.product-left.img }}" class="lazyload">
+      {%- endif -%}
+    </div>
+    <div class="product_video_right">
+      {%- if product.metafields.product-right.img != blank -%}
+     	 <img data-src="{{ product.metafields.product-right.img }}" class="lazyload">
+      {%- endif -%}
+      {% comment %}
+      <img data-src="{{ 'videos.png' | asset_url }}" class="video-center lazyload">
+      {% endcomment %}
+    </div>
+  </div>
+  {% comment %} 
+  {% include 'okendo-reviews-widget' %}
+  {% endcomment %}
+  {% include "product-related" %}
+  
+{% schema %}
+  {
+    "name": "Product pages",
+    "class": "product-pages",
+    "settings": [
+      {
+        "type":"header",
+        "content":"Accordin"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_header_1",
+        "label": "Accordin heading"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_Subheader_1",
+        "label": "Accordin Description"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_header_2",
+        "label": "Accordin heading"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_Subheader_2",
+        "label": "Accordin Description"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_header_3",
+        "label": "Accordin heading"
+      },
+      {
+        "type": "textarea",
+        "id": "Accordin_Subheader_3",
+        "label": "Accordin Description"
+      },    
+     {
+        "type":"header",
+        "content":"key Ingredients"
+      },
+      {
+        "type": "text",
+        "id": "key_title",
+        "label": "key Ingredients Title"
+      },
+      {
+        "type": "textarea",
+        "id": "key_description",
+        "label": "key Ingredients Description"
+      },
+      {
+        "type": "textarea",
+        "id": "key_description_2",
+        "label": "key Ingredients Description 2"
+      },
+      {
+        "type":"header",
+        "content":"Claims"
+      },
+      {
+        "type": "text",
+        "id": "Claims_title",
+        "label": "Claims Title"
+      },
+      {
+        "type": "text",
+        "id": "claims_1",
+        "label": "Claims Text 1"
+      },
+      {
+        "type": "text",
+        "id": "claims_2",
+        "label": "Claims Text 2"
+      },
+      {
+        "type": "text",
+        "id": "claims_3",
+        "label": "Claims Text 3"
+      },
+      {
+        "type": "text",
+        "id": "claims_4",
+        "label": "Claims Text 4"
+      },
+      {
+        "type": "text",
+        "id": "claims_5",
+        "label": "Claims Text 5"
+      },
+      {
+        "type": "text",
+        "id": "claims_6",
+        "label": "Claims Text 6"
+      },
+      {
+        "type": "text",
+        "id": "claims_7",
+        "label": "Claims Text 7"
+      },
+      {
+        "type":"header",
+        "content":"Featured In"
+      },
+      {
+        "type": "text",
+        "id": "Featured_title",
+        "label": "Featured Title"
+      },
+      {
+        "type": "image_picker",
+        "id": "Featured_1",
+        "label": "Featured Image 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "Featured_2",
+        "label": "Featured Image 2"
+      },
+      {
+        "type":"header",
+        "content":"Background Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "Background_1",
+        "label": "Background Image 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "Background_2",
+        "label": "Background Image 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_payment_button",
+        "label": "Show dynamic checkout button",
+        "info": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "image_layout_style",
+        "label": "Image layout style",
+        "options": [
+          {
+            "value": "thumbnails",
+            "label": "Thumbnails"
+          }
+        ],
+        "default": "thumbnails"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "tab",
+        "name": "Tab",
+        "settings": [
+          {
+            "type": "page",
+            "id": "product_tab_page",
+            "label": "Select page as tab content"
+          }
+        ]
+      },
+      {
+        "type": "share",
+        "name": "Share buttons",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "share_facebook",
+            "label": "Facebook"
+          },
+          {
+            "type": "checkbox",
+            "id": "share_pinterest",
+            "label": "Pinterest"
+          },
+          {
+            "type": "checkbox",
+            "id": "share_google",
+            "label": "Google Plus"
+          },
+          {
+            "type": "checkbox",
+            "id": "share_twitter",
+            "label": "Twitter"
+          },
+          {
+            "type": "checkbox",
+            "id": "share_tumblr",
+            "label": "Tumblr"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

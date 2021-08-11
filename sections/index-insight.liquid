@@ -1,0 +1,97 @@
+{% if blog == blank %}
+  {% assign blog = blogs["insight"] %}
+{% endif %}
+
+{% include 'blog-main-tags' %}
+<div class="index-section-insight index-section-default {% if section.settings.subtitle != blank %}index-section-has-subtitle{% endif %}">
+  {% if section.settings.title != blank %}
+    <h2 class="section-title">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.subtitle != blank %}
+    <div class="section-subtitle">{{ section.settings.subtitle }}</div>
+  {% endif %}
+  
+  <div id="index-insight-articles-wrapper" class="grid--full ambassadors_bottom-blog masonry-grid-cb article_wrapper masonry-row wrapper">
+    {% for article in blogs["insight"].articles limit: section.settings.articles_limit %}
+      {% include 'blog-article-grid-item', article: article %}
+    {% endfor %}
+  </div>
+  
+  {% if section.settings.link and section.settings.link_text != blank %}
+    <a id="dolor_sit_btn" class="innermost_front_btn btn" href="{{ section.settings.link }}">{{ section.settings.link_text }}</a>
+  {% endif %}
+</div>
+
+<style>
+  #shopify-section-{{ section.id }}
+  {
+    background-color:{{ section.settings.dolor_color }};
+    {% if section.settings.dolor_color_text %}
+      color: {{ section.settings.dolor_color_text }};
+    {% endif %}
+  }
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Insight - index page",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Insight"
+      },
+      {
+        "type":"textarea",
+        "id":"subtitle",
+        "label":"Subheading"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color",
+        "label":"Background Color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color_text",
+        "label":"Text Color",
+        "default": "#525252"
+      },
+	  {
+		"type": "url",
+		"id": "link",
+		"label": "Button Link",
+        "info": "Leave blank to hide the button"
+	  },
+	  {
+		"type": "text",
+		"id": "link_text",
+		"default": "Learn More",
+		"label": "Button Text"
+      },
+      {
+        "type": "range",
+        "id": "articles_limit",
+        "min": 1,
+        "max": 12,
+        "default": 3,
+        "label": "Articles to show"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Insight - index page",
+        "category": "Blog"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

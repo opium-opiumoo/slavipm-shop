@@ -1,0 +1,133 @@
+        {% assign actualindex = actualindex | plus: 1 %}
+        {% assign actualindex_allpages = paginate.current_offset | plus: actualindex %}
+  
+        {% assign dividend = actualindex | plus: 1 %}
+  		{% assign dividend1 = actualindex %}
+  		{% assign divisor = 5 %}
+		{% assign remainder = dividend | modulo:divisor %}
+  		{% assign remainder2 = dividend1 | modulo: divisor %}
+
+		{% if remainder == 0 or remainder2 == 0  %}
+  		{% assign width = "large--one-third" %}
+		{% else %}
+  		{% assign width = "large--one-third" %}
+  		{% endif %}
+
+  		{% assign article_layout = 'article_layout_default' %}
+        {% for tag in article.tags %}
+            {% if tag contains "article_layout_" and current_tags == blank %}
+                {% assign article_layout = tag %}
+                {% break %}
+            {% endif %}
+        {% endfor %}
+
+{% assign article_item_style = '' %}
+{% if article_layout == "article_layout_1" %}
+  {% for tag in article.tags %}
+    {% if tag contains "border_width" %}
+      {% assign border_width = tag | split: "_" | last %}
+      {% assign article_item_style = article_item_style | append: "border-width:" | append: border_width | append: "px;" %}
+    {% endif %}
+    {% if tag contains "border_color" %}
+      {% assign border_color = tag | split: "_" | last %}
+      {% assign article_item_style = article_item_style | append: "border-color:" | append: border_color | append: ";" %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+  
+  
+        <div data-length="{{forloop.length}}" class="masonry-grid-cb-item masonry-grid-cb-item-3 grid__item small--one-whole medium--one-half {{ width }} article ArticleItem {{article_layout}} article_layout_fluid">
+         <div class="article-grid-item-inner" style="{{ article_item_style }}" >
+           <a href="{{ article.url }}" title="{{ article.title | escape }}">
+            <div class="blog_image box-ratio--135 image-placeholder-cover">
+                {% if article.image %}
+              		{% include "filter-rias-img-url-with-height" input: article.image %}
+		            {% assign image_url = output | replace: "{height}x{width}", "700x700" %}
+              
+                    {% if article_layout == 'article_layout_cover' %}
+              			{% for tag in article.tags %}
+                			{% if tag contains "coverimage:" %}
+                    			{% assign image_url = tag | split: ':' | last %}
+                			    {% break %}
+                            {% endif %}
+            			{% endfor %}
+              		{% endif %}
+              
+               		<img
+                    data-src="{{ image_url }}"
+                    data-ratio="{{ article.image.aspect_ratio }}"
+                    data-sizes="auto"
+                    data-parent-fit="cover"
+                    class="lazyload lazyload-fade"
+                    alt="{{ article.image.alt | escape }}">   
+                {% else %}
+                  {% if article.content contains "<img " %}
+                      {% comment %} gets the first image from the content {% endcomment %}
+                      {% assign src = article.content | split: 'src="' %}
+                      {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:' %}
+                      <img data-src="{{ src }}" alt="{{ article.title | escape }}" class="lazyload" />
+                  {% elsif template.name == 'search' %}
+                      {% comment %} get default placeholder {% endcomment %}
+                      <img data-src="{{ 'innermost_circle.png' | asset_img_url:'400x', scale: 2 }}"  alt="{{ article.title | escape }}" class="lazyload" >
+              
+                      {% comment %}
+                      <div class="default-placeholder-wrapper">
+                        {% render 'new-svg-logo.liquid' %}
+                      </div>
+                      {% endcomment %}
+                  {% endif %}    
+                {% endif %}
+            </div>
+           </a>
+<div class="safari_buffer">
+           <div class="blog_details">
+             <a href="{{ article.url }}" title="{{ article.title | escape }}">
+              <h4 class='featured-blog__title'>{{ article.title }}</h4>
+
+              {% if section.settings.enable_blog_author %}
+                <p class="author">{{ 'blogs.article.author_by_html' | t: author : article.author }}</p>
+              {% endif %}
+              
+             
+              <span class="excerpt-blog" data-href="{{ article.url }}">
+                	{{ article.excerpt_or_content | strip_html }}
+              </span>
+             </a>
+             
+             <!--<span class="read_more">{{ 'blogs.article.read_more' | t }}</span>-->
+             <div class="tags_blog">
+               <ul class="inline-list">
+                 {% assign maintag = false %}
+                 {% assign customtag = false %}
+                  
+                 {% for tag in article.tags %}
+                   {% assign loop_tag = tag | downcase | strip %}
+                   {% if blog_main_tags contains loop_tag %}
+                     {% assign maintag = tag %}
+                   {% endif %}
+                  
+                   {% if tag contains "custom_" %}
+                     {% assign customtag = tag | split: "_" | last | uppercase %}
+                   {% endif %}
+                 {% endfor %}
+                      
+                 {% if customtag and current_tags != blank %}
+                   {% assign customcolor = "#ea565d" %}
+                   <li ><a href="/blogs/{{blog.handle}}/tagged/{{ customtag | handleize }}" style="color: {{ customcolor }}" class="custom_tag"> {{ customtag }} </a></li>
+                 {% elsif maintag %}
+                   <li>
+                        <a href="/blogs/{{ blog.handle }}/tagged/{{ maintag }}">
+                          {% comment %}<img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload" />{% endcomment %}
+                          {% comment %}if the iamge has to be present -> check templates/blog.liquid -> where blog_main_tags is init{% endcomment %}
+                          <span class="main-tagged">{{ maintag }}</span>
+                        </a>
+                   </li>
+                 {% endif %}
+                 
+               </ul>
+             </div>
+             <span class="read_more">{{ 'blogs.article.read_more' | t }}</span>
+           </div>
+</div>
+         </div>
+        </div>

@@ -1,0 +1,22 @@
+<div class="dolor_sit dolor_sit-{{ section.id }}">
+  <div class="footer-wrapper">
+  <h2>{{ section.settings.title }}</h2>
+  <p class="dolor_desktop">{{ section.settings.dolor_subheading }}</p>
+  <p class="dolor_mobile">{{ section.settings.dolor_subheading_mob }}</p>
+    {% if section.settings.add_link and section.settings.add_link_text != blank %}
+    <a id="dolor_sit_btn" class="btn account--btn first-btn" href="{{ section.settings.add_link }}">{{ section.settings.add_link_text }}</a>
+    {% endif %}
+    {% if section.settings.link2 and section.settings.link_text2 != blank %}
+    <a id="dolor_sit_btn" class="innermost_front_btn btn second-btn" href="{{ section.settings.link2 }}">{{ section.settings.link_text2 }}</a>
+    {% endif %}
+  </div>
+</div> 
+
+<head>
+<style>
+  .dolor_sit-{{ section.id }}
+  {
+    background-color:{{ section.settings.dolor_color }};
+  }
+</style>
+</head>

@@ -1,0 +1,87 @@
+{% render 'about-us-template-html' %}
+
+{% schema %}
+  {
+    "name": "Refer a Friend Section",
+    "settings": [
+      
+    ],
+	"blocks": [
+      {
+        "type": "feature",
+        "name": "About Text with Image",
+        "settings": [
+          
+          {
+            "type":"textarea",
+            "id":"About_subtitle",
+            "label":"About Subtitle"
+          },
+          {
+            "type":"text",
+            "id":"About_heading-top",
+            "label":"About Heading Line 1 Right"
+          },
+          {
+            "type":"text",
+            "id":"About_heading-bottom",
+            "label":"About Heading Line 2 Left"
+          },
+		  {
+            "type":"text",
+            "id":"About_heading-small",
+            "label":"About Heading small"
+          },
+		  {
+            "type": "range",
+            "id": "About_heading-font",
+            "min": 30,
+            "max": 110,
+            "step": 1,
+            "unit": "px",
+            "label": "About heading small font size",
+			"default": 54
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_1",
+            "label":"About Paragraph 1"
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_2",
+            "label":"About Paragraph 2"
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_3",
+            "label":"About Paragraph 3"
+          },
+          {
+            "type":"image_picker",
+            "id":"About_img",
+            "label":"About Right Side Image"
+          },
+		  {
+			"type": "text",
+			"id": "sign_login_button",
+			"label": "Block Button"
+		  },
+		  {
+			"type": "url",
+			"id": "sign_login_button_url",
+			"label": "Block Button Url"
+		  }
+          
+        ]
+      }
+    ],
+	"presets": [
+      {
+        "name": "Refer a Friend Section",
+        "category": "Refer a Friend"
+      }
+    ]
+  }
+
+{% endschema %}

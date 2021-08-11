@@ -1,0 +1,325 @@
+{% unless page.handle contains 'questionnaire' or template == 'page.thank-you' or template == 'page.ambassadors-landing-page' or template == 'page.affiliates' or template == 'page.retailers-landing-page' or template contains "customers" or page.handle contains "quiz" %}
+<div class=" dolor_sit cta-section__wrapper"
+  style="
+    {% if section.settings.background != blank %}background-color: {{ section.settings.background }};{% endif %}
+    {% comment %} old with dynamic parameters ; else it gets the style of the other such sections
+      padding-top: {{ section.settings.padding_vertical }}px;
+      padding-bottom: {{ section.settings.padding_vertical }}px;
+    {% endcomment %}
+  "
+>
+  {% if section.settings.cta_heading %}
+    {% comment %} old one with dynamic parameters
+  	<h3 class="heading-small" style="font-size:{{ section.settings.cta_heading_font }}px; line-height:{{ section.settings.cta_heading_font }}px">
+      {{ section.settings.cta_heading }}
+  	</h3>
+    {% endcomment %}
+    
+    {% comment %} width the style of the other sections {% endcomment %}
+    <h2>{{ section.settings.cta_heading }}</h2>
+  {% endif %}
+  <div class="cta-section__content" >
+    {% if section.settings.content != blank %}
+    <div class="cta-content para_uk dolor_regular">
+      {{ section.settings.content }}
+    </div>
+    <div class="cta-content para_non_uk dolor_regular">
+      {{ section.settings.content_non_uk }}
+    </div>
+    {% endif %}
+    
+    {% if section.settings.btn_text != blank and section.settings.btn_link != blank %}
+      <button  class="trigger-popup dolor_sit_btn innermost_front_btn cta-button btn {% if section.settings.content == blank %} no-margin{% endif %}">
+        {{ section.settings.btn_text }}
+      </button>
+    {% endif %}
+  </div>
+</div>
+{% endunless %}
+{% unless template == 'page.thank-you' %}
+<footer class="site-footers new">
+  <div class="grid">
+    <div class="grid__item large--three-fifths small--margin-bottom-20">
+	<div class="logo">
+      {% include 'new-svg-logo' %}
+      </div>
+      <div class="grid">
+        {% if section.settings.footer_nav1 != blank  %}
+        {% assign menuItem = section.settings.footer_nav1 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+        
+        {% if section.settings.footer_nav2 != blank  %}
+        {% assign menuItem = section.settings.footer_nav2 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+        
+        {% if section.settings.footer_nav3 != blank  %}
+        {% assign menuItem = section.settings.footer_nav3 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+        
+        {% if section.settings.footer_nav4 != blank  %}
+        {% assign menuItem = section.settings.footer_nav4 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+        
+        {% if section.settings.footer_nav5 != blank  %}
+        {% assign menuItem = section.settings.footer_nav5 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+        
+        {% if section.settings.footer_nav6 != blank  %}
+        {% assign menuItem = section.settings.footer_nav6 %}        
+        {% include 'new-footer-item', menu: menuItem %}
+        {% endif %}
+         
+        <div class="grid__item large--hide footer-nav">
+          {% include 'multi-currency-mobile', footer: true %} 
+        </div>
+          
+    </div>
+ 
+  
+      
+    </div>
+    <div class="grid__item large--two-fifths large--border-left">
+     <div class="padding-left-custom">
+     <div class="signup small--hide">
+       {% if section.settings.join_the_heading  %}  <h6>{{ section.settings.join_the_heading }}</h6> {% endif %}
+        {% if section.settings.join_the_para != blank  %} <p class="para_uk">{{ section.settings.join_the_para }}</p> {% endif %}
+       {% if section.settings.join_the_para_non_uk != blank  %} <p class="para_non_uk">{{ section.settings.join_the_para_non_uk }}</p> {% endif %}
+       {% comment %}
+       {% render 'klaviyo-footer'%}
+       {% endcomment %}
+       {% render 'klaviyo-footer-selector' %}
+       </div>
+       {% include 'social-footer-new' %}
+    {% include 'contact-us' %}
+       <p class="footer-address">{{ section.settings.address}}</p>
+     </div>
+      </div>
+    <div class="grid__item one-whole payment-icons-new">
+    {% include 'payment-icons' %}
+    </div>
+   
+    
+  </div>
+</footer>
+ <div class="footer_last_main">
+    <div class="footer-last last-new">
+      <div class="footer-last_right push--large--one-half">
+        
+        <ul>
+          <li><a href="{{ section.settings.Subpage_link }}">{{ section.settings.Subpage_text }}</a></li>
+          <li><a href="{{ section.settings.Subpage_link_2 }}">{{ section.settings.Subpage_text_2 }}</a></li>
+          <li><a href="{{ section.settings.Subpage_link_3 }}">{{ section.settings.Subpage_text_3 }}</a></li>
+          
+        </ul>
+        
+        
+      </div>
+       <div class="footer-last_left pull--large--one-half">
+        <p><span>&copy;</span> {{ section.settings.copyrights_text }}</p>
+      </div>
+    </div>
+  </div>
+{% endunless %}
+{% schema %}
+  {
+    "name": "New Footer",
+    "settings": [
+	  {
+       "type": "range",
+       "id": "padding_vertical",
+       "min": 0,
+       "max": 100,
+       "step": 1,
+       "unit": "px",
+       "label": "Vertical Padding",
+	   "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "text",
+      "id": "cta_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "cta_heading_font",
+      "min": 30,
+      "max": 75,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading font size",
+      "default": 54
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Text Content ( UK )"
+    },
+	{
+      "type": "textarea",
+      "id": "content_non_uk",
+      "label": "Text Content ( non UK )"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button URL"
+    },
+ 	{
+        "type": "link_list",
+        "id": "footer_nav1",
+        "label": "Footer menu 1"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_nav2",
+        "label": "Footer menu 2"
+      },
+	 {
+        "type": "link_list",
+        "id": "footer_nav3",
+        "label": "Footer menu 3"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_nav4",
+        "label": "Footer menu 4"
+      },
+	   {
+        "type": "link_list",
+        "id": "footer_nav5",
+        "label": "Footer menu 5"
+      },
+	  {
+        "type": "text",
+        "id": "join_the_heading",
+        "label": "Sign up heading"
+      },
+      {
+        "type": "textarea",
+        "id": "join_the_para",
+        "label": "Sign up description ( UK )"
+      },
+	     {
+        "type": "textarea",
+        "id": "join_the_para_non_uk",
+        "label": "Sign up description ( Non-UK )",
+		"default": " Sign up to the newsletter and get <br/> 10% off your first order."
+      },
+	  {
+		"type": "text",
+		"id": "social_heading",
+		"label": "Follow us heading",
+		"default": "Follow us"
+	   },
+	   {
+        "type": "url",
+        "id": "Insta_link",
+        "label": "Instagram Link"
+      },
+      {
+        "type": "url",
+        "id": "Twitter_link",
+        "label": "Twitter Link"
+      },
+      {
+        "type": "url",
+        "id": "Facebook_link",
+        "label": "Facebook Link"
+      },
+	  {
+        "type": "url",
+        "id": "Youtube_link",
+        "label": "Youtube Link"
+      },
+      {
+        "type": "url",
+        "id": "Tiktok_link",
+        "label": "Tiktok Link"
+      },
+      {
+        "type": "url",
+        "id": "Pinterest_link",
+        "label": "Pinterest Link"
+      },
+	  {
+		"type": "text",
+		"id": "contact_heading",
+		"label": "Contact us heading",
+		"default": "Contact us"
+	},
+    {
+		"type": "richtext",
+		"id": "email",
+		"label": "Contact us text"
+	},
+    {
+        "type": "text",
+        "id": "copyrights_text",
+        "label": "Copyrights Text"
+     },
+	 {
+        "type": "text",
+        "id": "Subpage_text",
+        "label": "Footer Subpage Text"
+      },
+	{
+        "type": "url",
+        "id": "Subpage_link",
+        "label": "Footer Subpage Link"
+      },
+      {
+        "type": "text",
+        "id": "Subpage_text_2",
+        "label": "Footer Subpage Text 2"
+      },
+      {
+        "type": "url",
+        "id": "Subpage_link_2",
+        "label": "Footer Subpage Link 2"
+      },
+      {
+        "type": "text",
+        "id": "Subpage_text_3",
+        "label": "Footer Subpage Text 3"
+      },
+      {
+        "type": "url",
+        "id": "Subpage_link_3",
+        "label": "Footer Subpage Link 3"
+      },
+ 	 { 
+		"type": "text", 
+		"id": "address", 
+		"label": "Address",
+		"default": "64 Nile Street, London, United Kingdom, N1 7SR"
+	}
+	
+	
+]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

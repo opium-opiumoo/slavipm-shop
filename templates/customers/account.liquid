@@ -1,57 +1,359 @@
-<div class="page-width">
-  <div class="section-header text-center">
-    <h1>{{ 'customer.account.title' | t }}</h1>
-    {{ 'layout.customer.log_out' | t | customer_logout_link }}
+<!-- /templates/customers/account.liquid -->
+{% comment %}
+
+  For all available customer liquid tags:
+    - http://docs.shopify.com/themes/liquid-variables/customer
+
+{% endcomment %}
+<div class="content-wrapper account-page-content">
+  <div class="heading-wrapper account-header">
+  <h1 class="">
+    {{ customer.name }}
+  </h1>
+    <p class="account-email-info"><span>{{ customer.email }}</span></p>
+    {% comment %}<span data-lion-referral-url></span>{% endcomment %}
+  <div class="logout">
+    <a href="/account/logout" class="btn account--btn">Sign Out</a>
+  </div>
+  <div>
+    {% comment %}
+    <p>Welcome, {{ customer.name }}</p>
+          <!-- Begin ReCharge code -->	
+<p><a href="/tools/recurring/login/" style="text-decoration: underline;">Manage Subscriptions</a></p>	
+<!-- End ReCharge code -->
+    {% endcomment %}
+    </div>
   </div>
 
-  <div class="grid myaccount">
-    <div class="grid__item myaccount__order-history">
-      <h2>{{ 'customer.orders.title' | t }}</h2>
-
+  <hr>
+  {% comment %}
+  <div data-lion-account></div>
+  {% endcomment %}
+  <div class="account-second-row">
+    <div class="grid">
+      <div class="grid__item one-half small--one-whole">
+        <div class="first-block small--hide">
+        <h2>Your Orders</h2>
+        <a href="account?view=order-history" class="underline">See your order history</a>
+      </div>
+      <div class="first-block medium-up--hide">
+        <h2>Your Subscriptions</h2>
+		<a href="/tools/recurring/login/" class="underline">Manage Subscriptions</a>
+      </div>
+    </div>
+      <div class="grid__item one-half small--one-whole">
+        <div class="second-block small--hide">
+        <h2>Your Subscriptions</h2>
+		<a href="/tools/recurring/login/" class="underline">Manage Subscriptions</a>
+      	</div>
+        <div class="second-block medium-up--hide">
+          <h2>Your Orders</h2>
+        <a href="account?view=order-history" class="underline">See you order history</a>
+      </div>
+        </div>
+    </div>
+    </div>
+  <div class="account-third-row">
+    <div class="grid">
+      <div class="grid__item one-fifth small--one-half">
+      	<h3>{{ 'customer.addresses.title' | t }}</h3>
+        <p>You have {{ customer.addresses_count }} addresses</p>
+      </div>
+       <div class="grid__item one-half medium-up--hide">
+       <a class="btn account--btn account-mobile-btn" href="/account/addresses">View All</a>
+      </div>
+      <div class="grid__item two-fifths small--one-half">
+        <h5 class="fw-500">Main Address</h5>
+       {% if customer.default_address != nil %}
+        <p>
+          <span>Address 1:</span> {{ customer.default_address.address1 }}<br>
+  
+        {% if customer.default_address.address2 != "" %}
+          <span>Address 2:</span> {{ customer.default_address.address2 }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.city != "" %}
+          <span>City:</span> {{ customer.default_address.city }}<br>
+        {% endif %}
+  		{% comment %}
+        {% if customer.default_address.province_code != "" %}
+          <span>Province Code:</span> {{ customer.default_address.province_code | upcase }}<br>
+        {% endif %}
+  		{% endcomment %}
+        {% if customer.default_address.zip != "" %}
+          <span>Post/Zip Code:</span> {{ customer.default_address.zip | upcase }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.country != "" %}
+          <span>Country:</span> {{ customer.default_address.country }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.phone != "" %}
+          <span>Phone:</span>  {{ customer.default_address.phone }}
+        {% endif %}
+        </p>
+  
+      {% endif %}
+      </div>
+      {% for address in customer.addresses limit:2 %}
+      {% if forloop.last %}
+      <div class="grid__item one-fifth small--one-half">
+        <h5 class="fw-500" id="secondary-address-title">Secondary Address</h5>
+     	 <p>
+          <span>Address 1:</span> {{ address.address1 }}<br>
+  
+        {% if customer.default_address.address2 != "" %}
+          <span>Address 2:</span> {{ address.address2 }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.city != "" %}
+          <span>City:</span> {{ address.city }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.province_code != "" %}
+          <span>Province Code:</span> {{ address.province_code | upcase }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.zip != "" %}
+          <span>Zip Code:</span> {{ address.zip | upcase }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.country != "" %}
+          <span>Country:</span> {{ address.country }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.phone != "" %}
+          <span>Phone:</span>  {{ address.phone }}
+        {% endif %}
+        </p>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="grid__item one-fifth small--hide">
+       <a class="btn account--btn" href="/account/addresses">View All</a>
+      </div>
+    </div>
+  </div>
+  <div class="account-fourth-row">
+    <div class="grid">
+      <div class="grid__item one-fifth small--one-half">
+        <h3>Rewards</h3>
+      </div>
+      <div class="grid__item one-fifth small--one-half medium-up--hide">
+        <a class="btn account--btn account-mobile-btn" data-lion-account-link>View Rewards</a>
+      </div>
+      <div class="grid__item three-fifths small--one-whole">
+        <div class="grid">
+          <div class="grid__item one-third">
+            <h5 class="rewards-points fw-500">Points Approved</h5>
+            <span data-lion-points="approved"></span>
+          </div>
+          <div class="grid__item one-third">
+            <h5 class="rewards-points fw-500">Points Pending</h5>
+            <span data-lion-points="pending"></span>
+		  </div>
+          <div class="grid__item one-third">
+            <h5 class="rewards-points fw-500">Points Spent</h5>
+            <span data-lion-points="spent"></span>
+          </div>
+        </div>
+      </div>
+      <div class="grid__item one-fifth small--one-whole small--hide">
+        <a class="btn account--btn" data-lion-account-link>View Rewards</a>
+      </div>
+    </div>
+  </div>
+  <div class="account-fifth-row">
+    <div class="grid">
+      <div class="grid__item one-fifth small--one-whole">
+        <h3>Referral Program</h3>
+      </div>
+        <div class="grid__item four-fifths small--one-whole">
+          <div class="share-buttons-text">
+            <P class="fw-500 refer-friend-title">Refer a friend. They'll get £5 off their first purchase and you'll earn 1,000 points if they spend over £20. That's enough for £5 off your next order.</P>
+            <p>Share your referral link and keep track of your points on this page.</p>
+          </div>
+            <div class="copy-link-btn">
+              <span id="first-span" class="password-span myInput small--hide">Your Referral URL: </span><span id="first-span" class="password-span myInput medium-up--hide custom--hide">URL: </span><span id="pwd_spn" class="password-span myInput" data-lion-referral-url></span>
+              <button id="cp_btn" class="btn account--btn copy-link-btn">Click to copy</button>        
+              <div class="tooltip">
+              </div>
+          </div>
+          <div class="account-share-btns">
+       <div class='social-share-btns-container'>
+       <div class='social-share-btns'>
+         <a id="facebook-share" class='share-btn share-btn-facebook' href='https://www.facebook.com/sharer/sharer.php?u=https://www.liveinnermost.com/' rel='nofollow' target='_blank'>
+            <i class='ion-social-facebook'></i>
+            Share
+          </a>
+         <a id="twitter-share" class='share-btn share-btn-twitter' href='https://twitter.com/intent/tweet?text=https://www.liveinnermost.com/' rel='nofollow' target='_blank'>
+            <i class='ion-social-twitter'></i>
+            Tweet
+          </a>
+         <a id="whatsapp-share" class='share-btn share-btn-whatsapp' href="https://api.whatsapp.com/send?text=https://www.liveinnermost.com/" target="_blank">
+            <i class='ion-social-whatsapp'></i>
+           Share
+         </a>
+      </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    	{% comment %}
+  <div class="grid">
+  
+    <div class="grid__item one-third medium-down--one-whole">
+      <h5>{{ 'customer.addresses.title' | t }}</h5>
+  
+  
+      {% if customer.default_address != nil %}
+        <p>
+        {{ customer.default_address.address1 }}<br>
+  
+        {% if customer.default_address.address2 != "" %}
+          {{ customer.default_address.address2 }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.city != "" %}
+          {{ customer.default_address.city }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.province_code != "" %}
+          {{ customer.default_address.province_code | upcase }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.zip != "" %}
+          {{ customer.default_address.zip | upcase }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.country != "" %}
+          {{ customer.default_address.country }}<br>
+        {% endif %}
+  
+        {% if customer.default_address.phone != "" %}
+          {{ customer.default_address.phone }}
+        {% endif %}
+        </p>
+  
+      {% endif %}
+  
+      <p><a class="underline" href="/account/addresses">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a></p>
+    </div>
+    <div class="grid__item two-thirds medium-down--one-whole">
+      
+      <h5>{{ 'customer.orders.title' | t }}</h5>
+		{% comment %}
+        <ul class="account-tabs">
+            <li><a data-currency="gbp" href="#tabs-1">Pounds (£)</a></li>
+          	<li><a data-currency="usd" href="#tabs-2">US Dollars ($)</a></li>
+          	<li><a data-currency="aud" href="#tabs-3">AUD Dollars ($)</a></li>
+          	<li><a data-currency="usd" href="#tabs-4">US Dollars ($)</a></li>        
+            <li><a data-currency="eur" href="#tabs-5">Euros (€)</a></li>
+         	<li><a data-currency="cad" href="#tabs-6">CAD Dollars ($)</a></li>
+          	<!--<li><a data-currency="cad" href="#tabs-7">CAD Dollars ($)</a></li>-->
+        </ul>
+    	{% endcomment %}
+      <div id="tabs-1" class='btn_tab'>
+      {% comment %}
+        If we have past orders, loop through each one
+      {% endcomment %}
       {% paginate customer.orders by 20 %}
         {% if customer.orders.size != 0 %}
-
-          <table class="responsive-table">
-            <thead>
-              <tr>
-                <th scope="col">{{ 'customer.orders.order_number' | t }}</th>
-                <th scope="col">{{ 'customer.orders.date' | t }}</th>
-                <th scope="col">{{ 'customer.orders.payment_status' | t }}</th>
-                <th scope="col">{{ 'customer.orders.fulfillment_status' | t }}</th>
-                <th scope="col">{{ 'customer.orders.total' | t }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for order in customer.orders %}
+  
+          <div class="table-wrap">
+            <table class="full">
+              <thead>
                 <tr>
-                  <th data-label="{{ 'customer.orders.order_number' | t }}" scope="row">
-                    <a href="{{ order.customer_url }}" class="btn btn--secondary btn--small" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}">{{ order.name }}</a>
-                  </th>
-                  <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | time_tag: format: 'date' }}</td>
-                  <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
-                  <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
-                  <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
+                  <th>{{ 'customer.orders.order_number' | t }}</th>
+                  <th>{{ 'customer.orders.date' | t }}</th>
+                  <th>{{ 'customer.orders.payment_status' | t }}</th>
+                  <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.orders.total' | t }}</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
+              </thead>
+              <tbody>
+                {% for order in customer.orders %}
+                  <tr>
+                    <td>{{ order.name | link_to: order.customer_url }}</td>
+                    <td>{{ order.created_at | date: format: 'month_day_year' }}</td>
+                    <td>{{ order.financial_status_label }}</td>
+                    <td>{{ order.fulfillment_status_label }}</td>
+                    <td>{{ order.total_price | money }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+  
         {% else %}
-
+  
           <p>{{ 'customer.orders.none' | t }}</p>
-
+  
         {% endif %}
-        {%- if paginate.pages > 1 -%}
-          {% include 'pagination', paginate: paginate %}
-        {%- endif -%}
+        {% if paginate.pages > 1 %}
+          <hr>
+          <div class="pagination">
+            {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+          </div>
+        {% endif %}
       {% endpaginate %}
-    </div>
-    <div class="grid__item myaccount__account-details">
-      <h2>{{ 'customer.account.details' | t }}</h2>
-
-      {{ customer.default_address | format_address }}
-
-      <p><a href="{{ routes.account_addresses_url }}" class="btn btn--small">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a></p>
-    </div>
+    	</div>
+      {% comment %}
+      <div id="tabs-2" class='btn_tab'>
+          <div class="btn">
+          <a class="intl-order-btn" data-order-store="innermost-me.myshopify.com" href="">Click to open USD ($) Orders</a></div>
+      </div>
+      <div id="tabs-3" class='btn_tab'>
+         <div class="btn"><a class="intl-order-btn" data-order-store="innermost-au.myshopify.com" href="">Click to open AUD ($) Orders</a></div>
+      </div>
+      <div id="tabs-4" class='btn_tab'>
+         <div class="btn"><a class="intl-order-btn" data-order-store="innermost-us.myshopify.com" href="">Click to open USD ($) Orders</a></div>
+      </div>
+      <div id="tabs-5" class='btn_tab'>
+          <div class="btn">
+          <a class="intl-order-btn" data-order-store="innermost-eu.myshopify.com" href="">Click to open Euro (€) Orders</a></div>
+      </div>
+      <div id="tabs-6" class='btn_tab'>
+         <div class="btn"><a class="intl-order-btn" data-order-store="innermost-ca.myshopify.com" href="">Click to open CAD ($) Orders</a></div>
+      </div>
+      {% endcomment %}
+  	  <!--<div id="tabs-7" class='btn_tab'>
+         <div class="btn"><a class="intl-order-btn" data-order-store="innermost-us.myshopify.com" href="">Click to open CAD ($) Orders</a></div>
+      </div>
+		-->
   </div>
 </div>
+      {% endcomment %}
+
+<script>
+document.getElementById("cp_btn").addEventListener("click", copy_password);
+
+function copy_password() {
+    var copyText = document.getElementById("pwd_spn");
+    var textArea = document.createElement("textarea");
+    textArea.value = copyText.textContent;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("Copy");
+  	copyText.classList.add("copied");
+ 	document.getElementById('cp_btn').innerText = 'Link Copied';
+    textArea.remove();
+}
+  function showLink() {
+    var linkToCopy = document.getElementById("pwd_spn").innerText;
+    var getHrefFacebook = document.getElementById('facebook-share');
+    getHrefFacebook.setAttribute("href", `https://www.facebook.com/sharer/sharer.php?u=${linkToCopy}`); 
+    var getHrefTwitter = document.getElementById('twitter-share');
+    getHrefTwitter.setAttribute("href", `https://twitter.com/intent/tweet?text=${linkToCopy}`);
+    var getHrefWhatsapp = document.getElementById('whatsapp-share');
+    getHrefWhatsapp.setAttribute("href", `https://api.whatsapp.com/send?text=${linkToCopy}`);
+  }
+  $(document).ready(function(){
+    setTimeout(showLink, 500);
+    setTimeout(showLink, 2000);
+    setTimeout(showLink, 4000);
+    setTimeout(showLink, 8000);
+  });
+
+</script>

@@ -1,0 +1,118 @@
+<div class="nootropics-ingredients-section" style="background-color: {{ section.settings.nootropics_background_color }};">
+  <div class="nootropics-ingredients-heading">
+    <h2>{{ section.settings.nootropics_ingredients_heading }}</h2>
+  </div>
+  <div class="nootrpoics-wrapper">
+    <div class="nootropics-ingredients-slides">
+      {% for block in section.blocks %}
+      {% if block.settings.linkup != blank %}
+      <a href="{{ block.settings.linkup }}" class="solo-anchor">
+      {% endif %}
+        <div class="solo-ingredient">
+          <div class="solo-ingredient-container">
+            <img class="lazyload" data-src={{ block.settings.ingredient_image | img_url: 'x240'}}>
+            <h2>{{ block.settings.ingredient_header }}</h2>
+            <div class="solo-ingredient-caption">
+              <div class="meta-info-text-left">
+                {{ block.settings.ingredient_description }}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% if block.settings.linkup != blank %}
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{{ 'slick.css' | asset_url | stylesheet_tag }}
+{{ 'slick-theme.css' | asset_url | stylesheet_tag }}
+<script type="text/javascript">
+  $(document).ready(function(){
+  $('.nootropics-ingredients-slides').slick({
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    infinite: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: true,
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  });
+});
+</script>
+
+{% schema %}
+  {
+    "name": "Nootropics Ingredients",
+    "settings": [
+      {
+        "id": "nootropics_ingredients_heading",
+        "type": "text",
+        "label": "Nootropics Ingredients Heading"
+      },
+      {
+        "id": "nootropics_background_color",
+        "type": "color",
+        "label": "Nootropics Section Background Color"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "name": "Ingredient",
+        "settings": [
+          {
+            "id": "ingredient_header",
+            "type": "text",
+            "label": "Ingredient Header"
+          },
+          {
+            "id": "ingredient_image",
+            "type": "image_picker",
+            "label": "Ingredient Image"
+          },
+          {
+            "id": "ingredient_description",
+            "type": "richtext",
+            "label": "Ingredient Description"
+          },
+          {
+            "id": "linkup",
+            "type": "url",
+            "label": "Ingredient Link"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

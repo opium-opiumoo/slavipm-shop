@@ -1,0 +1,189 @@
+{% if link.type == "http_link" %}
+  	  {% assign pagelink = true %}
+{% else %}
+  	  {% assign pagelink = false %}
+{% endif %}
+<li {% if link.links != blank %}aria-haspopup="true"{% endif %} class="{%- if link.url contains "rewards" -%}rewards{%- endif -%} {%- if link.url contains "about" -%}about{%- endif -%} {%- if link.url contains "contact" -%}contact{%- endif -%} {% if link.links != blank %}has-dropdown{% endif %} {% if pagelink == false %}not-menu-item{% endif %}">
+   {% assign txt = link.title | handle %} 
+   {% assign shop = collection.url | split: "/" %} 
+  
+ 
+    {% if link.links != blank %}
+      {% for link in link.links %}
+        {% if link.active %}
+          {% assign menu_link_true = true %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  
+  <a class="nav_name" href="{{ link.url }}" {% if topLevel == true %}data-navigation-top-level{% endif %} class="{% if link.active %}link-active {% endif %}" id="{% if  collection.url == "" or shop[1] == "collections" and txt == "shop"%}colorClass{% endif %}{% if blog and txt == "blog" %}colorClass{% endif %}{% if page.handle == txt or page.url == link.url %}colorClass{% endif %}">
+    {{ link.title }}
+    {% if link.links != blank %}
+      <span class="icon-container">
+        {% include 'chevron-down' %}
+      </span>
+    {% endif %}
+  </a>
+
+  {% if link.links != blank %}
+    {% assign count = 0 %}
+    {% assign topLevel = false %}
+
+    {% assign catalogDropdown = false %}
+  
+    {% if section.settings.catalog_dropdowns and link.links != blank and topLevel == false %}
+      {% for link in link.links %}
+        {% if link.type == "collection_link" or link.type == "collections_link" %}
+          {% assign catalogDropdown = true %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+  {% assign catalogDropdown = true %}
+  
+    <div class="dropdown  {% if catalogDropdown %}catalog-menu{% endif %} {% if pagelink == false %}not-mega-menu {% endif %}">
+      <ul class="main-nav-level">
+        {% assign first_loop = 0 %}
+        {% for link in link.links %}
+          {% assign dropdown = link.links | default: false %}
+          <li class="animation-sequence-{{ count }}" data-index="{{ forloop.index0 }}">
+            <a href="{{ link.url }}" class="{% if link.active %} link-active {% endif %}">
+              {{ link.title }}
+            </a>
+            {% if dropdown %}
+              <ul class="dropdown-third-level">
+                {% assign loop = 0 %}
+                {% for link in link.links %}
+                  <li data-inner-index="{{ count }}-{{ loop }}">
+                    <a href="{{ link.url }}" class="{% if link.active %}link-active {% endif %}" id="{% if link.active %}colorClass{% endif %}{% if collection.url == "" and link.title =="All"%}colorClass{% endif %}">
+                      {{ link.title }}
+                    </a>
+                  </li>
+                {% assign loop = loop | plus : 1 %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+          {% assign count = count | plus: 1 %}
+        {% endfor %}
+        {% if section.settings.nav-last-section-heading != blank or section.settings.nav-last-section-description != blank %}
+        <li class="animation-sequence-last">
+          <a id="nav-border-title">{{ section.settings.nav-last-section-heading }}</a>
+          <ul class="dropdown-third-level">
+            <p>{{ section.settings.nav-last-section-p }}</p>
+            {% if section.settings.nav-last-btn-url != blank or section.settings.nav-last-btn-text != blank %}
+            <div id="nav-border-btn" class="nav-quiz-btn">
+            <a href="{{ section.settings.nav-last-btn-url }}">{{ section.settings.nav-last-btn-text }}</a>
+            </div>
+            {% endif %}
+          </ul>
+        </li>
+        {% endif %}
+      </ul>
+
+    </div>
+  {% endif %}
+</li>
+
+<script>
+  $(document).ready(function() {
+    // The button
+    var btn = document.querySelector('.has-dropdown');
+    const $first_link = $('.main-navigation ul li').first();
+    const menu_btn_hamburger = $('.menu-btn.hamburger');
+    const navMenu = $('.mobile-nav-menu');
+ 
+    
+    
+    $('#nav-border-btn').click(function() {
+      const new_url = $(this).children()[0].href;
+      window.location(new_url);
+    })
+    
+    if ($('.main-content.main-content-homepage')) {
+       
+      $(document).on('touchend', function(e) {
+        if($(e.target).closest('.mobile-nav-menu')){
+          //$('header')[0].style.setProperty('background', '#fff', 'important');
+
+        }
+      })
+
+        
+        
+//         let check = false
+//         $(submenu).find('.accordion').each((index, element) => {
+//           if ($(element).hasClass('open')) {
+// 			check = true;
+//           } else {
+//             if ($(window).scrollTop() >= 32) {
+//               check = true;
+//             } else {
+//               check = false;
+//             }
+//           }
+//         })
+//         if (check == true) {
+//           $('header.addHomepage').removeClass('isHomepage');
+//           $('.addHomepage').removeClass('isHomepage');
+//         } else {
+//           $('header.addHomepage').addClass('isHomepage');
+//           $('.addHomepage').addClass('isHomepage');
+//         }
+  
+
+
+      $($first_link).on('touchend', function() {
+        console.error('errr')
+        if ($($first_link).find('.dropdown').hasClass('visible')) {
+          $('header').addClass('notransition-new');
+          $('header').removeClass('isHomepage');
+          console.log('isVisible')
+        } else {
+          if ($(window).scrollTop() >= 32) {
+            $('header.addHomepage').removeClass('isHomepage');
+            $('.addHomepage').removeClass('isHomepage');
+          } else {
+            $('header.addHomepage').addClass('isHomepage');
+            $('.addHomepage').addClass('isHomepage');
+          }
+        }
+
+      })
+      
+      $(menu_btn_hamburger).on('touchend', function() {
+        if ($(menu_btn_hamburger).hasClass('close') && $(window).scrollTop() < 32) {
+          $('header.addHomepage').addClass('isHomepage');
+          $('.addHomepage').addClass('isHomepage');
+        } else {
+          $('header.addHomepage').removeClass('isHomepage');
+          $('.addHomepage').removeClass('isHomepage');
+        }
+      })
+      
+      $(window).scroll(function () {
+        if ($(window).scrollTop() >= 32 ) {
+          $('header.addHomepage').removeClass('isHomepage');
+          $('.addHomepage').removeClass('isHomepage');
+        } else if ($(window).scrollTop() < 32 && $('.has-dropdown:hover').length == 0){
+          $('header.addHomepage').addClass('isHomepage');
+          $('.addHomepage').addClass('isHomepage');
+          }
+      }); 
+      
+
+      $(btn).mouseover(function () {
+        $('header').removeClass('isHomepage');
+      }).mouseleave (function () {
+        if ($(window).scrollTop() >= 32) {
+          $('header.addHomepage').removeClass('isHomepage');
+          $('.addHomepage').removeClass('isHomepage');
+        } else {
+          $('header.addHomepage').addClass('isHomepage');
+          $('.addHomepage').addClass('isHomepage');
+        }
+      })
+    }
+  })
+  
+</script>

@@ -1,0 +1,51 @@
+<div class="image-text-full__wrapper">
+  {% if section.settings.image != blank %}
+    <a href="{{section.settings.link}}" class="image-text-full__image small--hide">{{ section.settings.image | img_url: "2000x2000" | img_tag }}</a>
+    <a href="{{section.settings.link_mobile}}"  class="image-text-full__image large--hide">{{ section.settings.image_mobile | img_url: "1000x" | img_tag }}</a>
+  {% endif %}
+  {% if section.settings.title == blank and section.settings == blank %}
+  <div class="image-text-full__text" style="background-color: {{ section.settings.background_color }}">
+    {% if section.settings.title != blank %}
+      <h2 style="color: {{ section.settings.color }}">{{ section.settings.title }}</h2>
+    {% endif %}
+    
+    {% if section.settings.text != blank %}
+      <p style="color: {{ section.settings.color }}">{{ section.settings.text }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Full width image and text",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Desktop Image"
+      },
+	  {
+        "type": "url",
+        "id": "link",
+        "label": "Desktop Link"
+      },
+	  {
+        "type": "image_picker",
+        "id": "image_mobile",
+        "label": "Mobile Image"
+      },
+	  {
+        "type": "url",
+        "id": "link_mobile",
+        "label": "Mobile Link"
+      }
+	],
+    "presets": [
+      {
+        "name": "Full width image and text",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}

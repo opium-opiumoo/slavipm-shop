@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    
+ 
+    <link rel="stylesheet" href="{{ 'checkout.scss.css' | asset_url }}">
+    
+<!-- GTM : 5 June 2020 -- >
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KGZVPND');</script>
+<!-- End Google Tag Manager -->
+    
+    
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KGZVPND"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    
+    {{ skip_to_content_link }}
+
+    <div class="" data-header>
+      <div class="wrap banner ">
+        {{ content_for_logo }}
+      </div>
+    </div>
+
+    {{ order_summary_toggle }}
+
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main" role="main">
+          <div class="main__header">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </div>
+          <div class="main__content">
+            {{ content_for_layout }}
+          </div>
+          <div class="main__footer">
+            {{ content_for_footer }}
+          </div>
+        </div>
+        <div class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+    
+    {% comment %} Added by Preslav Nikov from CraftBerry on Aug 13 2020 {% endcomment %}
+    {% if settings.checkout_customization %}
+    {{ '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js' | script_tag }}
+    
+    
+      {% comment %}
+      {% if Shopify.Checkout.page == "thank_you" or true %}
+        {{ 'jquery_cookie-min.js' | asset_url | script_tag }}
+        {{ 'https://a.klaviyo.com/media/css/public/klaviyo_subscribe.css' | stylesheet_tag  }}
+        {% section 'thankyou-popup-selector' %}
+      {% endif %}
+      {% endcomment %}
+    
+   <style>
+     
+     @font-face { 
+     font-family: 'jaapokki';
+     src: url('{{ 'jaapokki-regular.eot' | asset_url }}');
+     src: url('{{ 'jaapokki-regular.woff' | asset_url }}') format('woff'), url('{{ 'jaapokki-regular.ttf' | asset_url }}') format('truetype');
+     } 
+     
+    .completed, .completed * { 
+      color: black!important; 
+    } 
+    
+     
+     .main h2, .main .heading-2 {
+    color: #525252;
+    font-family: jaapokki;
+    text-transform: uppercase;
+    font-weight: normal;
+    letter-spacing: 2.5px;
+}
+     
+     p, .display-table .radio__label__primary, .address--tight, .review-block__label  { 
+       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+       color: #525252; 
+     }
+     
+     div, input { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+       color: #525252; 
+     }
+     
+     .review-block__label {
+    font-weight: 600;
+    }
+    
+   .anyflexbox .field__input-btn {
+    width: auto;
+    margin-left: 0.8571428571em;
+    white-space: nowrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+     
+     .btn, .sp-modal-toggle {
+    -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, -webkit-box-shadow 0.2s ease-in-out;
+    //min-width: 183px;
+   // margin: auto;
+    background-color: #525252;
+    border: 1px solid #fff;
+    font-family: 'Jaapokki';
+    font-size: 16px;
+    font-weight: normal;
+    padding: 12px 19px;
+    color: #FFFFFF;
+    letter-spacing: 2px;
+    line-height: 24px;
+    text-transform: uppercase;
+    border-radius: 0;
+
+}
+     @media(min-width: 850px){
+       .btn { 
+         min-width: 183px; 
+       }
+      }
+     
+    .field__input, .content-box  { 
+      border-radius: 0px!important; 
+    } 
+     
+     
+    @media (min-width: 1000px){
+   .logo__image--medium {
+    max-height: 40px;
+   }
+    }
+      
+  @media (max-width: 1000px) and (min-width: 540px){ 
+    .logo__image--medium { 
+      max-height: 22px; 
+      
+    
+  } 
+ } 
+    .content-box { 
+      padding: 4px 0; 
+    }
+    
+     
+     
+  @media(min-width: 540px) {
+ .page--banner .banner {
+    padding-top: 3em;
+    padding-bottom: 2em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: white;
+    background-position: center right;
+   }   
+  }
+       @media(min-width: 1040px) {
+ 		.page--banner .banner {
+      	background-position: 22px;
+          
+       }
+      }
+     .sidebar .order-summary__emphasis {
+    color: #525252;
+    font-family: jaapokki;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+     
+     .total-line th, .total-line td {
+    padding-top: 0.75em;
+    font-family: jaapokki;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+	}
+     
+     .sidebar .payment-due-label__taxes {
+    color: #737373;
+    text-transform: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    letter-spacing: 0;
+	}
+     
+     .payment-due__price { 
+       letter-spacing: 3px; 
+     }
+     
+     
+  td.total-line__price span { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif!important;
+  }
+    
+.checkout-alert {
+    background: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.checkout-alert p {
+    font-size: 14px;
+    font-weight: 400;
+    display: inline-block;
+    line-height: 20px;
+}
+
+.checkout-alert__icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 0 0 15px;
+}
+
+.checkout-alert--info {
+    background: #25aba4;
+}
+     .checkout-alert p {
+    font-size: 14px;
+    font-weight: 400;
+    display: inline-block;
+    line-height: 20px;
+    color: white;
+}
+
+  .field-input { 
+    border-radius: 0; 
+  } 
+     
+     td.total-line__price span {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    letter-spacing: 0;
+    letter-spacing: 0!important;
+}
+     
+     .product__price .order-summary__emphasis {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    letter-spacing: 0;
+    }
+     
+     @media(max-width: 999px){
+       .page--banner .banner { 
+         padding: 1em; 
+       }
+      .logo__image--medium { 
+        max-height: 2em; 
+      }
+     }
+     
+	</style>
+
+
+
+<script>
+  $(document).ready(function(){
+    var completedItem = $('.breadcrumb__item--completed');
+    var cartBreadCrumb = $('div[data-trekkie-id="breadcrumb_cart_link"]');
+    var sidebar = $('.sidebar'); 
+    
+    //sidebar.prepend("<div class='statement'>THINK, FEEL AND PERFORM YOUR BEST</div>");
+    completedItem.addClass('completed');
+    
+    if (Shopify.Checkout.step == 'contact_information'){
+      //console.log('yes');
+     $('nav[aria-label="Breadcrumb"]').after('<div class="checkout-alert checkout-alert--info"> <span class="checkout-alert__icon"> <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-triangle-alert" viewBox="0 0 30 26"><path d="M29.613 21.881c.502.838.516 1.887.04 2.738A2.696 2.696 0 0 1 27.304 26H2.695c-.97 0-1.87-.529-2.347-1.38a2.739 2.739 0 0 1 .038-2.739L12.692 1.314A2.705 2.705 0 0 1 15 0c.939 0 1.823.503 2.308 1.314L29.613 21.88zM15.01 8.211c-.77 0-1.373.41-1.373 1.136 0 2.218.264 5.405.264 7.623 0 .577.508.82 1.11.82.45 0 1.09-.243 1.09-.82 0-2.218.264-5.405.264-7.623 0-.726-.621-1.136-1.355-1.136zm0 10.947a1.36 1.36 0 0 0-1.373 1.368 1.37 1.37 0 0 0 1.373 1.369c.73 0 1.355-.64 1.355-1.369 0-.746-.624-1.368-1.355-1.368z" fill="#FFF" fill-rule="nonzero"></path></svg> </span> <p>{{ 'cart.general.checkout-covid' | t }}</p> </div>');
+      
+    }
+    
+  })
+</script>
+{% endif %}
+
+
+  </body>
+</html>

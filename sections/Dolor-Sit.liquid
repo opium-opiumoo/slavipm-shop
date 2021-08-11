@@ -1,0 +1,84 @@
+<div class="dolor_sit dolor_sit-{{ section.id }}">
+  <div class="footer-wrapper">
+  <h1>{{ section.settings.title }}</h1>
+  <p class="dolor_desktop">{{ section.settings.dolor_subheading }}</p>
+  <p class="dolor_mobile">{{ section.settings.dolor_subheading_mob }}</p>
+    {% if section.settings.link and section.settings.link_text != blank %}
+    <a id="dolor_sit_btn" class="innermost_front_btn btn {% comment %}account--btn{% endcomment %}" href="{{ section.settings.link }}">{{ section.settings.link_text }}</a>
+    {% endif %}
+  </div>
+</div> 
+
+<head>
+<style>
+  .dolor_sit-{{ section.id }}
+  {
+    overflow: hidden;
+    background-color:{{ section.settings.dolor_color }};
+    {% if section.settings.dolor_color_text %}
+      color: {{ section.settings.dolor_color_text }};
+    {% endif %}
+  }
+  
+  .dolor_sit-{{ section.id }} h1
+  {
+    {% if section.settings.dolor_color_text %}
+      color: {{ section.settings.dolor_color_text }};
+    {% endif %}
+  }
+  
+</style>
+</head>
+
+{% schema %}
+  {
+    "name": "New Section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "New Section"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color",
+        "label":"Background Color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color_text",
+        "label":"Text Color",
+        "default": "#525252"
+      },
+      {
+        "type":"textarea",
+        "id":"dolor_subheading",
+        "label":"Paragraph"
+      },
+      {
+        "type":"textarea",
+        "id":"dolor_subheading_mob",
+        "label":"Mobile Paragraph"
+      },
+	  {
+		"type": "url",
+		"id": "link",
+		"label": "Button Link"
+	  },
+	  {
+		"type": "text",
+		"id": "link_text",
+		"default": "Learn More",
+		"label": "Button Text"
+      }
+     ],
+    "presets": [
+      {
+        "name": "New Section",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

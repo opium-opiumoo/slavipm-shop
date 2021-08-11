@@ -1,0 +1,157 @@
+{% comment %}
+    item_product - the normal version of the cart item product
+    item.product - the specific product to this cart item (could be on recharge or not)
+    if cart item is one-time (casual, not 'recharge') -> item.product is same as item_product
+    if cart item is 'recharge' -> item.product is the rechargable one and item_product is its related Not rechargeble.
+
+    showPurchaseType - if the product "could be" on Subscription (the code copied from snippets/multiple-form)
+    item_is_subscription - if the specific cart item "is chosen in cart" as Subscription
+
+    normalID and rechargeID make a combo pair of a variant and its twin variant on recharge (Subscription)
+    By changing the purchase type - we switch between these two IDs.
+    Both are taken from the normal version of the product -> item_product
+{% endcomment %}
+{% assign showPurchaseType = false %}
+{% assign normalID = false %}
+{% assign rechargeID = false %}
+{% assign variant_base_price = false %}
+{% for variant1 in item_product.variants %}
+    {% if variant1.metafields.subscriptions.discount_variant_id != blank %}
+      {% assign formated_subscriptions_discount_variant_id = variant1.metafields.subscriptions.discount_variant_id | plus: 0 %}
+      {% if item.id == variant1.id or item.id == formated_subscriptions_discount_variant_id %}
+        {% assign showPurchaseType = true %}
+        {% assign normalID = variant1.id %}
+        {% assign rechargeID = variant1.metafields.subscriptions.discount_variant_id %}
+        {% assign variant_base_price = variant1.price %}
+      {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% comment %}
+	Get array of VariantID=>VariantTitle with the variants of the specific product -> item.product (not the main product item_product)
+    ! When in data-attribute check the single and double quotes.
+{% endcomment %}
+{% assign json_variants_id_title = '' %}
+{% for loop_variant in item.product.variants %}
+  {% if json_variants_id_title != '' %}
+    {% assign json_variants_id_title = json_variants_id_title | append: ',' %}
+  {% endif %}
+  {% assign json_variants_id_title = json_variants_id_title | append: '"' | append: loop_variant.id | append: '":"' | append: loop_variant.title | append: '"' %}
+{% endfor %}
+{% assign json_variants_id_title = "{" | append: json_variants_id_title | append: "}" %}
+
+{% assign item_is_subscription = false %}
+{% for loop_tag in item.product.tags %}
+  {% if loop_tag contains 'Subscription' %}
+    {% assign item_is_subscription = true %}
+  {% endif %}
+{% endfor %}
+
+{% assign recharge_frequency = 4 %}
+{% if item.properties.shipping_interval_frequency != blank %}
+  {% assign recharge_frequency = item.properties.shipping_interval_frequency | plus: 0 %}
+{% endif %}
+
+{% comment %}
+<div class="test" style="display:none">{{ item.product | json }}</div>
+{% endcomment %}
+
+<div id="item-{{- item.id -}}" data-variant-id="{{item.id}}" data-normal-id="{{normalID}}" data-recharge-id="{{rechargeID}}" data-variants-combo='{{json_variants_id_title}}' class="cart-template__product {% if item_is_subscription %}cart-template__product__recharge{% endif %}" data-handle="{{- item.product.handle -}}">
+  <div class="cart-template__product-image">
+    {%- if item.image != blank -%}
+      {{- item.image | img_url: '320x320' | img_tag | link_to: item_product.url -}}
+    {%- elsif item_product.featured_image != blank -%}
+      {{- item_product.featured_image | img_url: '320x320' | img_tag | link_to: item_product.url -}}
+    {%- else -%}
+      {{- 'product-1' | placeholder_svg_tag | link_to: item_product.url -}}
+    {%- endif -%}
+  </div>
+  <div class="cart-template__product-info">
+    <div class="x-mark" data-item-id="{{- item.id -}}"></div>
+    <div class="product-info__title">
+      <h3>{{- item.product.title | link_to: item_product.url -}}</h3>
+    </div>
+    {% if variant_base_price and variant_base_price > item.final_price %}
+    <div class="product-info__price--base">
+      {{- variant_base_price | money -}}
+    </div>  
+    {% endif %}
+    <div class="product-info__price">
+      {{- item.final_price | money -}}
+    </div>
+    
+    {% if showPurchaseType %}
+    <div class="product-cart-recharge-wrapper" data-variant="{{- item.variant.title -}}" >
+      {% comment %}The visibility related to the Currency is controlled at '.purchase-type' like in the product page{% endcomment %}
+      <div class="purchase-type"  style="{% if cart.currency.iso_code != "GBP" %}display:none{% endif %}" >
+         <label class="purchase-type-label">
+           <input type="radio" name="purchase-type--{{item.id}}" value="One Time" class="purchase-type-input purchase-type--one-time" {% unless item_is_subscription %}checked=""{% endunless %}>
+           <p class="input-text">Single Purchase</p>
+         </label>
+         <label class="purchase-type-label">
+           <input type="radio" name="purchase-type--{{item.id}}" value="Recurring" class="purchase-type-input purchase-type--subscribe" {% if item_is_subscription %}checked=""{% endif %}>  
+           <p class="input-text">Subscribe <span class="subscribe-discount">20% off</span></p>
+         </label>
+      </div>
+    </div>
+    {% endif %}
+    
+    <div class="product-info__inputs-row">
+     <div class="product-info__variatns" data-variant="{{- item.variant.title -}}">
+      {%- if item_product.has_only_default_variant -%}
+        <p class="variatns__one-variant" data-variant-id="{{- item.variant.id -}}">{{- line_item.variant.title -}}</p>
+      {%- else -%}
+        {%- assign item_variants = item.variant.title | split: '/' -%}
+
+        {%- for option in item_product.options_with_values -%}
+          <div class="variatns__selector">
+            <select class="single-option-selector" data-index="{{- forloop.index -}}">
+              {%- assign selected_variant = item_variants[forloop.index0] | strip -%}
+
+              {%- for value in option.values -%}
+                <option name="{{- value | handleize -}}" data-item-id="{{- item.id -}}"{% if selected_variant == value %} selected{% endif %}>{{- value -}}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endfor -%}
+      
+      {%- endif -%}
+     </div>
+     <div class="product-info__qty">
+      <div class="variatns__selector">
+        <select class="single-option-selector single-option-selector-qty">
+          {%- for qty in (1..9) -%}
+            <option value="{{- qty -}}" data-item-id="{{- item.id -}}"{% if item.quantity == qty %} selected{% endif %}>{{- qty -}}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+     </div>
+    </div>
+    
+    {% if showPurchaseType %}
+    <div class="delivery-every-holder product-info__inputs-row">
+        {% comment %}The class here is changed from 'variatns__selector' to 'variatns__selector--static', because this field is not included in the variant selection.{% endcomment %}
+        <p class="delivery-every-title">{{ 'subscription.delivery_every' | t }}</p>
+        <div id="shipping_interval_frequency_wrapper" class="variatns__selector--static shipping_interval_frequency_wrapper">
+            <select class="single-option-selector shipping_interval_frequency" style="display:none">
+              {% for single_fr in (1..10) %}
+                {% if single_fr == 1 %}
+                  {% assign single_fr_text = single_fr | append: " Week" %}
+                {% elsif single_fr == 4 %}
+                  {% assign single_fr_text = single_fr | append: " Weeks (Most Popular)" %}
+                {% else %}
+                  {% assign single_fr_text = single_fr | append: " Weeks" %}
+                {% endif %}
+                <option value="{{ single_fr }}" {% if recharge_frequency == single_fr %}selected=""{% endif %}>{{ single_fr_text }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class="delivery-every-subtitle-holder">
+          <span class="delivery-every-subtitle">{{ 'subscription.cancel' | t }}</span>
+          <span class="delivery-every-subtitle">{{ 'subscription.learn_more' | t }} <a target="_blank" href="https://rechargepayments.com/subscribe-with-recharge" class="subscrition-details">{{ 'subscription.learn_more_link' | t }}</a></span>
+        </div>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>

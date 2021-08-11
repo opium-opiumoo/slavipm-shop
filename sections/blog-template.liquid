@@ -1,372 +1,849 @@
-{% paginate blog.articles by 12 %}
+{% comment %} returns array blog_main_tags with - fitness health lifestyle etc.  {% endcomment %}
+{% include 'blog-main-tags' %}
 
-<div class="page-width">
-  <header class="section-header text-center">
-    <h1>{{ page_title }}</h1>
-    {% if blog.tags.size > 0 %}
-      <div class="blog-filter">
-        <label class="blog-filter__label select-label" for="BlogTagFilter">{{ 'collections.filters.title_tags' | t }}</label>
-        <div class="select-group">
-          <select id="BlogTagFilter" aria-describedby="a11y-refresh-page-message a11y-selection-message" data-blog-tag-filter>
-            <option value="{{ blog.url }}">{{ 'blogs.article.all_topics' | t }}</option>
-            {% for tag in blog.all_tags %}
-              <option value="{{ blog.url }}/tagged/{{ tag | handleize }}" {% if current_tags contains tag %}selected{% endif %}>{{ tag }}</option>
-            {% endfor %}
-          </select>
-          {% include 'icon-chevron-down' %}
-        </div>
-      </div>
+{% comment %} get current main tag , whereever we are - main tag, sub tag {% endcomment %}
+{% assign current_main_tag = false %}
+{% assign tag_custom_color = false %}
+{% assign current_sub_tag = false %}
+
+{% unless current_tags == blank %}
+  {% assign first_article = blog.articles | first %}
+  {% for tag in first_article.tags %}
+    {% unless tag contains "_" %}
+      {% assign current_main_tag = tag | downcase %}
+      {% for tag_block in section.blocks %}
+        {% if tag_block.type == 'tag_colors' %}
+          {% assign tag_name_downcase = tag_block.settings.tag_name | downcase %}
+          {% if tag_name_downcase == current_main_tag %}
+            {% assign tag_custom_color = tag_block.settings.tag_color %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endunless %}
+  {% endfor %}
+
+  {% comment %} current_sub_tag -> sub tag of main tag {% endcomment %}
+  {% for tag in current_tags %}
+    {% if tag contains "custom_" %}
+       {% comment %}Can be used 'append' if have to be more than one sub_tag{% endcomment %}
+       {% assign current_sub_tag = tag %}
     {% endif %}
-  </header>
+  {% endfor %}
+{% endunless %}
+
+{% comment %} get all sub tags of selected custom_tag{% endcomment %}
+{% comment %} v2 - check tags of latest 50 articles {% endcomment %}
+{% liquid
+       assign alreadyDisplayed = ''
+       for loop_article in blog.articles
+          assign loop_article_same_category = false
+          for tag in loop_article.tags
+            assign tag_dc = tag | downcase
+            if tag_dc == current_main_tag
+              assign loop_article_same_category = true
+              break
+            endif
+          endfor
+          unless loop_article_same_category
+            continue
+          endunless
+
+          for tag in loop_article.tags
+            assign customtags = false
+            if tag contains "custom_" and current_tags != blank
+              assign customtags = tag | split: "_" | last | uppercase
+              unless alreadyDisplayed contains customtags
+                assign tagnew = tag
+                assign alreadyDisplayed = alreadyDisplayed | append: "_" | append: customtags
+              endunless
+            endif
+          endfor
+       endfor
+%}
+
+{% comment %}
+ test breadcrumbs: {{current_main_tag}}-{{current_sub_tag}}
+{% endcomment %}
+
+{% comment %}end get sub tags of selected custom_tag{% endcomment %}
+
+
+
+{% include 'blog-filters' %}
+
+{% include 'blog-filters-mob' %}
+
+{% unless current_tags == blank %}
+  {% include 'blog-marquee-per-category', articles: blog.articles, current_tags: current_tags %}
+{% endunless %}
+
+
+{% if current_tags == blank %}
+<div class="blogs">
+  <div class="blogs_main">
+    <div class="blogs_main_left">
+      {% include 'breadcrumb' %}
+    
+      <h1>{{ section.settings.Blog_heading }}</h1>
+      <h5 class="para_uk">{{ section.settings.Blog_para }}</h5>
+      <h5 class="para_non_uk">{{ section.settings.Blog_para_non_uk }}</h5>
+      
+      <div class="blog_mail_box">
+        <h6>{{ section.settings.Blog_Offer }}</h6>
+
+        <div class="blog_email">
+         {% comment %} {% include 'email-signup' %} {% endcomment %}
+         {% comment %} <div class="klaviyo-form-MFbG3B"></div>{% endcomment %}
+          {% include 'klaviyo-footer-selector', blog: true %}
+        </div>
+        {% comment %}
+        <div class="checkbox_acc checkbox_acc2">
+          <p><input type="checkbox"> <span>{{ section.settings.Blog_subscription }}</span></p>
+        </div>
+        {% endcomment %}
+      </div>
+    </div>
+    <div class="blogs_main_right" {% if section.settings.Blog_right_image != blank %} style="background-image:url('{{ section.settings.Blog_right_image | img_url : 'master'}}');"{% endif %}>
+   {% comment %}   <img data-src="{{ section.settings.Blog_right_image | img_url : 'master' }}" class="lazyload"> {% endcomment %}
+    </div>
+  </div>
+</div>
+{% comment %}
+<div class="inline-articles">
+  <div class="grid">
+  	{% for article in blogs["insight"].articles limit:5 %}
+    <div class="grid__item one-fifth">
+  		<p class="inline">{{ article.title }}</p>
+    </div>
+  	{% endfor %}
+  </div>
+</div>
+{% endcomment %}
+{% else %}
+{% comment %}
+<h1 class="wrapper h1 articles-author text-left">
+   	{% if section.settings.authors_title != blank %}
+  	{{ section.settings.authors_title }}
+  	{% else %}
+	{% for tag in current_tags %}
+	{% if tag contains "author" %}
+	Articles By	{{ tag | replace: "author_", "" | uppercase }} 	
+	{% break %}
+	{% endif %}
+	{% endfor %}
+  	{% endif %}
+</h1>
+{% endcomment %}
+
+{% comment %}
+<h1 class="wrapper h1 articles-author text-left">
+	{% for tag in current_tags %}
+	{% if tag contains "custom_" %}
+	Tagged	{{ tag | replace: "custom_", "" | uppercase }}
+	{% break %}
+	{% endif %}
+	{% endfor %}
+</h1>
+{% endcomment %}
+
+{% for block in section.blocks %}
+{% for tag in current_tags %}
+{% if tag contains block.settings.authors_name %}
+<div class="author-description wrapper">
+  <img data-src="{{ block.settings.author_image | img_url: 'x200' }}"/ class="authors-image lazyload">
+  <p class="authors-name">{{ block.settings.authors_name | uppercase }}</p>
+  <div class="authors-description">
+  	{{ block.settings.author_description }}
+  </div>
+</div>
+{% endif %}
+{% break %}
+{% endfor %}
+{% endfor %}
+<div class="blogs1">
+  <div class="blogs_main1">
+    {% comment %}
+    Gets the top article and put it in the beggining of blog.articles 
+    {% endcomment %}
+    
+ 	{% for article in blog.articles %}
+      {% assign current_tag = current_tags %}
+      {% assign featured = 'featured' %}
+      {% capture new_var1 %}{{ current_tags }}-{{ featured }}{% endcapture %}
+   
+  	  {% if article.tags contains new_var1 %}
+  	
+        <div class="grid__item article_full_width">
+           <a href="{{ article.url }}" title="{{ article.title | escape }}"> 
+            <div class="leftSide">
+              <div style="overflow:hidden;">
+                {% if article.image %}
+              		{% include "filter-rias-img-url-with-height" input: article.image %}
+		            {% assign image_url = output %}
+               		<img
+                    data-src="{{ image_url }}"
+                    data-ratio="{{ article.image.aspect_ratio }}"
+                    data-sizes="auto"
+                    data-parent-fit="cover"
+                    class="lazyload lazyload-fade"
+                    alt="{{ article.image.alt | escape }}">   
+                {% else %}
+                  {% if article.content contains "<img " %}
+                      {% assign src = article.content | split: 'src="' %}
+                      {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:' %}
+                      <img data-src="{{ src }}" alt="{{ article.title | escape }}" class="lazyload" />
+                  {% endif %}    
+                {% endif %}
+              </div>
+            </div>
+         </a>
+          <div class="rightSide">
+            <div class="rightSide_full">
+            <div class="blog_details">
+              <a href="{{ article.url }}" title="{{ article.title | escape }}"> 
+                <h4 class='featured-blog__title'>{{ article.title }}</h4>
+              </a>
+
+              {% if section.settings.enable_blog_author %}
+                <p class="author">{{ 'blogs.article.author_by_html' | t: author : article.author }}</p>
+              {% endif %}
+			<div class="tags_blog">
+                  
+                <ul class="inline-list">
+                  
+                  {% assign current_tag = current_tags %}
+                 
+                  {% for i in (1..10) %}
+
+                    {% capture blog_filter %}Blog_filter_text_{{ i }}{% endcapture %}  
+                    {% capture blog_filter_img %}Blog_filter_img_{{ i }}{% endcapture %}
+                    {% assign filter_tag = settings[blog_filter] | capitalize %}
+				   {{ filter_tag }}
+         			{% if current_tags contains filter_tag %}
+                  		{% if settings[blog_filter] != blank %}
+                        <li>
+                          <img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload"/>
+                          <span>{{ settings[blog_filter] }}</span>
+                        </li>
+                 		{% endif %}
+                      {% endif %}         
+                    
+                  {% endfor %}
+                 
+                </ul>
+              </div>
+              
+              <span class="excerpt excerpts">
+                {% if article.excerpt_or_content != '' %}
+                  {% capture art_url %} <a href="{{ article.url }}">...</a>{% endcapture %}
+                  {{ article.excerpt_or_content | truncate: 180, art_url }} 
+                {% endif %}
+              </span>
+              <span class="read_more">{{ 'blogs.article.read_more' | t }}</span>
+              <a href="{{ article.url }}" title="{{ article.title | escape }}" class="readMoreBtn" >{{ 'blogs.article.read_more' | t }}</a>
+            </div>
+            </div>
+          </div>
+          <!--</a>-->
+        </div>
+    	{% break %}
+	  {% endif %}
+    {% endfor %}
+    
+    
+    
+  </div>
 </div>
 
+  {% endif %}
 
-{% if section.settings.layout == 'grid' %}
-  <div class="page-width">
-    <ul class="grid grid--uniform grid--blog">
-      {% for article in blog.articles %}
-        <li class="grid__item medium-up--one-third">
-          <a href="{{ article.url }}" class="article__link">
-            {% if article.image %}
-              {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
-              {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
-              {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
 
-              {% include 'image-style', image: article.image, height: 345, wrapper_id: img_wrapper_id, img_id: img_id %}
-              <div id="{{ img_wrapper_id }}" class="article__grid-image-wrapper js">
-                <div class="article__grid-image-container" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;" data-image-loading-animation>
-                  <img id="{{ img_id }}"
-                      class="article__grid-image lazyload"
-                      data-src="{{ img_url }}"
-                      data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
-                      data-aspectratio="{{ article.image.aspect_ratio }}"
-                      data-sizes="auto"
-                      alt="">
-                </div>
-              </div>
-              <noscript>
-                <div class="article__grid-image-wrapper">
-                  {{ article | img_url: '345x345', scale: 2 | img_tag: article.title, 'article__grid-image' }}
-                </div>
-              </noscript>
-            {% endif %}
-
-            <h2 class="article__title h3{% if article.image %} article__title--has-image{% endif %}">
-              {{ article.title | escape }}
-            </h2>
-          </a>
-
-          <div class="article__grid-meta{% if article.image %} article__grid-meta--has-image{% endif %}">
-            {% if section.settings.blog_show_author %}
-              <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
-            {% endif %}
-
-            {% if section.settings.blog_show_date %}
-              <span class="article__date">
-                {{ article.published_at | time_tag: format: 'date' }}
-              </span>
-            {% endif %}
-
-            <div class="rte article__grid-excerpt">
-              {% if article.excerpt.size > 0 %}
-                {{ article.excerpt }}
-              {% else %}
-                {{ article.content | strip_html | truncate: 150 }}
-              {% endif %}
-            </div>
-
-            {% if article.tags.size > 0 %}
-              <div class="article__tags rte">
-                <ul class="list--inline" aria-label="{{ 'blogs.article.tags' | t }}">
-                  {% for tag in article.tags %}
-                    <li>
-                      <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article__grid-tag">{{ tag }}</a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endif %}
-
-            <ul class="list--inline article__meta-buttons">
-              <li>
-                <a href="{{ article.url }}" class="btn btn--tertiary btn--small" aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}">
-                  {{ 'blogs.article.read_more' | t }}
-                </a>
-              </li>
-
-              {% if blog.comments_enabled? and article.comments_count > 0 %}
-                <li>
-                  <a href="{{ article.url }}#comments" class="article__comment-count btn btn--tertiary btn--small">
-                    {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
-                  </a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-{% else %}
-  <ul class="blog-list-view">
-    {% for article in blog.articles %}
-      <li class="border-top">
-        <div class="page-width">
-          <div class="grid">
-            <div class="grid__item medium-up--five-sixths medium-up--push-one-twelfth">
-              <div class="article-listing">
-                <h2 class="article__title h3"><a href="{{ article.url }}">{{ article.title }}</a></h2>
-                {% if section.settings.blog_show_author %}
-                  <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
-                {% endif %}
-
-                {% if section.settings.blog_show_date %}
-                  <span class="article__date">
-                    {{ article.published_at | time_tag: format: 'date' }}
-                  </span>
-                {% endif %}
-
-                {% if article.image %}
-                  {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
-                  {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
-                  {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
-
-                  {% include 'image-style', image: article.image, height: 600, wrapper_id: img_wrapper_id, img_id: img_id %}
-
-                  <div id="{{ img_wrapper_id }}" class="article__list-image-wrapper js">
-                    <a href="{{ article.url }}" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;" class="article__list-image-container" data-image-loading-animation>
-                      <img id="{{ img_id }}"
-                           class="article__list-image lazyload"
-                           data-src="{{ img_url }}"
-                           data-widths="[180, 360, 540, 720, 905, 1090, 1296, 1512, 1728, 2048]"
-                           data-aspectratio="{{ article.image.aspect_ratio }}"
-                           data-sizes="auto"
-                           alt="">
-                    </a>
-                  </div>
-
-                  <noscript>
-                    <p>
-                      <a href="{{ article.url }}">
-                        {{ article | img_url: '455x300', scale: 2 | img_tag: article.title }}
-                      </a>
-                    </p>
-                  </noscript>
-                {% endif %}
-
-                <div class="rte">
-                  {% if article.excerpt.size > 0 %}
-                    {{ article.excerpt }}
-                  {% else %}
-                    {{ article.content | strip_html | truncate: 150 }}
-                  {% endif %}
-                </div>
-
-                {% if article.tags.size > 0 %}
-                  <div class="article__tags article__tags--list rte">
-                    {{ 'blogs.article.posted_in' | t }}
-                    {% for tag in article.tags %}
-                      <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
-                    {% endfor %}
-                  </div>
-                {% endif %}
-
-                <ul class="list--inline article__meta-buttons">
-                  <li>
-                    <a href="{{ article.url }}" class="btn btn--tertiary btn--small" aria-label="{{ 'blogs.article.read_more_title' | t: title: article.title }}">
-                      {{ 'blogs.article.read_more' | t }}
-                    </a>
-                  </li>
-
-                  {% if blog.comments_enabled? and article.comments_count > 0 %}
-                    <li>
-                      <a href="{{ article.url }}#comments" class="article__comment-count btn btn--tertiary btn--small">
-                        {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
-                      </a>
-                    </li>
-                  {% endif %}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
+ {% assign article_custom_positions = '' | split: "," %}
+ {% for article in blog.articles %}
+    {% for tag in article.tags %}
+       {% if tag contains 'article_position' %}
+           {% assign temp_custom_position = tag | split: '_' | last | split: "," %}
+           {% assign article_custom_positions = article_custom_positions | concat: temp_custom_position  %}
+	   {% endif %}
     {% endfor %}
-  </ul>
+ {% endfor %}
+
+
+ {% for article in blog.articles %}
+    {% assign current_tag = current_tags %}
+     {% assign featured = 'featured' %}
+    {% capture new_var1 %}{{ current_tags }}-{{ featured }}{% endcapture %}
+   
+  	{% if article.tags contains new_var1 %}
+	
+	{%assign indexnum =  forloop.index  %}
+		
+  	{% break %}
+	{% endif %}
+  {% endfor %}
+
+
+<!-- /templates/blog.liquid -->
+{% assign article_wrapper_id = '' %}
+{% if current_tags contains 'Questions' %}
+  {% assign number = 12 %}
+  {% assign article_wrapper_class = 'questions_wrapper' %}
+{% else %}
+  {% assign article_wrapper_class = 'masonry-grid-cb article_wrapper masonry-row' %}
+  {% assign article_wrapper_id = 'masonry-grid-cb' %}
+  {% assign number = 13 %}
+
+  {% comment %}
+  <!--
+   uncomment this part if not default pager is used:
+   We jave to skip the articles of type Questions and Listen. Then replace the skipped articles with next articles. So we increase the per page 'number'.
+   This works on "show more" or lazy load; by normal pager the change in the per page number will make a new offset (of the articles) to begin at the current page.
+  -->
+  {% for article in blog.articles limit: number %}
+    {% for tag in article.tags %}
+      {% if tag contains "Questions" or tag contains "Listen" %}
+        {% assign number = number | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  {% endcomment %}
+
 {% endif %}
 
-{%- if paginate.pages > 1 -%}
-  {% include 'pagination', paginate: paginate %}
-{%- endif -%}
+{% assign all_articles = blog.articles %}
+{% assign actualindex_allpages = 0 %}
+
+{% comment %}nesting here the section "blog-template-featured-articles-marquee.liquid"{% endcomment %}
+{% if current_tags == blank %}
+%%featured_articles_marquee%%
+{% endif %}
+
+
+{% paginate blog.articles by number %}
+   {% comment %}{% assign actualindex_allpages = paginate.current_page | minus: 1 | times: number %}{% endcomment %}
+{% comment %}
+  This template is also used for listing out articles of a specific tag.
+  You can change layouts or styles by checking if current_tags is true.
+  This pagination do not includes the default blog articles - they are looped with a for and a 'manual' pagination after this.
+{% endcomment %}
+<div class="ambassadors_bottom margin-top-0">
+ {% if current_tags %}
+  {% assign current_tags_joined = current_tags | join: ',' %}
+  {% unless current_tags_joined contains 'author_' %}
+  
+    {% for current_tag in current_tags %}
+      {% assign current_tag_downcase = current_tag | downcase %}
+      {% for tag_block in section.blocks %}
+        {% if tag_block.type == 'tag_colors' %}
+          {% assign tag_name_downcase = tag_block.settings.tag_name | downcase %}
+          {% if tag_name_downcase == current_tag_downcase %}
+            {% assign tag_custom_color = tag_block.settings.tag_color %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  
+    <h1 class="tagged-article-title article_tie">
+      <span class="custom-tags-tagged-main" style="{% unless tag_custom_color == false %}color: {{tag_custom_color}};{% endunless %}">
+        {% if current_tags_joined contains '_' %}
+          {% for current_tag in current_tags %}
+            {% if current_tag contains '_' %}
+              {{ current_tag | split: "_" | last | uppercase }}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {{ current_tags }}{% if current_sub_tag == false %}: {% endif %}
+        {% endif %}
+      </span>
+      {% if current_sub_tag == false %}
+        {% assign tagsToDisplay = alreadyDisplayed | split: "_" %}
+        {% for t in tagsToDisplay %}
+          {% unless forloop.first %}
+            {% comment %}
+                In the link we could add the patent_tag. Then it is: tagged/current-tag,custom-tag . With this we can get the main tag in the page with chosen custom-tag.
+                /blogs/insight/tagged/{{ current_tags }},custom_{{ t | lowercase }}
+            {% endcomment %}
+            <a class="custom-tags-tagged" href="/blogs/insight/tagged/custom_{{ t | handleize }}">{{ t }}</a>{% unless forloop.last %}<span class="tags_delimiter">, {% endunless %}</span>
+          {% endunless %}
+        {% endfor %}
+      {% endif %}
+    </h1>
+  {% endunless %}
+ {% endif %}
+  
+  <div id="{{article_wrapper_id}}" class="grid--full ambassadors_bottom-blog {{article_wrapper_class}} wrapper">
+  {% comment %}
+      {% if paginate.pages > 1 %}
+        <hr>
+        <div class="pagination blog-pagination">
+          {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+        </div>
+      {% endif %}
+  {% endcomment %}
+  
+
+      {% for article in blog.articles %}
+  {% comment %}
+              <div class="question grid__item small--one-whole medium--one-half large--one-quarter article ArticleItem">
+               {{ article.title }}
+ 			 </div>
+  {% endcomment %}
+    	{% if current_tags contains 'Questions' %}
+    	   {% if indexnum != forloop.index %}
+  
+            <div class="question grid__item small--one-whole medium--one-half large--one-quarter article ArticleItem">
+                {% comment %}masonry class: masonry-grid-cb-item masonry-grid-cb-item-4{% endcomment %}
+                <div class="blog_details">
+                  <h4 class='featured-blog__title'><a href="{{ article.url }}">{{ article.title }}</a></h4>
+                  {% if section.settings.enable_blog_author %}
+                    <p class="author">{{ 'blogs.article.author_by_html' | t: author : article.author }}</p>
+                  {% endif %}
+                  <span class="excerpt" data-href="{{ article.url }}">
+                     {% comment %}{% capture art_url %} <a href="{{ article.url }}">...</a>{% endcapture %}{% endcomment %}
+                     {{ article.excerpt_or_content | strip_html | truncate: 180 }} 	                     
+                  </span>
+                 
+                  <span class="read_more">{{ 'blogs.article.read_more' | t }}</span>
+                    <div class="tags_blog">
+
+                    <ul class="inline-list">
+
+                      {% for i in (1..10) %}
+
+                        {% capture blog_filter %}Blog_filter_text_{{ i }}{% endcapture %}  
+                        {% capture blog_filter_img %}Blog_filter_img_{{ i }}{% endcapture %}
+                        {% assign filter_tag = settings[blog_filter] %}
+
+
+                        {% for tag in article.tags %}
+                          {% if tag == filter_tag %} 
+                            <li>
+                              <img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload"/>
+                              <span>{{ settings[blog_filter] }}</span>
+                            </li>
+                          {% endif %}         
+                        {% endfor %}
+                      {% endfor %}
+
+                    </ul>
+                  </div>
+                </div>
+            </div>
+           {% endif %}	
+        {% else %}
+           {% comment %}Default blog page. For now lists all articles, inlcuding Questions and Playlists{% endcomment %}
+           {% comment %} unless article.tags contains 'Questions' or article.tags contains 'Listen' {% endcomment %}
+    	     {% if indexnum != forloop.index %}
+           
+               {% assign article_has_custom_position = false %}
+               {% for tag in article.tags %}
+                 {% if tag contains 'article_position' and current_tags == blank %}
+                    {% assign article_has_custom_position = true %}
+	             {% endif %}
+               {% endfor %}
+               {% if article_has_custom_position %}
+                 {% continue %}
+               {% endif %}
+  
+    	       {% include 'blog-article-grid-item' %}
+               {% assign current_custom_position = actualindex_allpages | plus: 1 | downcase %}
+      	       {% if article_custom_positions contains current_custom_position %}
+  				   {% assign current_custom_position = 'article_position_' | append: current_custom_position %}
+				   {% for temp_article in all_articles %}
+					   {% if temp_article.tags contains current_custom_position %}
+						   {% include 'blog-article-grid-item', article: temp_article, forloop_index: forloop.index %}
+					   {% endif %}
+				   {% endfor %}
+               {% endif %}
+  
+             {% endif %}
+           {% comment %} endunless {% endcomment %}
+        {% endif %}
+{% endfor %}
+    
+
+  </div>
+</div>
+
+{% comment %}<!--start manual pagination of articles-->
+{% paginate blog.articles by number %}
+  {% assign manual_first_item = paginate.current_page | minus: 1 | times: number | plus: 1 %}
+  {% assign manual_last_item = paginate.current_page | minus: 1 | times: number | plus: number %}
+{% endpaginate%}
+<!--  test:{{manual_first_item}}-{{manual_last_item}}/{{blog.articles | size}}<br>-->
+{% assign article_actual_index = 0 %}
+<div class="ambassadors_bottom margin-top-0">
+<div id="{{article_wrapper_id}}" class="grid--full ambassadors_bottom-blog {{article_wrapper_class}} wrapper">
+{% assign temp_pages = blogs['insight'].articles_count | divided_by: 50.0 | ceil %}
+{% for temp_page in (0..temp_pages) %}
+  {% assign temp_offset = temp_page | times: 50 %}
+  {% for article in blogs['insight'].articles limit:60 offset: temp_offset %}
+    {% unless article.tags contains 'Questions' or article.tags contains 'Listen' %}
+        {% assign article_actual_index = article_actual_index | plus: 1 | plus: temp_offset %}
+        {% if article_actual_index < manual_first_item %}
+          {% continue %}
+        {% endif %}
+        {% if article_actual_index > manual_last_item %}
+          {% continue %}
+        {% endif %}
+  
+    	 {% if indexnum != forloop.index %}
+           
+           {% assign article_has_custom_position = false %}
+           {% for tag in article.tags %}
+              {% if tag contains 'article_position' and current_tags == blank %}
+                 {% assign article_has_custom_position = true %}
+	          {% endif %}
+           {% endfor %}
+           {% if article_has_custom_position %}
+              {% continue %}
+           {% endif %}
+  
+    	   {% include 'blog-article-grid-item' %}
+           {% assign current_custom_position = actualindex_allpages | plus: 1 | downcase %}
+      	   {% if article_custom_positions contains current_custom_position %}
+  				{% assign current_custom_position = 'article_position_' | append: current_custom_position %}
+				{% for temp_article in all_articles %}
+					{% if temp_article.tags contains current_custom_position %}
+						{% include 'blog-article-grid-item', article: temp_article, forloop_index: forloop.index %}
+					{% endif %}
+				{% endfor %}
+           {% endif %}
+  
+     {% endif %}
+    {% endunless %}
+  {% endfor %}
+{% endfor %}
+</div>
+</div>
+<!--end manual pagination of articles-->{% endcomment %}
+
+
+{% if paginate.pages > 1 %}
+<div class="pagination">
+  {% comment %}
+    {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+  {% endcomment %}
+  
+
+  {% if paginate.previous.is_link %}
+    <span class="prev">
+      <a href="{{ paginate.previous.url }}">&larr;</a>
+    </span>
+  {% endif %}
+  
+  {% assign page_minus_2 = paginate.current_page | minus: 2 %}
+  {% assign paginate_part_prev_is_deco = false %}
+  {%- for part in paginate.parts -%}
+    {%- if part.is_link -%}
+      {% if part.title == page_minus_2 and page_minus_2 != 1 %}
+        {% unless paginate_part_prev_is_deco %}
+          <span class="deco">&hellip;</span>
+          {% assign paginate_part_prev_is_deco = false %}
+        {% endunless %}
+        {% continue %}
+      {% endif %}
+  
+      <span class="page">
+        <a href="{{ part.url }}">{{ part.title }}</a>
+  	  </span>
+    {%- else -%}
+      {%- if part.title == paginate.current_page -%}
+        <span class="page current">{{ part.title }}</span>
+      {%- else -%}
+        <span class="deco">&hellip;</span>
+        {% assign paginate_part_prev_is_deco = true %}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  
+  {% if paginate.next.is_link %}
+    <span class="next">
+      <a href="{{ paginate.next.url }}">&rarr;</a>
+    </span>
+  {% endif %}
+</div>
+{% endif %}
+
+
+{% comment %}
+{% if paginate.next.url %}
+<div class="showall_but">
+  <a href="#"  id="more" data-href="{{ paginate.next.url }}" href="javascript:void(0);">SHOW MORE</a>
+</div>
+{% endif %}
+{% endcomment %}
 
 {% endpaginate %}
 
+           
 
+
+<div class="blog_playlist">
+  <div class="related_blog_slider_wrapper">
+    <h2>{{ section.settings.Workout_heading }}</h2>
+    <div class="grid blog_playlist_main ambassadors_bottom_main-blog related_blog_slider">
+
+     {% comment %} paginate blogs['insight'].articles by 1000 {% endcomment %}
+      {% for article in blogs['playlist'].articles %}
+
+        {% if article.tags contains 'Listen'%}
+          <div class="grid__item one-quarter article article-playlist">
+            <div class="blog_image">
+              <a href="{{ article.url }}" title="{{ article.title | escape }}"> 
+                {% if article.image %}
+                  <img data-src="{{ article.image | img_url: '600x400' , crop: "center"  }}" alt="{{ article.title | escape }}" class="lazyload" />
+                {% else %}
+                  {% if article.content contains "<img " %}
+                      {% assign src = article.content | split: 'src="' %}
+                      {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:' %}
+                      <img data-src="{{ src }}" alt="{{ article.title | escape }}" class="lazyload" />
+                  {% endif %}    
+                {% endif %}
+              </a>
+            </div>
+            <div class="blog_details">
+              <a href="{{ article.url }}"><h4 class='featured-blog__title'>{{ article.title }}</h4></a>
+              <span class="excerpt" data-href="{{ article.url }}">
+                	{{ article.excerpt_or_content | strip_html | truncate: 180 }}
+              </span>
+              
+              {% comment %}
+                <div class="tags_blog">
+
+                   <ul class="inline-list">
+                 {% for i in (1..10) %}
+
+                    {% capture blog_filter %}Blog_filter_text_{{ i }}{% endcapture %}  
+                    {% capture blog_filter_img %}Blog_filter_img_{{ i }}{% endcapture %}
+                    {% assign filter_tag = settings[blog_filter] | capitalize %}
+
+
+                      {% for tag in article.tags %}
+
+                        {% if tag == filter_tag %} 
+                          <li>
+                            <img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload"/>
+                            <span>{{ settings[blog_filter] }}</span>
+                          </li>
+                        {% endif %}         
+                      {% endfor %}
+                  {% endfor %}
+                  </ul>
+                </div>
+              {% endcomment %}
+
+              {% if section.settings.enable_blog_author %}
+                <p class="author">{{ 'blogs.article.author_by_html' | t: author : article.author }}</p>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+     {% comment %} endpaginate {% endcomment %}
+    </div>
+  </div>
+</div>
 
 {% schema %}
-{
-  "name": {
-    "cs": "Stránky blogu",
-    "da": "Blogsider",
-    "de": "Blogseiten",
-    "en": "Blog pages",
-    "es": "Páginas del blog",
-    "fi": "Blogisivut",
-    "fr": "Pages du blog",
-    "it": "Pagine del blog",
-    "ja": "ブログページ",
-    "ko": "블로그 페이지",
-    "nb": "Bloggsider",
-    "nl": "Blogpagina's",
-    "pl": "Strony blogu",
-    "pt-BR": "Páginas do blog",
-    "pt-PT": "Páginas do blogue",
-    "sv": "Bloggsidor",
-    "th": "หน้าบล็อก",
-    "tr": "Blog sayfaları",
-    "vi": "Trang blog",
-    "zh-CN": "博客页面",
-    "zh-TW": "網誌頁面"
-  },
-  "settings": [
-    {
-      "type": "select",
-      "id": "layout",
-      "label": {
-        "cs": "Rozvržení",
-        "da": "Layout",
-        "de": "Layout",
-        "en": "Layout",
-        "es": "Diseño",
-        "fi": "Asettelu",
-        "fr": "Mise en page",
-        "it": "Layout",
-        "ja": "レイアウト",
-        "ko": "레이아웃",
-        "nb": "Oppsett",
-        "nl": "Opmaak",
-        "pl": "Układ",
-        "pt-BR": "Layout",
-        "pt-PT": "Esquema",
-        "sv": "Layout",
-        "th": "เลย์เอาต์",
-        "tr": "Düzen",
-        "vi": "Bố cục",
-        "zh-CN": "布局",
-        "zh-TW": "版面配置"
+  {
+    "name": "Blog",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_blog_author",
+        "default": false,
+        "label": "Show author"
       },
-      "default": "list",
-      "options": [
-        {
-          "value": "grid",
-          "label": {
-            "cs": "Mřížka",
-            "da": "Gitter",
-            "de": "Raster",
-            "en": "Grid",
-            "es": "Cuadrícula",
-            "fi": "Ruudukko",
-            "fr": "Grille",
-            "it": "Griglia",
-            "ja": "グリッド",
-            "ko": "그리드",
-            "nb": "Rutenett",
-            "nl": "Grid",
-            "pl": "Siatka",
-            "pt-BR": "Grade",
-            "pt-PT": "Grelha",
-            "sv": "Rutnät",
-            "th": "กริด",
-            "tr": "Izgara",
-            "vi": "Lưới",
-            "zh-CN": "网格",
-            "zh-TW": "網格"
-          }
-        },
-        {
-          "value": "list",
-          "label": {
-            "cs": "Seznam",
-            "da": "Liste",
-            "de": "Liste",
-            "en": "List",
-            "es": "Lista",
-            "fi": "Luettelo",
-            "fr": "Liste",
-            "it": "Elenco",
-            "ja": "リスト",
-            "ko": "목록",
-            "nb": "Liste",
-            "nl": "Lijst",
-            "pl": "Lista",
-            "pt-BR": "Lista",
-            "pt-PT": "Lista",
-            "sv": "Lista",
-            "th": "รายการ",
-            "tr": "Liste",
-            "vi": "Danh sách",
-            "zh-CN": "列表",
-            "zh-TW": "清單"
-          }
-        }
-      ]
+	{
+		"type": "text",
+		"id": "authors_title",
+		"label": "Author's Page Title",
+		"default": "Author"
+	},
+    {
+      "type":"header",
+      "content":"Blog Content"
     },
     {
-      "type": "checkbox",
-      "id": "blog_show_author",
-      "label": {
-        "cs": "Zobrazit autora",
-        "da": "Vis forfatter",
-        "de": "Autor anzeigen",
-        "en": "Show author",
-        "es": "Mostrar autor",
-        "fi": "Näytä tekijä",
-        "fr": "Afficher l'auteur",
-        "it": "Mostra autore",
-        "ja": "執筆者を表示する",
-        "ko": "작성자 표시",
-        "nb": "Vis forfatter",
-        "nl": "Auteur weergeven",
-        "pl": "Pokaż autora",
-        "pt-BR": "Exibir autor",
-        "pt-PT": "Mostrar autor",
-        "sv": "Visa författare",
-        "th": "แสดงผู้เขียน",
-        "tr": "Yazarı göster",
-        "vi": "Hiển thị tác giả",
-        "zh-CN": "显示作者",
-        "zh-TW": "顯示作者"
-      },
-      "default": true
+      "type": "image_picker",
+      "id": "Blog_right_image",
+      "label": "Blog Banner right Side Image"
     },
     {
-      "type": "checkbox",
-      "id": "blog_show_date",
-      "label": {
-        "cs": "Zobrazit datum",
-        "da": "Vis dato",
-        "de": "Datum anzeigen",
-        "en": "Show date",
-        "es": "Mostrar fecha",
-        "fi": "Näytä päivämäärä",
-        "fr": "Afficher la date",
-        "it": "Mostra data",
-        "ja": "日付を表示する",
-        "ko": "날짜 표시",
-        "nb": "Vis dato",
-        "nl": "Datum weergeven",
-        "pl": "Pokaż datę",
-        "pt-BR": "Exibir data",
-        "pt-PT": "Mostrar data",
-        "sv": "Visa datum",
-        "th": "แสดงวันที่",
-        "tr": "Tarihi göster",
-        "vi": "Hiển thị ngày",
-        "zh-CN": "显示日期",
-        "zh-TW": "顯示日期"
-      },
-      "default": true
+      "type": "text",
+      "id": "Blog_heading",
+      "label": "Blog Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "Blog_para",
+      "label": "Blog Paragraph ( UK )"
+    },
+	 {
+      "type": "textarea",
+      "id": "Blog_para_non_uk",
+      "label": "Blog Paragraph ( Non Uk )"
+    },
+    {
+      "type": "text",
+      "id": "Blog_Offer",
+      "label": "Blog Offer Text"
+    },
+	{
+      "type": "textarea",
+      "id": "Blog_subscription",
+      "label": "Blog Subscribe text"
+    },
+    {
+      "type":"header",
+      "content":"Workout Playlist"
+    },
+    {
+      "type": "text",
+      "id": "Workout_heading",
+      "label": "Workout Heading"
     }
-  ]
-}
+    ],
+	"blocks": [
+      {
+        "type": "Text",
+        "name": "Author's Page Block",
+        "settings": [
+			{
+			  "type": "text",
+			  "id": "authors_name",
+		      "label": "Author's Name"
+			},
+			{
+			  "type": "image_picker",
+			  "id": "author_image",
+			  "label": "Author's Image"
+			},
+			{
+			  "type": "richtext",
+			  "id": "author_description",
+			  "label": "Author's Description"
+			}
+		]
+	  },
+      {
+        "type": "tag_colors",
+        "name": "Tag colors",
+        "settings": [
+			{
+			  "type": "text",
+			  "id": "tag_name",
+		      "label": "Tag"
+			},
+			{
+			  "type": "color",
+			  "id": "tag_color",
+			  "label": "Color"
+			}
+		]
+	  }
+	]
+  }
 {% endschema %}
+
+{{ 'slick.css' | asset_url | stylesheet_tag }}
+{{ 'slick-theme.css' | asset_url | stylesheet_tag }}
+ <script type="text/javascript">
+ /*masonry*/
+   function setMasonryCB(){
+     {% comment %} for now the function is disabled; if with show more button -> remove the return false {% endcomment %}
+     return false;
+     
+     var masonry_wrapper = $('#masonry-grid-cb');
+     
+     {% comment %}
+     //make the article like cover and full width 100% of the viewport
+     var item_offset = (document.body.clientWidth - masonry_wrapper.width())/2;
+     $('.ArticleItem.article_layout_1, .ArticleItem.article_layout_cover').css({
+        'width': document.body.clientWidth, //body width minus scrollbar width
+        'min-width': document.body.clientWidth,
+        'margin-left':(-item_offset),
+        'margin-right':(-item_offset)
+     });
+     $('.ArticleItem.article_layout_1 .blog_details, .ArticleItem.article_layout_cover .blog_details').css({
+        'padding-left':item_offset,
+        //'padding-right':item_offset,
+     });
+     {% endcomment %}
+     
+     
+     //resize MasonryWrapper height ot its content (it has to be fixed val)
+     var masonry_buffer = 100;
+     var masonry_height = 0;
+     var last_item_height = 0;
+     var masonry_col_num = 3;
+     if(masonry_wrapper.find('.masonry-grid-cb-item-4').length > 0){
+       masonry_col_num = 4;
+     }
+     
+     masonry_wrapper.find('.masonry-grid-cb-item').each(function(index, masonry_item){
+       masonry_height += jQuery(this).outerHeight();
+       last_item_height = jQuery(this).outerHeight();
+     });
+     
+     var masonry_equilizer = 0;
+     if(masonry_wrapper.find('.masonry-grid-cb-item').length % masonry_col_num){
+     	masonry_equilizer = masonry_col_num - (masonry_wrapper.find('.masonry-grid-cb-item').length % masonry_col_num); /*we need to add this Num of virtual items to equalize, when the count%num_cols != 0*/
+        masonry_equilizer = masonry_equilizer * last_item_height;
+     }
+     masonry_wrapper.css('min-height', (((masonry_height+masonry_equilizer)/3)+masonry_buffer) );
+   }
+ $('#masonry-grid-cb').bind('DOMSubtreeModified', function(){
+   setMasonryCB();
+ });
+ $(window).on('resize', function(){
+   setMasonryCB();
+ });
+ /*masonry end*/
+   
+ $(document).ready(function() {
+     setMasonryCB();
+
+   
+     $(".related_blog_slider").slick({
+        dots: false,
+        arrows: true,
+        infinite: true,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+         responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    }
+    // You can unslick at a given breakpoint now by adding:
+    // settings: "unslick"
+    // instead of a settings object
+  ]
+      });
+   
+    });
+   
+ </script>

@@ -1,0 +1,496 @@
+  <script> 
+    $(document).ready(function(){ 
+      function alignMetaWithImage(){
+        $('.meta-article').css('top','0');
+        if($(window).width() > 768)  {
+       var align = $('.image-placeholder-cover').offset().top +  $('.image-placeholder-cover').outerHeight() ;
+       var positionMeta = $('.meta-article').offset().top + $('.meta-article').outerHeight(); 
+       var newalign = align - positionMeta;
+         //console.log(newalign + " is " +  align + " " + positionMeta );
+       $('.meta-article').css('position','relative').css('top', newalign + "px");
+        }
+        else { 
+          $('.meta-article').css('top',0);
+        }
+               $('.meta-article').css('opacity','1');
+
+      }
+      
+      function cloneBlockQuote(){ 
+        if($(window).width() > 1024 && $('.blog_lists_main').is(':visible'))  {
+                 
+         let widthUl = $('.blog_lists_main .ul-class').width();
+         $('.article-new_main.article-center').css('width', widthUl ); 
+ 
+               }
+        else { 
+        $('.article-new_main.article-center').css('width', 'auto' ); 
+
+        }
+       if($(window).width() > 768)  {
+      
+
+         if($('.blockquote.clone blockquote').length <= 0){
+       $('.rte.article_cont blockquote').hide().clone().appendTo('.blockquote.clone').show();
+         }
+         else { 
+            $('.rte.article_cont blockquote').hide();
+         }
+       }
+        else { 
+          $('.article-new_main.article-center').css('width', 'auto' ); 
+          $('.rte.article_cont blockquote').show();
+        }
+      }
+      
+      function emailCourse(){
+      $('.article_emails').appendTo('.email-course');
+      }
+      
+      
+      {% if article.content contains "<!-- email-course" %}
+       emailCourse();
+      {% endif %}
+      
+      cloneBlockQuote();
+      alignMetaWithImage();
+      
+      $(window).resize(function(){
+      cloneBlockQuote();
+      alignMetaWithImage();        
+        
+      })
+    }) 
+  </script>
+
+{% include 'blog-filters' %}
+
+{% include 'blog-filters-mob' %}
+
+<!-- /templates/article.liquid -->
+{% comment %}
+
+  Comments will not appear right after they are submitted, either to be checked for spam
+  or to await moderation. When a comment is submitted, the browser is redirected to a page
+  that includes the new comment id in its URL.
+    Example: http://shopname.myshopify.com/blogs/news/2022072-my-post?comment=3721372
+
+  More information:
+    - http://docs.shopify.com/themes/liquid-variables/comment
+
+{% endcomment %}
+
+{% assign number_of_comments = article.comments_count %}
+
+{% comment %}
+  If a comment was just submitted and it has no blank fields, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+<div class="grid--full article-new">
+  <div class="article-new_main article-center">
+    <div class="article-new-left">
+      <div class="article-new_main_left">
+        {% include "breadcrumb" %}
+
+        <div class="Tags_blog Tags_blog-article large--hide">
+         
+              {% for i in (1..10) %}
+
+                  {% capture blog_filter %}Blog_filter_text_{{ i }}{% endcapture %}  
+                  {% capture blog_filter_img %}Blog_filter_img_{{ i }}{% endcapture %}
+                  {% assign filter_tag = settings[blog_filter] %}
+
+                    {% for tag in article.tags %}
+          			 {% if forloop.first == true %}
+                      {% if tag == filter_tag %} 
+          				{% if settings[blog_filter] != blank %}
+                          <li>
+                            <img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload"/>
+                            <span>{{ settings[blog_filter] }}</span>
+                          </li>
+          				{% endif %}
+                      {% endif %}  
+          			 {% endif %} 
+                    {% endfor %}
+                {% endfor %}
+         
+        </div>
+        
+        
+        <div class="display-table-cell">
+          <h1 class="article_tie">
+            {{ article.title }}
+          </h1>
+          <div class="medium-up--hide">
+              {% capture date %}
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+            {{ article.published_at | date: format: 'month_day_year' }}
+          </time>
+          {% endcapture %}
+
+          <p class="light h6-article">
+            {% assign d = article.published_at | date: "%-d" %}
+            {% case d %}
+              {% when "1" or "21" or "31" %}{{ d }}st
+              {% when "2" or "22" %}{{ d }}nd
+              {% when "3" or "23" %}{{ d }}rd
+              {% else %}{{ d }}th
+            {% endcase %}
+            {{ article.published_at | date: "%B %Y" }}
+            
+            {% comment %}
+            {{ "blogs.article.author_on_date_html" | t: author: author, date: date }}
+            {% endcomment %}
+          </p>
+          </div>
+     {% include 'meta-article' %}
+        </div>
+      </div>
+    </div>
+    <div class="article-new-right">
+      {% if article.image %}
+      {% assign image = article.image %}
+
+      {% include "attribute-image-box-ratio" %}
+
+      {% include "filter-rias-img-url" input: image %}
+      {% assign image_url = output %}
+
+      <div class="image-placeholder-cover box-ratio article-feature-image" style="padding-bottom: {{ image_box_ratio }};">
+        <img
+             data-src="{{ image_url }}"
+             data-ratio="{{ image.aspect_ratio }}"
+             data-sizes="auto"
+             alt="{{ image.alt | escape }}"
+             data-parent-fit="cover"
+             class="lazyload lazyload-fade">
+
+        <noscript>
+          <img data-src="{{ image | img_url: '1200x' }}" alt="{{ image.alt | escape }}" class="lazyload">
+        </noscript>
+      </div>
+      {% endif %}
+
+      {% unless article.image %}
+      <hr  class="text-max-width hr--center">
+      {% endunless %}
+      {% comment %}
+      <div class="article-image-section">
+        <div class="article-image-section-newletter">
+          {% if settings.Article_Join_image != blank %}
+            <img data-src="{{ settings.Article_Join_image | img_url : 'master' }}" class="lazyload">
+          {% endif %}
+          
+          {% if settings.Article_Join_heading %}
+            <h2>{{ settings.Article_Join_heading }}</h2>
+          {% endif %}
+          
+          {% if settings.Article_Join_order %}
+          <h3 class="para_uk">{{ settings.Article_Join_order }}</h3>
+          {% endif %}
+           {% if settings.Article_Join_order_non_uk %}
+          <h3 class="para_non_uk">{{ settings.Article_Join_order_non_uk }}</h3>
+          {% endif %}
+          
+          {% if settings.Article_Join_cir_para %}
+            <p>{{ settings.Article_Join_cir_para }}</p>
+          {% endif %}
+          
+          
+          {% if settings.Article_Join_chk_text != blank %}
+            <span class="news_check-aritl"><input type="checkbox"> <i>{{ settings.Article_Join_chk_text }}</i></span>
+          {% endif %}
+          
+          <div class="article_emails">
+            {% comment %} {% include 'email-signup' %} {% endcomment %}
+            {% comment %} <div class="klaviyo-form-MFbG3B"></div> {% endcomment %}
+            {% include 'klaviyo-footer-selector', article: true %} 
+            
+          </div>
+        </div>
+        
+        <div class="more-articles-sidebar">
+          <h2> More articles </h2>
+          <ul class="more-article-list">
+          {% for article in blog.articles limit: 5 %}
+            <li>
+              <a href="{{ article.url }}" title="{{ article.title | escape }}"> {{ article.title | escape }}</a>
+            </li>
+          {% endfor %}
+          </ul>
+        </div>
+        
+        {% comment %}
+       {% assign related_product = settings.products_featured_collection %}
+       {% assign upper_related_product = related_product | upcase %}
+         <div class="article-image-section-product">
+         
+          <h2>HAVE YOU TRIED?</h2>
+           {% for image in all_products[upper_related_product].images %}
+
+             <img data-src=" {{ image | img_url : 'master' }} " class="lazyload">
+
+           {% endfor %}
+         
+          <h3>{{ all_products[upper_related_product].title }}</h3>
+          <div class="product_meta-info">
+             {{ all_products[upper_related_product].metafields["global"]["product-info"] }}
+          </div>
+          <a class="btn" href="{{ all_products[upper_related_product].url }}">SHOP NOW</a>
+           
+        </div>
+        
+        {% endcomment %}
+      </div>
+      {% endcomment %}
+  </div>
+  </div>
+
+     <div class="article-center main-article">
+        	<article class="article_contes" itemscope itemtype="http://schema.org/Article">
+    <div class="rte article_cont" itemprop="articleBody">
+      {{ article.content | replace: '<!-- email-course:sleep -->', "<div class='email-course email-course-sleep'></div>" }}
+       
+      
+    </div>
+               {% if article.content contains "<!-- email-course" %}
+      <div class="article_emails">
+         {% if article.content contains "<!-- email-course:sleep -->" %}
+            {% include 'klaviyo-footer-selector', article: true, typeoflist: 'sleep' %} 
+         {% elsif article.content contains "<!-- email-course:fasting -->" %}
+           {% include 'klaviyo-footer-selector', article: true, typeoflist: 'fasting' %} 
+         {% elsif article.content contains "<!--email-course:sexualwellness --> %}
+         {% include 'klaviyo-footer-selector', article: true, typeoflist: 'sexualwellness' %} 
+         {% endif %}
+        
+        </div>
+            {% endif %}  
+
+          <div class="arti_shares">
+            <ul>
+              <li><a href="">SHARE</a></li>
+              <li>
+                <a href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ product.url }}&text={{ product.title }}" target="_blank" class='twitter'>
+                  <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ product.url }}" target="_blank" class='facebook'>
+                  <i class="fa fa-facebook" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:?subject=Liveinnermost&amp;body={{ shop.url }}{{ product.url }}" title="Share by Email">
+                  <i class="fa fa-envelope" aria-hidden="true"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+    {% comment %}
+      Show off meta information like comments and tags.
+    {% endcomment %}
+          {% comment %}
+    <ul class="inline-list">
+      {% include 'tags-article' %}
+    </ul>
+{% endcomment %}
+    {% comment %}
+      Create links to the next and previous articles, if available.
+    {% endcomment %}
+    {% if blog.next_article or blog.previous_article %}
+     {% comment %}
+      <p class="clearfix">
+        {% if blog.previous_article %}
+          <span class="left">
+            {{ 'blogs.article.older_post' | t | link_to: blog.previous_article }}
+          </span>
+        {% endif %}
+        {% if blog.next_article %}
+          <span class="right">
+            {{ 'blogs.article.newer_post' | t | link_to: blog.next_article }}
+          </span>
+        {% endif %}
+      </p>
+           {% endcomment %}
+    {% endif %}
+
+    {% if blog.comments_enabled? %}
+      <hr>
+      <h3 class="arti_comments">
+        {{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}
+      </h3>
+      <hr>
+      {% comment %}
+        Just like blog.liquid page, define how many comments should be on each page.
+      {% endcomment %}
+      {% paginate article.comments by 5 %}
+        {% comment %}
+          #comments is required, it is used as an anchor link by Shopify.
+        {% endcomment %}
+        <div id="comments">
+          {% if comment and comment.created_at %}
+            <p class="note form-success">
+              {% if blog.moderated? %}
+                {{ 'blogs.comments.success_moderated' | t }}
+              {% else %}
+                {{ 'blogs.comments.success' | t }}
+              {% endif %}
+            </p>
+          {% endif %}
+
+          {% if number_of_comments > 0 %}
+            <ul class="no-bullets">
+              {% comment %}
+                Show the comments.
+              {% endcomment %}
+              {% for comment in article.comments %}
+                <li id="{{ comment.id }}" class="comment{% unless number_of_comments > article.comments_count %}{% if forloop.first %} first{% endif %}{% endunless %}{% if forloop.last %} last {% endif %}">
+                  {% include 'comment' %}
+                </li>
+
+                {% unless forloop.last %}
+                  <li><hr></li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+
+            {% if paginate.pages > 1 %}
+              <hr>
+              <div class="pagination">
+                {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+              </div>
+            {% endif %}
+
+            <hr>
+          {% endif %}
+
+          {% comment %}
+            Comment submission form
+          {% endcomment %}
+          <div class="text-center">
+            <button id="AddCommentTitle" class="btn">{{ 'blogs.comments.title' | t }}</button>
+          </div>
+          <div class="form-vertical">
+            {% form 'new_comment', article %}
+
+              {% comment %}
+                #AddCommentTitle is used simply as an anchor link
+              {% endcomment %}
+              
+              {{ form.errors | default_errors }}
+              <div class="grid">
+                <div class="grid__item large--one-half">
+                  <label for="CommentAuthor" class="hidden-label">{{ 'blogs.comments.name' | t }}</label>
+                  <input type="text" name="comment[author]" id="CommentAuthor" class="input-full{% if form.errors contains 'author' %} error{% endif %}" placeholder="{{ 'blogs.comments.name' | t }}" value="{{ form.author }}" autocapitalize="words">
+                </div>
+                <div class="grid__item large--one-half">
+                  <label for="CommentEmail" class="hidden-label">{{ 'blogs.comments.email' | t }}</label>
+                  <input type="email" name="comment[email]" id="CommentEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'blogs.comments.email' | t }}" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+                </div>
+                <div class="grid__item large--one-whole">
+                  <label for="CommentBody" class="hidden-label">{{ 'blogs.comments.message' | t }}</label>
+                  <textarea name="comment[body]" id="CommentBody" class="input-full{% if form.errors contains 'body' %} error{% endif %}" placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+                </div>
+              </div>
+
+              {% if blog.moderated? %}
+                <p>{{ 'blogs.comments.moderated' | t }}</p>
+              {% endif %}
+
+              <button type="submit" class="btn arti_bTn">{{ 'blogs.comments.post' | t }}</button>
+
+              {% comment %}
+                Assign variable to be used after ira.init() is run in theme.liquid
+              {% endcomment %}
+              {% if form.errors %}
+                {% assign newHash = 'AddCommentTitle' %}
+              {% endif %}
+
+              {% if form.posted_successfully? %}
+                {% assign newHash = 'Comments' %}
+              {% endif %}
+            {% endform %}
+          </div>
+        </div>
+          
+          {% comment %}
+          <p class="clearfix margin_artic">
+            {% if blog.previous_article %}
+            <span class="left arti_lEFT">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i>
+              <a href="{{ blog.previous_article }}" title="">PREVIOUs</a>
+           {% comment %}   {{ 'blogs.article.older_post' | t | link_to: blog.previous_article }}  {% endcomment %}
+            </span>
+            {% endif %}
+            {% if blog.next_article %}
+            <span class="right arti_RIGHT">
+              <a href="{{ blog.next_article }}" title="">Next</a>
+              <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            {% comment %}  {{ 'blogs.article.newer_post' | t | link_to: blog.next_article }} {% endcomment %}
+            </span>
+            {% endif %}
+          </p>
+          {% endcomment %}
+      {% endpaginate %}
+    {% endif %}
+  </article>
+    </div>
+       
+
+
+{% comment %}
+<div class="blog_playlist">
+  <h2>RELATED ARTICLES</h2>
+  <div class="ambassadors_bottom_main ambassadors_bottom_main-blog">
+    {% for article in blog.articles limit: 4 %}
+      <div class="grid__item medium-down--one-third large--one-quarter article">
+        <div class="blog_image">
+          <a href="{{ article.url }}" title="{{ article.title | escape }}"> 
+            {% if article.image %}
+              <img data-src="{{ article.image | img_url: 'grande_cropped' }}" alt="{{ article.title | escape }}" />
+            {% else %}
+              {% if article.content contains "<img " %}
+                {% assign src = article.content | split: 'src="' %}
+                {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:' %}
+                  <img data-src="{{ src }}" alt="{{ article.title | escape }}" class="lazyload" />
+              {% endif %}    
+            {% endif %}
+          </a>
+        </div>
+        <div class="blog_details">
+          
+          <a href="{{ article.url }}"><h4 class='featured-blog__title'>{{ article.title }}</h4></a>
+          <div class="tags_blog">
+            <ul class="inline-list">
+             {% for i in (1..10) %}
+
+                  {% capture blog_filter %}Blog_filter_text_{{ i }}{% endcapture %}  
+                  {% capture blog_filter_img %}Blog_filter_img_{{ i }}{% endcapture %}
+                  {% assign filter_tag = settings[blog_filter] %}
+
+
+                    {% for tag in article.tags %}
+                      {% if tag == filter_tag %} 
+                        <li>
+                          <img data-src="{{ settings[blog_filter_img] | img_url: '600x' }}" class="lazyload"/>
+                          <span>{{ settings[blog_filter] }}</span>
+                        </li>
+                      {% endif %}         
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+          </div>
+            {% if section.settings.enable_blog_author %}
+              <p class="author">{{ 'blogs.article.author_by_html' | t: author : article.author }}</p>
+            {% endif %}
+
+        </div>
+  	  </div>
+    {% endfor %}
+  </div>
+</div>
+{% endcomment %}
+

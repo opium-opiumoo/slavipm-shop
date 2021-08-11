@@ -1,0 +1,100 @@
+{% render 'refer-a-friend-values-html' %}
+
+{% schema %}
+{
+  "name": "Icons",
+  "settings": [
+    {
+       "type": "range",
+       "id": "padding_vertical",
+       "min": 0,
+       "max": 100,
+       "step": 1,
+       "unit": "px",
+       "label": "Vertical Padding",
+	   "default": 20
+    },   
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+	{
+      "type": "range",
+      "id": "title-font",
+      "min": 30,
+      "max": 110,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 54
+    },
+	{
+		"type": "text",
+		"id": "sign_login_button",
+		"label": "Block Button"
+	},
+	{
+		"type": "url",
+		"id": "sign_login_button_url",
+		"label": "Block Button Url"
+	}
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Value Image"
+        },
+        {
+          "type": "textarea",
+          "id": "icon_svg_code",
+          "label": "SVG Code"
+        },
+        {
+          "type": "text",
+          "id": "icon_svg_link",
+          "label": "SVG Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_img",
+          "label": "Icon Image"
+        },
+        {
+          "type": "header",
+          "content": "Meta Texts"
+        },
+        {
+          "type": "text",
+          "id": "icon_subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "textarea",
+          "id": "icon_subtext",
+          "label": "Subtext"
+        },
+		{
+		  "type": "checkbox", 
+		  "id" :  "show_star",
+		  "label": "Show star?",
+		  "default" : false
+		}
+      ]
+    },
+    {
+      "type": "row-end",
+      "name": "Row End"
+    }
+  ]
+}
+{% endschema %}

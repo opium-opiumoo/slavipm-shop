@@ -1,111 +1,262 @@
+<!-- /templates/search.liquid -->
+{% comment %}
+
+  To return only products or pages in results:
+    - http://docs.shopify.com/manual/configuration/store-customization/return-only-product-in-storefront-search-results
+    - Or manually add type=product or type=page to the search URL as a parameter
+
+{% endcomment %}
+
+{% comment %}
+  Set grid_results to true and set search results as a grid instead of a list.
+  This works well when your search is only for products.
+  [update: Jan 2021] redesign search page - show products in grid; the articles - in their grid snippet
+{% endcomment %}
+{% assign grid_results = false %}
+
+{% comment %} returns array blog_main_tags with - fitness health lifestyle etc.  {% endcomment %}
+{% include 'blog-main-tags' %}
+
+{% comment %}
+  Avoid accessing search.results before the opening paginate tag.
+  If you do, the pagination of results will be broken.
+{% endcomment %}
 {% paginate search.results by 10 %}
+    <div class="grid--full text-max-widths search_templates">
+      <div class="search_templates_hero">
+        <div class="text-center content-wrapper--horizontal section-header">
+          <div class="display-table-cell">
 
-<div class="page-width">
-  {% if search.performed == false %}
-    <div class="text-center">
-      <h1 class="h2">{{ 'general.search.title' | t }}</h1>
-  {% else %}
-    <div class="text-center">
-      <h1 class="h2">
-        <span class="visually-hidden">{{ 'general.search.heading' | t: count: search.results_count }}:</span>
-        {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
-      </h1>
-  {% endif %}
-      <div class="grid">
-        <div class="grid__item medium-up--six-tenths medium-up--push-two-tenths">
-          {% if search.performed and search.results_count == 0 %}
-            <div class="rte search--no-results-found">
-              <p>{{ 'general.search.no_results' | t }}</p>
-            </div>
+          {% comment %} <!-- head title -->
+          {% if search.performed %}
+            {% if search.results_count == 0 %}
+              <h1 class="text-center">{{ 'general.search.no_results_html' | t: terms: search.terms }}</h1>
+            {% else %}
+              <h1 class="text-center"> Search Results</h1>
+            {% endif %}
+          {% else %}
+            <h1 class="text-center">{{ 'general.search.title' | t }}</h1>
           {% endif %}
-          <form action="{{ routes.search_url }}" method="get" role="search" class="search-form search-page-form">
-            <div class="input-group input-group--nowrap">
-              <div class="input-group__field input-group__field--connected search-form__input-wrapper">
-                <input
-                  type="search"
-                  name="q"
-                  value="{{ search.terms | escape }}"
-                  placeholder="{{ 'general.search.placeholder' | t }}"
-                  role="combobox"
-                  aria-autocomplete="list"
-                  aria-owns="predictive-search-results"
-                  aria-expanded="false"
-                  aria-label="{{ 'general.search.placeholder' | t }}"
-                  aria-haspopup="listbox"
-                  class="search-form__input"
-                  data-search-page-predictive-search-input
-                  data-base-url="{{ routes.search_url }}"
-                />
+          {% endcomment %}
 
-                <input type="hidden" name="options[prefix]" value="last" aria-hidden="true" />
+            <form action="/search" method="get" class='search-bar search-page' role="search">
+               <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" class="grid__item search-page--input" aria-label="{{ 'general.search.placeholder' | t }}">
+               <button class="innermost_front_btn btn create_button" type="submit">{{ 'general.search.submit' | t }}</button>
+            </form>
 
-                <button type="reset" class="search-form__clear-action" aria-label="{{ 'general.search.clear_search_term' | t }}" data-search-page-predictive-search-clear>
-                  {% include 'icon-close' %}
-                </button>
-
-                <div class="predictive-search-wrapper" data-predictive-search-mount="default"></div>
-              </div>
-
-              <button type="submit" class="search-form__connected-submit" aria-label="{{ 'general.search.submit' | t }}" data-search-page-predictive-search-submit>
-                {% include 'icon-search' %}
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-  </div>
-</div>
-
-
-{% if search.performed %}
-  {% if search.results_count > 0 %}
-    <hr aria-hidden="true" />
-  {% endif %}
-
-  <h2 class="visually-hidden">{{ 'general.search.heading' | t: count: search.results_count }}</h2>
-
-  <ul class="page-width list-view-items">
-    {% for item in search.results %}
-      <li class="list-view-item">
-        {% if item.object_type == 'product' %}
-          {% include 'product-card-list', product: item %}
-        {% else %}
-          <div class="product-card product-card--list">
-            <a href="{{ item.url }}" class="full-width-link">
-              <span class="visually-hidden">{{ item.title }}</span>
-            </a>
-            <div class="list-view-item__link">
-              <div class="list-view-item__image-column">
-                <div class="list-view-item__image-wrapper product-card__image-wrapper">
-                  {% unless item.image == null %}
-                    <img class="list-view-item__image" src="{{ item.image.src | img_url: '600x600' }}" alt="{{ item.image.alt | escape }}">
-                  {% endunless %}
-                </div>
-              </div>
-
-              <div class="list-view-item__title-column">
-                <div class="list-view-item__title" aria-hidden="true">
-                  <span class="product-card__title">{{ item.title }}</span>
-                </div>
-                <div>
-                  {% if item.published_at %}{{ item.published_at | date: format: "date" }} &#8212; {% endif %}
-                  {{ item.content | strip_html | truncate: 200 }}
-                </div>
-              </div>
+        {% if search.performed %}
+          {% if search.results_count > 0 %}
+          <hr class='hr--center'>
+          {% endif %}
+      
+          {% liquid
+            assign search_results_products_count = 0
+            assign search_results_articles_count = 0
+            assign search_results_other_count = 0
+            for item in search.results
+              if item.object_type == "product"
+                if item.tags contains 'hide-free'
+                  continue
+                endif
+      
+                assign search_results_products_count = search_results_products_count | plus: 1
+              elsif item.object_type == "article"
+                assign search_results_articles_count = search_results_articles_count | plus: 1
+              else
+                assign search_results_other_count = search_results_other_count | plus: 1
+              endif
+            endfor
+          %}
+      
+          {% comment %} PRODUCT RESULTS {% endcomment %}
+          {% if search_results_products_count > 0 %}
+            <div class="search-result-subsection-title__wrapper">
+              <h2 class="search-result-subsection-title">Products</h2>
             </div>
+            <div class="search-result-subsection-grid grid--full grid--products collection_main_new">
+              {% for item in search.results %}
+                {% if item.object_type == "product" %}
+                  {% if item.tags contains 'hide-free' %}
+                    {% continue %}
+                  {% endif %}
+              
+                  {% assign fit_image_class = 'grid__item--variable-height grid__image' %}
+                  {% include 'product-grid-item', product: item %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          {% comment %} ARTICLE RESULTS {% endcomment %}
+          {% if search_results_articles_count > 0 %}
+            <div class="search-result-subsection-title__wrapper">
+              <h2 class="search-result-subsection-title">Insight</h2>
+            </div>
+            <div class="search-result-subsection-grid grid--full ambassadors_bottom-blog masonry-grid-cb article_wrapper masonry-row wrapper">
+              {% for item in search.results %}
+                {% if item.object_type == "article" %}
+                  {% include 'blog-article-grid-item', article: item %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+      
+          {% comment %} OTHER types RESULTS {% endcomment %}
+          {% comment %}
+          There are some other type of search result items (different from product or article) like "page"
+          <div class="search-result-subsection-grid grid--full ">
+            {% for item in search.results %}
+              {% unless item.object_type == "product" or item.object_type == "article" %}
+                  <div class="grid__item one-third">
+                    <h3>{{ item.title | link_to: item.url }}</h3>
+                    <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+                  </div>
+              {% endunless %}
+            {% endfor %}
           </div>
+          {% endcomment %}
+          
+          
+      
+{% comment %}
+          <div class="grid--full">
+            {% for item in search.results %}
+              {% comment %}
+                Check if the product is on sale and set a variable to be used below.
+              {% endcomment %}
+              {% assign on_sale = false %}
+              {% if item.compare_at_price > item.price %}
+                {% assign on_sale = true %}
+              {% endif %}
+              {% comment %}
+                Check if the product is sold out and set a variable to be used below.
+              {% endcomment %}
+              {% assign sold_out = true %}
+              {% if item.available %}
+                {% assign sold_out = false %}
+              {% endif %}
+              {% if grid_results == false %}
+                <!-- begin list search results-->
+                <div class="grid__item">
+                  <div class="grid search-result-item">
+                    {% if item.featured_image %}
+                      {% comment %}
+                        We have a featured_image, so it's likely a product
+                      {% endcomment %}
+                      <div class="grid__item one-third">
+                        <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                          {{ item.featured_image.src | img_url: '350x' | img_tag: item.featured_image.alt }}
+                        </a>
+                      </div>
+                    {% endif %}
+
+
+                    {% if item.image and item.object_type == 'article' %}
+                      <div class="grid__item one-third">
+                        <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                          {{ item.image | img_url: '350x' | img_tag: item.image.alt }}
+                        </a>
+                      </div>
+                    {% endif %}
+                    {% comment %}
+                      If we don't have a featured_image, add a push-- class to keep the alignment the same
+                    {% endcomment %}
+                    <div class="grid__item two-thirds {% unless item.featured_image or item.image %}push--one-third{% endunless %}">
+                      <h3>{{ item.title | link_to: item.url }}</h3>
+                      {% if item.price %}
+                        <p>
+                          {% comment %}
+                            You can show a leading 'from' or 'up to' by checking 'product.price_varies'
+                            if your variants have different prices.
+                          {% endcomment %}
+                          {% if on_sale %}
+                            <s style="color:red; padding-right: 5px;">{{ item.compare_at_price | money }}</s>
+                          {% endif %}
+                          {% if on_sale %}
+                            {% if item.price_varies %}
+                              {% assign sale_price = item.price | money %}
+                              {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                            {% else %}
+                              <span itemprop="price" style="font-weight: bold;">{{ item.price | money }}</span>
+                            {% endif %}
+                          {% else %}
+                            {% if item.price_varies %}
+                              {% assign price = item.price | money %}
+                              <span itemprop="price" style="font-weight: bold;">{{ 'products.general.from_text_html' | t: price: price }}</span>
+                            {% else %}
+                              <span itemprop="price" style="font-weight: bold;">{{ item.price | money }}</span>
+                            {% endif %}
+                          {% endif %}
+                          {% if sold_out %}
+                            <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                          {% endif %}
+                        </p>
+                      {% endif %}
+                      {% comment %}
+                        Get a brief excerpt of raw text from the page/product
+                      {% endcomment %}
+                      <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+                    </div>
+                  </div>
+                  {% unless forloop.last %}<hr>{% endunless %}
+                </div>
+                <!-- //list search results-->
+              {% else %}
+                <!-- begin grid search results-->
+                <div class="grid__item search-result large--one-third medium--one-third grid__image">
+                  {% if item.featured_image %}
+                  <div class="cell-wrapper">
+                    <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                      {{ item.featured_image.src | img_url: 'large' | img_tag: item.featured_image.alt }}
+                    </a>
+                    </div>
+                  {% endif %}
+                  <h5>{{ item.title | link_to: item.url }}</h5>
+                  {% if item.price %}
+                    <p>
+                      {% if on_sale %}
+                        {% if item.price_varies %}
+                          {% assign sale_price = item.price | money %}
+                          {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                        {% else %}
+                          <strong>{{ 'products.product.on_sale' | t }}</strong>
+                          <span itemprop="price">{{ item.price | money }}</span>
+                        {% endif %}
+                      {% else %}
+                        {% if item.price_varies %}
+                          {% assign price = item.price | money %}
+                          <span itemprop="price">{{ 'products.general.from_text_html' | t: price: price }}</span>
+                        {% else %}
+                          <span itemprop="price">{{ item.price | money }}</span>
+                        {% endif %}
+                      {% endif %}
+                      {% if sold_out %}
+                        <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                      {% endif %}
+                      {% if on_sale %}
+                        <br><s>{{ item.compare_at_price | money }}</s>
+                      {% endif %}
+                    </p>
+                  {% else %}
+                    <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+                  {% endif %}
+                </div>
+                <!-- //grid search results-->
+              {% endif %}
+            {% endfor %}
+          </div>
+{% endcomment %}
+
+          {% if paginate.pages > 1 %}
+            <hr>
+            <div class="pagination">
+              {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+            </div>
+          {% endif %}
+
         {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-
-  {%- if paginate.pages > 1 -%}
-    {% include 'pagination', paginate: paginate %}
-  {%- endif -%}
-{% endif %}
-
-{% if search.results_count < 2  %}
-  <div class="search--less-than-2-results"></div>
-{% endif %}
-
+      </div>
 {% endpaginate %}

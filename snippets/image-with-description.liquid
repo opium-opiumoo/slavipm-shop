@@ -1,0 +1,52 @@
+{% assign columns = 0 %}
+{% if product.metafields.image-description1 != blank %}
+{% assign columns = columns | plus: 1 %}
+{% endif %}
+{% if product.metafields.image-description2 != blank %}
+{% assign columns = columns | plus: 1 %}
+{% endif %}
+{% if product.metafields.image-description3 != blank %}
+{% assign columns = columns | plus: 1 %}
+{% endif %}
+{% assign columnClass = "" %}
+{% if columns == 1 %}
+{% assign columnClass = 'one-whole' %}
+{% elsif columns == 2 %}
+{% assign columnClass = 'one-half' %}
+{% elsif columns >= 3  %}
+{% assign columnClass = 'one-third' %}
+{% endif %}
+
+<div class="image-with-text-holder">
+  <div class="image-inside grid">
+  {% if columns > 0 %}
+  {% for field in product.metafields.image-desc-title %}
+  <div class="image-desc-title h6 text-center grid__item one-whole">{{ field | last }}</div>
+  {% endfor %}
+  {% endif %}
+{% for field in product.metafields.image-description1 %}
+<div class="padding-bottom--xlg2 padding-top--xlg2 grid__item {{ columnClass }}">
+  <div class="image-descirption-holder text-center">
+    <img data-src="{{ field | last | split: '*text' | first | split: '.jpg' | join: '_x100.jpg' | split: '.png' | join: '_x100.png' }}" class="image-description-image lazyload"/>
+    <p class="image-description-text">{{ field | last | split: '*text' | last }}</p>
+  </div>	
+</div>
+{% endfor %}
+{% for field in product.metafields.image-description2 %}
+<div class="padding-bottom--xlg2 padding-top--xlg2 grid__item {{ columnClass }}">
+  <div class="image-descirption-holder text-center">
+    <img data-src="{{ field | last | split: '*text' | first | split: '.jpg' | join: '_x100.jpg' | split: '.png' | join: '_x100.png' }}" class="image-description-image lazyload"/>
+    <p class="image-description-text">{{ field | last | split: '*text' | last }}</p>
+  </div>	
+</div>
+{% endfor %}
+{% for field in product.metafields.image-description3 %}
+<div class="padding-bottom--xlg2 padding-top--xlg2 grid__item {{ columnClass }}">
+  <div class="image-descirption-holder text-center">
+    <img data-src="{{ field | last | split: '*text' | first | split: '.jpg' | join: '_x100.jpg' | split: '.png' | join: '_x100.png'  }}" class="image-description-image lazyload"/>
+    <p class="image-description-text">{{ field | last | split: '*text' | last }}</p>
+  </div>	
+</div>
+{% endfor %}
+</div>
+</div>

@@ -1,0 +1,53 @@
+<div class="about-values icons-text__wrapper"{% if section.settings.background %} style="padding-top: {{ section.settings.padding_vertical }}px; padding-bottom: {{ section.settings.padding_vertical }}px; background-color: {{ section.settings.background }};"{% endif %}>
+  <div class="icons-text__inner">
+    {% if section.settings.title != blank %}
+    <div class="icons-text__heading refer-a-friend-icons" data-aos="fade-in">
+      <h2 class="heading-small" style="font-size:{{ section.settings.title-font }}px; line-height:{{ section.settings.title-font }}px">{{ section.settings.title }}</h2>
+    </div>
+	{% endif %}
+    
+    {% if section.blocks.size > 0 %}
+    <div class="icons__wrapper big-wrapper">
+      <div class="grid" data-aos="fade-in">
+      {% for block in section.blocks %}
+        
+      {% if block.type == 'value' %}
+      <div class="grid__item large--one-third custom-medium--one-half icon-block small--text-center ref-icon {% unless forloop.last %} medium-down--margin-bottom-medium {% endunless %}">
+		<div class="icon__wrapper icon__wrapper-ref">
+          {% if block.settings.icon_svg_code != blank %}
+          	{{ block.settings.icon_svg_code }}
+          
+          {% elsif block.settings.icon_svg_link != blank %}
+          	<img data-src="{{ block.settings.icon_svg_link }}" class="lazyload" >
+          {% elsif block.settings.icon_img != blank %}
+          	<img data-src="{{ block.settings.icon_img | img_url: 'x175' }}" class="lazyload" >
+          {% endif %}
+        </div>
+        
+        {% if block.settings.icon_subheading != blank or block.settings.icon_subtext != blank %}
+        <div class="icon__meta">
+          {% if block.settings.icon_subheading != blank %}
+          <div class="icon__meta-subheading h5 ref-friend-meta">{{ block.settings.icon_subheading }}</div>
+          {% endif %}
+          {% if block.settings.icon_subtext != blank %}
+          <div class="icon__meta-subtext">{{ block.settings.icon_subtext }}{% if block.settings.show_star %}<span class="star-custom">*</span>{% endif %}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+        
+      </div>
+        
+      
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+        {% endif %}
+    
+</div>
+    {% if section.settings.sign_login_button %}
+    <div class="refer-a-friend-btn myMargin">
+      <a href="{{ section.settings.sign_login_button_url }}" class="innermost_front_btn btn second-btn">{{ section.settings.sign_login_button }}</a>
+    </div>
+    {% endif %}
+</div>

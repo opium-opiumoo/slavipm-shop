@@ -1,0 +1,109 @@
+<div class="marquee-wrapper blog-marquee">
+	<ul id="marquee_crawler" class="marquee marquee-1" aria-hidden="true" onmouseover="this.stop()" onmouseout="this.start()">
+        {% for block in section.blocks %}
+          {% assign article = articles[block.settings.featured_article] %}
+          <li>
+            <a href="{{ article.url }}" class="marquee-item">
+              {% if block.settings.custom_title != blank %}
+                {{ block.settings.custom_title }}
+              {% else %}
+                {{ article.title }}
+              {% endif %}
+            </a>
+          </li>
+        {% endfor %}
+	</ul>
+</div>
+
+{% comment %} The main script 'marquee_crawler.js' is included in templates/blog.liquid
+{{ 'marquee_crawler.js'  | asset_url | script_tag     }}
+{% endcomment %}
+
+<script type="text/javascript">
+marqueeInit({
+	uniqueid: 'marquee_crawler',
+	style: {
+		'padding': '0px',
+		'width': '100%',
+		//'height': '180px'
+	},
+    inc: {{ section.settings.marquee_speed }}, //speed - pixel increment for each iteration of this marquee's movement
+	mouse: 'pause', //mouseover behavior ('pause' 'cursor driven' or false)
+	moveatleast: 2,
+	neutral: 150,
+	savedirection: true,
+	random: true
+});
+</script>
+
+{% comment %}
+<script>
+  $(document).ready(function(){
+  // polyfill
+    window.requestAnimationFrame = (function(){
+      return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+    })();
+
+    var speed = 3000;
+    (function currencySlide(){
+      var first_el = $(".marquee").find("li:first");
+      if(first_el.width() + first_el.offset().left < 0){
+        first_el.remove().appendTo($(".marquee"));
+      }
+      
+      var currencyPairWidth = $('.marquee').find('li:first').outerWidth();
+      $(".marquee").animate({marginLeft:-currencyPairWidth},speed, 'linear', function(){
+                $(this).css({marginLeft:0}).find("li:last").after($(this).find("li:first"));
+      });
+      
+      requestAnimationFrame(currencySlide);
+    })();
+  })
+</script>
+{% endcomment %}
+
+{% schema %}
+  {
+    "name": "Featured articles slider",
+    "settings": [
+	  {
+		"type": "range",
+		"id": "marquee_speed",
+		"label": "Speed",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+		"default": 3 
+	  }
+    ],
+    "blocks": [
+      {
+        "type": "FeaturedArticles",
+        "name": "Featured article",
+        "settings": [
+			{
+			  "type": "article",
+			  "id": "featured_article",
+		      "label": "Featured articles"
+			},
+			{
+			  "type": "richtext",
+			  "id": "custom_title",
+		      "label": "Custom articles title"
+			}
+		]
+	  }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

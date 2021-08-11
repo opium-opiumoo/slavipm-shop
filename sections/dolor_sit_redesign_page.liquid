@@ -1,0 +1,110 @@
+{% if section.settings.additional_ctas %}
+	{% include 'dolor_sit_redesign_snip' %}
+{% endif %}
+{% schema %}
+  {
+    "name": "Tailored Nutrition",
+    "settings": [
+      {
+        "type": "text",
+        "id": "str-1",
+        "label": "Staircase Text Row 1"
+      },
+      {
+        "type": "text",
+        "id": "str-2",
+        "label": "Staircase Text Row 2"
+      },
+      {
+        "type": "text",
+        "id": "str-3",
+        "label": "Staircase Text Row 3"
+      },
+	  {
+		"type": "text",
+		"id": "str-mobile",
+		"label": "Heading Mobile"
+	  },
+      {
+        "type": "range",
+        "id": "staircase-text-font-size-desktop",
+        "label": "Staircase Text Font-Size Desktop",
+        "min": 20,
+        "max": 120,
+        "step": 1,
+        "unit": "px",
+        "default": 50			
+      },
+      {
+        "type": "range",
+        "id": "staircase-text-font-size-mobile",
+        "label": "Heading Font-Size Mobile",
+        "min": 10,
+        "max": 110,
+        "step": 1,
+        "unit": "px",
+        "default": 18			
+      },	
+      {
+        "type":"color",
+        "id":"dolor_color",
+        "label":"Background Color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color_text",
+        "label":"Text Color",
+        "default": "#525252"
+      },
+      {
+        "type":"textarea",
+        "id":"dolor_subheading",
+        "label":"Paragraph"
+      },
+      {
+        "type": "range",
+        "id": "subtext-font-size-desktop",
+        "label": "Subtext Font-Size Desktop",
+        "min": 10,
+        "max": 110,
+        "step": 1,
+        "unit": "px",
+        "default": 30			
+      },	
+      {
+        "type": "range",
+        "id": "subtext-font-size-mobile",
+        "label": "Subtext Font-Size Mobile",
+        "min": 10,
+        "max": 110,
+        "step": 1,
+        "unit": "px",
+        "default": 19			
+      },
+	  {
+		"type": "url",
+		"id": "link",
+		"label": "Button Link"
+	  },
+	  {
+		"type": "text",
+		"id": "link_text",
+		"default": "Learn More",
+		"label": "Button Text"
+      }
+     ],
+    "presets": [
+      {
+        "name": "Tailored Nutrition New",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

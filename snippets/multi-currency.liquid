@@ -1,0 +1,1321 @@
+{{ "/services/javascripts/currencies.js" | script_tag }}
+{% comment %}
+before custom minify
+{{ "jquery.currencies_SP.min.js" | asset_url | script_tag }}
+{% endcomment %}
+{{ "jquery.currencies_SP-min.js" | asset_url | script_tag }}
+
+
+<style>
+  .currency-picker__wrapper{ z-index: 999; position: relative;}
+  a.cart__checkout{line-height:3.2;}
+</style>
+
+<div class="header-message-currency">
+  <label class="currency-picker__wrapper">
+    <div class="currency-picker-outer">
+      <span class="currency-picker-label">{{ shop.currency }}</span>
+      <select class="currency-picker" name="currencies_SP" style="display: inline; width: auto; vertical-align: inherit;">
+
+      </select>
+    </div>
+  </label>
+</div>
+<!--<label class="currency-picker__wrapper" id="currency_pickgeo" style1="visibility:hidden !important;">
+<span class="currency-picker__label"></span>
+<select class="currency-picker" name="currencies_SP" style="display:inline; width: auto; vertical-align: inherit;">
+</select>
+</label>-->
+
+<span id='shopDomain' hidden>{{ shop.permanent_domain }}</span>
+<span id='cartString' hidden></span>
+<input type="hidden" id='onloadpg' value='1'>
+<script>
+  
+
+  
+  
+  // loyaltylion APP start
+  setInterval(function() {
+    var loyaltylionCurrency = $('select[name=currencies_SP]').val();
+    var loyaltylionElement = $('#loyaltylion .lion-loyalty-widget__body');
+    var loyaltylionPopup = $('#loyaltylion #lion-loyalty-panel-custom-css');
+    var loyaltylionNotification = $('#loyaltylion .lion-notification-container');
+
+    if (loyaltylionCurrency === 'GBP') {
+      loyaltylionElement.fadeIn(300);
+      loyaltylionPopup.fadeIn(300);
+      loyaltylionNotification.fadeIn(300);
+    } else {
+      loyaltylionElement.fadeOut(300);
+      loyaltylionPopup.fadeOut(300);
+      loyaltylionNotification.fadeOut(300);
+    }
+  }, 1000)
+  // loyaltylion APP end
+  
+  Currency_SP.format = 'money_format';
+  Currency_SP.currentCurrency = "{{ shop.currency }}";
+  var getParams = function (url) {
+    var params = {};
+    var parser = document.createElement('a');
+    parser.href = url;
+    var query = parser.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      params[pair[0]] = decodeURIComponent(pair[1]);
+    }
+    return params;
+  };
+  var qry = getParams(window.location.href);
+
+  $.each(qry,function(k,v){
+
+    if(k == 'geoset'){
+      Currency_SP.cookie.write(v);
+
+      createCookie_SP('set_SP_Store',qry['ref'],30);
+
+      var pathname = window.location.href;
+      pathname = pathname.replace('&geoset='+v, '');
+      pathname = pathname.replace('?geoset='+v, '');
+      pathname = pathname.replace('&ref='+qry['ref'], '');
+      window.history.pushState({}, document.title,pathname );
+    }
+  })
+
+  $(document).ready(function(){
+
+    setTimeout(function() {
+      $('#onloadpg').val('0');
+    }, 1000);
+
+    var shop = $('#shopDomain').text();
+
+    $(document).on('click', ".currency-picker-label", function(){
+      $(this).parent().find('select.currency-picker').trigger('onchange');
+    });
+
+    $(".currency-selector-mobile").on("click", ".curr_li", function(){
+      var key = $(this).attr('key');
+      var val = $(this).attr('val');
+      $('select.currency-picker option:eq('+key+')').prop('selected', true).trigger('change'); 
+      $('.icon-close').click();      
+      const url = window.location.href;	
+      setTimeout(() => {	
+        window.open(url,"_self");	
+      }, 500); 	
+  
+    });
+    
+    
+ setTimeout(function(){
+    var dataRaw = '[{"linked_shop":"liveinnermost.myshopify.com","currency":"GBP","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-me.myshopify.com","currency":"USD","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-au.myshopify.com","currency":"AUD","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-us.myshopify.com","currency":"USD","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-eu.myshopify.com","currency":"EUR","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-ca.myshopify.com","currency":"CAD","shop":"liveinnermost.myshopify.com"},{"linked_shop":"innermost-asia.myshopify.com","currency":"USD","shop":"liveinnermost.myshopify.com"}]';
+      var data = JSON.parse(dataRaw);
+    //console.log(data);
+    var opt='';
+        var optmobile = '';
+
+        if (data != '') {
+          $.each(data,function(k,v) {
+            var dis_country =  v.currency;
+            var dis_curr = v.currency;
+
+           
+            if ($.trim(v.linked_shop) == 'liveinnermost.myshopify.com') {
+              dis_country = 'UK'; dis_curr =' UK (GBP)';
+            }
+            if ($.trim(v.linked_shop) == 'innermost-me.myshopify.com') {
+              dis_country = 'Middle East';
+              dis_curr = 'Middle East (USD)';
+            }
+
+            if ($.trim(v.linked_shop) == 'innermost-au.myshopify.com') {
+               dis_country = 'Australia'; dis_curr = 'Australia (AUD)';
+            }
+            if ($.trim(v.linked_shop) == 'innermost-eu.myshopify.com') {
+               dis_country = 'Europe'; dis_curr = ' Europe (EUR)';
+            }
+            if ($.trim(v.linked_shop) == 'innermost-ca.myshopify.com') {
+               dis_country = 'Canada'; dis_curr = 'Canada (CAD)';
+            }
+            if ($.trim(v.linked_shop) == 'innermost-us.myshopify.com') {
+               dis_country = 'US'; dis_curr = 'US (USD)';
+
+            }
+            if ($.trim(v.linked_shop) == 'innermost-asia.myshopify.com') {
+               dis_country = 'Singapore'; dis_curr = 'Singapore (USD)';
+
+            }
+
+            opt += '<option value="'+$.trim(v.currency)+'" val="'+$.trim(dis_curr)+'" link-s="'+$.trim(v.linked_shop)+'">'+dis_country+'</option>';
+
+            optmobile +='<li class="curr_li mobile-nav__item animation-sequence-'+k+'" key='+k+' val="'+$.trim(v.currency)+'"> <a  class="mobile-nav__link">'+dis_curr+'</a></li>';
+          });
+
+          $('select.currency-picker').append(opt);    
+          $('.currency-selector-mobile > ul').append(optmobile);
+          $('.country-mobile').append(optmobile);
+
+          var lastCurrency = Currency_SP.cookie.read();  		
+
+          if (lastCurrency == null) {
+            Check_location();
+          } else {
+            var sp_store = $.trim(getCookie_SP('set_SP_Store'));
+
+            if (sp_store == '' || sp_store == undefined || sp_store == null) {
+              sp_store = '{{shop.url | remove:'https://' }}';
+            }
+
+            $('select.currency-picker option[value='+lastCurrency+'][link-s="'+sp_store+'"]').prop('selected', true);
+            $('.currency-picker__wrapper').show();
+            $('.currency-picker').show();
+			
+            if (sp_store != '{{ shop.url | remove:'https://' }}') {
+              LoadCurrency();
+          }
+          setCirclePopup();
+        }
+      }
+     }, 400)      
+  
+    /*$(document).change('select.single-option-selector',function(){
+        console.log(43232);
+      	 LoadCurrency();
+      })*/
+
+    {% if template == 'customers/account' %}
+
+    var str = '';
+    var link = getMultipassLoginOrder(str);
+
+    $( ".intl-order-btn" ).each(function( index ) {
+      var str = $(this).data("order-store")
+      var link = getMultipassLoginOrder(str);
+
+      $(this).attr("href", link)
+
+    });
+    {% endif %} 
+    $(document).on('click','.wg-li',function(){
+      {% if template contains 'cart' %}
+      var ln = $(document).find('.wgcurrent').attr('data-l');
+      var txt = '{{ 'cart.general.checkout' | t }}';
+      if(ln == 'en') txt = 'Secure Checkout';
+      $(document).find('button[name=checkout],a[name=checkout]').html(txt + " <i class='fa fa-lock'></i>");
+      {% endif %}
+    })
+
+    $(document).on('change','select[name=currencies_SP]',function(){
+      if($(this).val() !== "GBP"){
+        const ifNotUKRemoveRechargeItems = cart.items.filter(item => item.properties && item.properties.shipping_interval_frequency)
+        if(ifNotUKRemoveRechargeItems.length){
+          let keys = []
+          ifNotUKRemoveRechargeItems.forEach(item => {
+           keys.push(item.key);
+          })
+          
+          removeAllRechargeProducts(keys)
+        }
+            
+      }
+      LoadCurrency();
+      setCirclePopup(); 
+    });
+
+    $('ul.account-tabs').each(function(){
+      var active, content, links = $(this).find('a');
+      active = links.first().addClass('active');
+      content = $(active.attr('href'));
+      links.not(':first').each(function () {
+        $($(this).attr('href')).hide();
+      });
+      $(this).find('a').click(function(e){
+
+        active.removeClass('active');
+        content.hide();
+        active = $(this);
+        content = $($(this).attr('href'));
+        active.addClass('active');
+        content.show();
+        return false;
+      });
+    });
+
+       setCirclePopup();
+  });
+  
+  
+  function dynamicallyLoadKlaviyo(url){ 
+         $.getScript( url , function( data, textStatus, jqxhr ) {
+           /*
+ 	 console.log( data ); // Data returned
+	  console.log( textStatus ); // Success
+	  console.log( jqxhr.status ); // 200
+	  console.log( "Load was performed. " + url );
+           */
+	});
+  }
+  
+   function setRechargePopup(type){ 
+     var $price = $('.main-price');
+    if($(".purchase-type").length > 0 ){
+    if(type == "show"){ 
+      /*
+           console.log(parseInt($('.discounted-price').data('compare-price')) + " < " +  parseInt($('.main-price').data('rc-price')));
+      console.log('type show');
+      */
+      if($('.purchase-type-input[value="Recurring"]').is(':checked')){
+      if( parseInt($('.discounted-price').data('compare-price')) > parseInt($('.main-price').data('rc-price')) ||  parseInt($('.discounted-price').data('compare-custom-price')) > parseInt($('.main-price').data('rc-price')) ) { 
+       $('.discounted-price').removeClass('hide');
+     }
+    } else { 
+       if( parseInt($('.discounted-price').data('compare-price')) > parseInt($('.main-price').data('onetime-price')) || parseInt($('.discounted-price').data('compare-custom-price')) > parseInt($('.main-price').data('onetime-price')) ) { 
+       $('.discounted-price').removeClass('hide');
+    }
+    }
+     $('.purchase-type').show();
+     $('.purchase-type').css('opacity','1').css('visibility','visible').css('height','auto');
+       if(!$('.purchase-type').is(':visible')){
+         setTimeout(function(){setRechargePopup("show")}, 500);
+       }
+      
+      }
+      else if(type == "hide"){ 
+        $price.data('price-recharge','false');
+        $('.delivery-every-holder').hide();
+        $('.purchase-type').hide();
+     //console.log(parseInt($('.discounted-price').data('compare-price')) + " < " +  parseInt($('.main-price').data('onetime-price')));
+     if( parseInt($('.discounted-price').data('compare-price')) <= parseInt($('.main-price').data('onetime-price')) ) { 
+       $('.discounted-price').addClass('hide');
+       $('.discounted-price-currency').addClass("hide");
+       
+     }
+     $('.purchase-type').css('opacity','0').css('visibility','hidden').css('height','0');
+        //console.log('check');
+         $('input[name="purchase-type"][value="One Time"]').prop("checked", true);
+         $('input[name="purchase-type"][value="One Time"]').click();
+       if($('.purchase-type').is(':visible')){
+         setTimeout(function(){setRechargePopup("hide")}, 500);
+         
+
+       }
+                   }                        
+       }  
+    }
+  
+
+  
+  function setDimension(value){ 
+    if(typeof ga !== 'undefined') {
+          ga('set', 'dimension1', value);
+    //console.log('possible function');
+  } 
+  else { 
+    //console.log('recursion');
+    setTimeout(function(){setDimension(value)},1000);
+   }
+  }
+  
+  function accCheck(link1){
+   if (document.location.href.indexOf('/account') > -1) {
+    // window.location.href = "https://" + link1 + "/account";
+   }
+  }
+  
+  /* Footer join the circle set the right klaviyo link */
+  function setCirclePopup(){
+    
+    var ukScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PGhkN2",
+        euScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kb7J4f",
+        auScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kmtuzb" , 
+        caScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PPuj6j", 
+        meScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PfxLKY", 
+        usScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=NZQ2jY",
+        asScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=R9V3Fy";
+    
+    var UKAPI = 'PGhkN2' ,
+        EUAPI = 'Kb7J4f' ,
+        AUAPI = 'Kmtuzb' ,
+        CAAPI = 'PPuj6j' ,
+        MEAPI = 'PfxLKY' , 
+        USAPI = 'NZQ2jY',
+        ASAPI = 'R9V3Fy';
+    
+    var UKLink = "liveinnermost.myshopify.com",
+        AUSLink = "innermost-au.myshopify.com",
+        USLink = "innermost-us.myshopify.com",
+        EULink = "innermost-eu.myshopify.com",
+        CALink = "innermost-ca.myshopify.com",
+        MELink = "innermost-me.myshopify.com",
+        ASIALink = "innermost-asia.myshopify.com";
+        
+    let popup  = $('select[name="currencies_SP"]').find('option:selected').attr('val')
+   
+    
+    if(typeof popup == 'undefined'){
+     
+      setTimeout(function(){setCirclePopup()},1000);
+    }
+    else{
+         $('nav a[href="/pages/about"]').css('opacity','1')
+       //  $('nav li.contact').css('display','inline-block');
+      $('.newsletter_country').find('option[val="'+ popup +'"]').prop('selected', true);
+   switch (popup){
+     case "UK (GBP)":
+       setDimension("UK");
+       dynamicallyLoadKlaviyo(ukScript);
+     //  accCheck(UKLink);
+        window.APItoLoad = UKAPI;
+       $('.js-account-icon').addClass('show-account');
+       $('.js-account-icon').removeClass('dont-show-account');
+       $('.search-svg').removeClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-uk').show();       
+       
+       $('li.rewards').show();
+       $('li.contact.not-menu-item').hide();
+       $('.site-footers.new li a[href="/pages/rewards"]').parent('li').show();
+       
+       
+       /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-UK').show();
+       $('.para_uk').show();
+       $('.para_non_uk').hide();
+       
+       $('.welcome-popup .k_id_modal_UK').show("slow");
+       
+      
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+            //console.log('show me');  
+      $('.klaviyo_modal').hide();
+        $('.klaviyo-form-join .k_id_modal_UK').show();
+        
+      })  
+      setRechargePopup("show");
+     	break;
+     case "Middle East (USD)":
+         setDimension("ME");
+        dynamicallyLoadKlaviyo(meScript);
+       window.APItoLoad = MEAPI;
+       accCheck(MELink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-me').show(); 
+       $('.mobile-nav-buttons ').hide();
+       
+       
+    	$('li.rewards').hide();
+		$('nav li.contact').css('display','inline-block');
+       $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide();
+
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-ME').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       
+       $('.welcome-popup .k_id_modal_ME').show("slow");
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_ME').show();
+      })
+      setRechargePopup("hide");
+      break;
+     case "Australia (AUD)":
+        setDimension("AU");
+        dynamicallyLoadKlaviyo(auScript);
+           window.APItoLoad = AUAPI;
+       accCheck(AUSLink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-au').show();
+       $('.mobile-nav-buttons ').hide();
+       
+       
+        $('li.rewards').hide();
+        $('nav li.contact').css('display','inline-block');
+        $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide();
+       
+       
+       
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-AU').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       $('.welcome-popup .k_id_modal_AU').show("show");
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_AU').show();
+      })    
+      setRechargePopup("hide");
+
+     	break;
+     case "US (USD)":
+       
+        setDimension("US");
+        dynamicallyLoadKlaviyo(usScript);
+        window.APItoLoad = USAPI;
+       accCheck(USLink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-us').show();
+       $('.mobile-nav-buttons ').hide();
+       
+       
+    	$('li.rewards').hide();
+       $('nav li.contact').css('display','inline-block');
+       $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide();
+       
+       
+       
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-US').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       $('.welcome-popup .k_id_modal_US').show("show");
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_US').show();
+      });
+       
+     setRechargePopup("hide");
+     	break;
+     case "Europe (EUR)":
+        setDimension("EU");
+        dynamicallyLoadKlaviyo(euScript);
+        window.APItoLoad = EUAPI;
+       accCheck(EULink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-eu').show();
+       $('.mobile-nav-buttons ').hide();
+       
+       
+    	$('li.rewards').hide();
+		$('nav li.contact').css('display','inline-block');
+       $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide(); 
+          
+       
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-EU').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       $('.welcome-popup .k_id_modal_EU').show("show");
+       
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_EU').show();
+      })
+      
+      setRechargePopup("hide");
+     	break;
+     case "Canada (CAD)":
+        setDimension("CA");
+        dynamicallyLoadKlaviyo(caScript);
+        window.APItoLoad = CAAPI;
+        accCheck(CALink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-ca').show(); 
+       $('.mobile-nav-buttons ').hide();
+       
+    	$('li.rewards').hide();
+        $('nav li.contact').css('display','inline-block');
+        $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide();
+              
+       
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-CA').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       
+       $('.welcome-popup .k_id_modal_CA').show("show").css('opacity','1');
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+ 
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_CA').show();
+      })  
+      
+     setRechargePopup("hide");
+     	break;
+     case "Singapore (USD)":
+        dynamicallyLoadKlaviyo(asScript);
+         window.APItoLoad = ASAPI;
+       	 accCheck(ASIALink);
+       $('.js-account-icon').removeClass('show-account');
+       $('.js-account-icon').addClass('dont-show-account');
+       $('.search-svg').addClass('hidden-account');
+       $('.announcement').hide();
+       $('.announcement-as').show(); 
+       $('.mobile-nav-buttons ').hide();
+       
+    	$('li.rewards').hide();
+        $('nav li.contact').css('display','inline-block');
+        $('.site-footers.new li a[href="/pages/rewards"]').parent('li').hide();
+              
+       
+        /* Show the footer signup form based on the country */
+       $('.custom-footer-form').hide();
+       $('.email_signup-f-AS').show();
+       $('.para_non_uk').show();
+       $('.para_uk').hide();
+       
+       
+       $('.welcome-popup .k_id_modal_AS').show("show").css('opacity','1');
+       
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+ 
+      $('.klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_AS').show();
+      })  
+      
+     setRechargePopup("hide");
+     	break;
+   }
+  }
+ }
+
+  function Check_location(){
+
+    jQuery.getJSON('https://freegeoip.app/json/', function(location){
+		//console.log(location.country_code);
+        if(location.country_code=='GR' 
+           || location.country_code=='AL' 
+           || location.country_code=='AD' 
+           || location.country_code=='AT' 
+           || location.country_code=='BY'
+           || location.country_code=='BE' 
+           || location.country_code=='BA'
+           || location.country_code=='BG' 
+           || location.country_code=='HR' 
+           || location.country_code=='CY' 
+           || location.country_code=='CZ' 
+           || location.country_code=='DK'
+           || location.country_code=='EE'
+           || location.country_code=='EL'
+           || location.country_code=='FO'
+           || location.country_code=='FI'
+           || location.country_code=='FR'
+           || location.country_code=='DE'
+           || location.country_code=='GI'
+           || location.country_code=='HR'
+           || location.country_code=='HU'
+           || location.country_code=='IS'
+           || location.country_code=='IE'
+           || location.country_code=='IM'
+           || location.country_code=='IT'
+           || location.country_code=='RS'
+           || location.country_code=='LV'
+           || location.country_code=='LI'
+           || location.country_code=='LT'
+           || location.country_code=='LU'
+           || location.country_code=='MK'
+           || location.country_code=='MT'	
+           || location.country_code=='MD'
+           || location.country_code=='MC'	
+           || location.country_code=='ME'	
+           || location.country_code=='NL'
+           || location.country_code=='PL'
+           || location.country_code=='PT'
+           || location.country_code=='RO'
+           || location.country_code=='RU'
+           || location.country_code=='SM'
+           || location.country_code=='RS'
+           || location.country_code=='SK'
+           || location.country_code=='SI'
+           || location.country_code=='SE'
+           || location.country_code=='CH'
+           || location.country_code=='UA'  
+           || location.country_code=='VA'
+           || location.country_code=='RS'
+          ){          
+          $('select.currency-picker option[value=EUR][link-s="innermost-eu.myshopify.com"]').prop('selected', true);
+           $('.trigger-popup').attr('href','#signup-EU');
+          LoadCurrency()
+        }else if(location.country_code=='US' || location.country_code=='USA'){
+          $('select.currency-picker option[value=USD][link-s="innermost-us.myshopify.com"]').prop('selected', true);
+          $('.trigger-popup').attr('href','#signup-US');
+          LoadCurrency()
+        }else if(location.country_code=='CA' || location.country_code=='CAN'){
+          $('select.currency-picker option[value=CAD][link-s="innermost-ca.myshopify.com"]').prop('selected', true);
+          $('.trigger-popup').attr('href','#signup-CA');
+          LoadCurrency()
+        }else if(location.country_code=='AU' || location.country_code=='AUS'){
+          $('select.currency-picker option[value=AUD][link-s="innermost-au.myshopify.com"]').prop('selected', true);
+          $('.trigger-popup').attr('href','#signup-AU');
+          LoadCurrency()
+        }else {
+          $('.trigger-popup').attr('href','#signup-UK');
+          Currency_SP.cookie.write('GBP');
+          createCookie_SP('set_SP_Store',"{{shop.permanent_domain | remove:'https://' }}",10);
+                          }
+                          });
+
+        }
+
+        var detectReCharge = false;
+      
+        function showCarbonClickWrapper(curr){
+          if(curr === 'GBP'){
+            //console.log('carbonclick show: '+ curr);
+            $('.ajaxcart__carbonclick-cart-wrapper').show();
+          } else {
+            //console.log('carbonclick hide: '+ curr);
+            $('.ajaxcart__carbonclick-cart-wrapper').hide();
+          }
+        }
+
+      
+        function LoadCurrency() {
+          var c_shop = $('select.currency-picker').find('option:selected').attr('link-s');
+          var dis_curr = $('select.currency-picker').find('option:selected').attr('val');
+          var curr = $('select[name=currencies_SP]').val();     
+          // loyaltylion APP start
+          var loyaltylionCurrency = $('select[name=currencies_SP]').val();
+          var loyaltylionElement = $('#loyaltylion .lion-loyalty-widget__body');
+          var loyaltylionPopup = $('#loyaltylion #lion-loyalty-panel-custom-css');
+          var loyaltylionNotification = $('#loyaltylion .lion-notification-container');
+
+          if (loyaltylionCurrency === 'GBP') {
+            loyaltylionElement.fadeIn(300);
+            loyaltylionPopup.fadeIn(300);
+            loyaltylionNotification.fadeIn(300);
+            var els = document.querySelectorAll("a[href='/pages/refer-a-friend']");
+            for (let i = 0; i < els.length; i++) {
+              $(els[i]).show();
+            }
+          } 
+          else {
+            loyaltylionElement.fadeOut(300);
+            loyaltylionPopup.fadeOut(300);
+            loyaltylionNotification.fadeOut(300);
+            var els = document.querySelectorAll("a[href='/pages/refer-a-friend']");
+            for (let i = 0; i < els.length; i++) {
+              $(els[i]).hide();
+            }
+          }
+          // loyaltylion APP end
+
+          Currency_SP.cookie.write(curr);
+          createCookie_SP('set_SP_Store', $.trim(c_shop), 30);
+          $('div.currency-picker-outer > span.currency-picker-label').text(dis_curr);
+          
+          var index = $("select.currency-picker").prop('selectedIndex'); 
+          
+          $('.currency-selector-mobile').find("li a").removeAttr('style');
+          $('.currency-selector-mobile').find("li[key=" + index + "] a").attr('style','color:#23aba4 !important');
+
+          var ProductsList = [];
+          var page = '';
+
+          $(document).find('.grid--products .grid__item').each(function(k, v) {
+            var curr_handle = $(this).find('a').attr('href');  
+            var curr_arr = curr_handle.split("/products/");
+            curr_arr = curr_arr[1].split("?");
+            curr_arr = curr_arr[0];
+            var curr_prohandle = curr_arr;
+
+            ProductsList.push(curr_prohandle);
+          });
+
+          page = 'collection';
+
+          {% if template contains 'product' %}
+
+            var options = [];
+            
+            $('select.single-option-selector').each(function(){
+              options.push($(this).val());
+            })
+
+            $(document).find('.single-option-selector').trigger('change');
+
+          {% elsif template contains 'cart' %}
+
+            // from cartTemplate.js
+            try {
+              formatCurrency();
+            } catch (error) {}
+
+          {% elsif template == 'account' %}
+
+            var str = '';
+            var link = getMultipassLoginOrder(str);
+
+            $( ".intl-order-btn" ).each(function( index ) {
+              var str = $(this).data("order-store")
+              var link = getMultipassLoginOrder(str);
+              //console.log(str,link);
+              $(this).attr("href", link)
+
+            });
+
+          {% endif %} 
+
+          ChangePrice(ProductsList, c_shop, curr, page);
+          
+          showCarbonClickWrapper(curr);
+          
+        }
+
+        {% comment %} Change price of product using product handle {% endcomment %}
+
+        function ChangePrice(ProductsList, c_shop, curr, page) {
+          //console.log('ChangePrice in  action');
+          $.each(ProductsList, function(k, handle) {
+            loadJSON('https://' + $.trim(c_shop) + '/products/' + handle + '.json', function(data) { 
+              var coll_handle = '{{ collection.handle }}';
+              var cl_url = '';
+
+              if (coll_handle != '' && coll_handle != 'all' ) {
+                cl_url = '/collections/' + coll_handle;
+              }
+
+              var pro = data.product;
+
+              if (pro != '') {
+                var variants = pro['variants'][0];
+                var price = variants['price'];
+                var pro_div = $(document).find("a[href $='" + cl_url + "/products/"+handle+"']").closest('div.grid__item');
+                if(pro_div.length == 0){
+                  pro_div = $(document).find("a[href *='" + cl_url + "/products/"+handle+"?']").closest('div.grid__item');
+                }
+                //console.log(pro_div);
+                var price_html = pro_div.find("span.money");
+                var price_compare_html = pro_div.find("span.price__strike");
+
+                pro_div.show();
+
+                var comparePrice = variants['compare_at_price'];
+                
+                Currency_SP.convertAll(price,price,curr,price_html);
+                
+                if (comparePrice > 0) {
+                  price_compare_html.show();
+                  Currency_SP.convertAll(comparePrice, comparePrice, curr, price_compare_html);
+                } else {
+                  price_compare_html.hide();
+                }
+              }
+            }, function(xhr) {
+              var pro_div = $(document).find("a[href $='/products/" + handle + "']").closest('div.grid__item');
+              pro_div.hide();
+            })
+          })
+        }
+
+        {% comment %}Get product json from linked store {% endcomment %}
+
+        function loadJSON(path, success, error){
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                if (success)
+                  success(JSON.parse(xhr.responseText));
+              } else {
+                if (error)
+                  error(xhr);
+              }
+            }
+          };
+          xhr.open("GET", path, true);
+          xhr.send();
+        }
+
+        {% comment %} Change variant price on product detail page {% endcomment %}
+ 
+        function GetVariantPrice(v_title){
+          //console.log('getvrtprc called');
+         // console.log(v_title);
+          var c_shop = $('select.currency-picker').find('option:selected').attr('link-s');
+          var curr = $('select.currency-picker').val();
+
+          if(typeof c_shop != 'undefined'){
+
+            loadJSON('https://'+$.trim(c_shop)+'/products/{{product.handle}}.json?dave', function(data) { 
+                     $(document).find('.meta--price').show();    
+                     var product = data.product;
+                     var varnt = product.variants;
+
+
+
+                     $.each(varnt,function(k,v){
+
+                     if($.trim(v_title) == $.trim(v.title)){
+                     /*var inventory_management = $.trim(v.inventory_management);
+           			var inventory_quantity = $.trim(v.inventory_quantity);
+                   	var no_stock = product.tags;
+					console.log(v,inventory_management);
+                   	if($.trim(c_shop) != '{{shop.url}}'){
+
+                       if(inventory_management == "shopify" && (inventory_quantity == "0")){
+
+                          if(!$('button[name=add]').is(':disabled')){
+
+                             $(document).find('button[name=add]').prop('disabled', true);
+                             $(document).find('button[name=add]').addClass('disabled');
+                          }
+                          $(document).find('button[name=add]').css('pointer-events','none');
+
+                       } else {
+
+                         $(document).find('button[name=add]').removeAttr('disabled');
+                         $(document).find('button[name=add]').removeClass('disabled');
+                         $(document).find('button[name=add]').css('pointer-events','all');
+                       }
+                   	}*/
+                    var price_html = $(document).find('span[itemprop=price]');
+                    var price_compare_html = $(document).find('span[itemprop=compare-price]');
+                     
+                     
+                      if(price_html.attr('data-quantity')){
+                     var quantity = price_html.attr('data-quantity');
+                     }
+                    else { 
+                   var quantity = 1; 
+                    }
+                     
+                     price_html.attr('data-onetime-price',v.price*100);
+                     price_compare_html.attr('data-compare-price', v.compare_at_price*100);                
+                     Currency_SP.convertAll(v.price*quantity*100,v.price,curr,price_html);
+                     //console.log('compare-price-calculated ' + v.compare_at_price*100);
+                     
+                     if(price_compare_html.attr('data-compare-price') > price_compare_html.attr('data-compare-custom-price')){
+                     //console.log('conversion happens');
+                     Currency_SP.convertAll(v.compare_at_price*quantity*100,v.compare_at_price,curr,price_compare_html);
+                     }
+                     }
+                     });
+                     
+                     
+                     },function(xhr) {
+
+                     if(xhr.status == 404 || xhr.status == 401){
+                     $(document).find('.meta--price').hide();
+                     $(document).find('button[name=add] span').text('Not available');
+                     $(document).find('button[name=add]').css('pointer-events','none');
+                     }
+                     });
+
+                     }
+                     }
+
+                     function getMultipassLogin(str){
+
+                     var customer = '{{ customer.email }}';
+                     var c_shop = $('select.currency-picker').find('option:selected').attr('link-s');
+                     var shop = $('#shopDomain').text();
+                     var params = str.slice(0,-1);
+
+                     var url = '/apps/multipass/login?';
+                     var data = {destination_shop:c_shop,email:customer,shop:shop, params:params};
+                     var recursiveDecodedParamString = decodeURIComponent($.param(data));
+            return url+recursiveDecodedParamString;
+
+          };
+
+          
+             function reChargeProcessCart() {
+	function get_cookie(name){ return( document.cookie.match('(^|; )'+name+'=([^;]*)')||0 )[2] }
+               //console.log(get_cookie('_aw_m_20851'));
+	do {
+      		token=get_cookie('cart');
+	}
+	while(token == undefined);
+
+	var myshopify_domain='{{ shop.permanent_domain }}'
+	try { var ga_linker = ga.getAll()[0].get('linkerParam') } catch(err) { var ga_linker ='' }
+    var sendAwin = "";
+     if(get_cookie('_aw_m_20851')){
+     sendAwin = "&_aw_m_20851=" + get_cookie('_aw_m_20851');
+     }
+               
+	var customer_param = '{% if customer %}customer_id={{customer.id}}&customer_email={{customer.email}}{% endif %}'
+	checkout_url= "https://checkout.rechargeapps.com/r/checkout?myshopify_domain="+myshopify_domain+"&cart_token="+token+"&"+ga_linker+"&"+customer_param + sendAwin;
+                   //console.log(checkout_url);
+    return checkout_url;
+}
+          
+     
+          
+          
+          function getMultipassLoginOrder(str){
+
+            var customer = '{{ customer.email }}';
+            var c_shop = $('.intl-order-btn').attr('href');
+            var shop = $('#shopDomain').text();
+            //var params = str.slice(0,-1);
+
+            var url = '/apps/multipass/login?';
+            var data = {destination_shop:str,email:customer,shop:shop, params:""};
+            var recursiveDecodedParamString = decodeURIComponent($.param(data));
+            return url+recursiveDecodedParamString;
+
+          };
+
+          function setButtonLink(c_shop, str){
+            var txt = ' SECURE CHECKOUT', 
+                reCharge = false;
+            
+            
+        //    console.log(c_shop,str);
+            if(str != 'cart'){
+              
+              var shop = $('#shopDomain').text();  
+              var link = getMultipassLogin(str);
+              //console.log(link + ' link');
+              if(link.indexOf('liveinnermost.myshopify.com') > -1 && detectReCharge){ 
+                link = reChargeProcessCart();
+                reCharge = true
+              }
+              
+            
+
+              {% comment %}
+                $(document).find('button[name=checkout]').replaceWith("<a name='checkout' href='"+link+"?referrer="+$.trim(shop)+ "' style='color:white;' data-checkout class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+                $(document).find('a.checkout,a.cart__checkout').replaceWith("<a name='checkout' id='checkoutLink' data-checkout href='"+link+"?referrer="+$.trim(shop)+"' style='color:white;' class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+              {% endcomment %}
+              if(reCharge == true ){
+                 $(document).find('button[name=checkout]').replaceWith("<a name='checkout' href='" + link + "' style='color:white;' class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+                $(document).find('a.checkout,a.cart__checkout').replaceWith("<a name='checkout' id='checkoutLink' href='" + link + "'  style='color:white;' class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+               
+              }
+              else{
+                $(document).find('button[name=checkout]').replaceWith("<a name='checkout' href='https://"+$.trim(c_shop)+"/cart/"+str+"' style='color:white;' class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+                $(document).find('a.checkout,a.cart__checkout').replaceWith("<a name='checkout' id='checkoutLink' href='https://"+$.trim(c_shop)+"/cart/"+str+"' style='color:white;' class='btn btn--full cart__checkout'><i class='fa fa-lock'></i> "+ txt +"</a>");
+              }
+            }else{
+              $(document).find('button[name=checkout]').replaceWith("<a name='checkout' href='/cart' style='color:white;' class='btn btn--full cart__checkout'>"+ txt +" <i class='fa fa-lock'></i></a>");
+              $(document).find('a.checkout,a.cart__checkout').replaceWith("<a name='checkout' id='checkoutLink' href='/cart' style='color:white;' class='btn btn--full cart__checkout'>"+ txt +" <i class='fa fa-lock'></i></a>");
+            }
+          };
+
+          {% comment %} Change cart items price on cart page {% endcomment %}
+
+          function CartItems() {
+            setButtonLink('', 'cart');
+
+            $.ajax({
+              type: 'GET',
+              url: '/cart.js',
+              dataType: 'json',
+              success: function(cartdata) {
+                var item_json = [];
+                var cart_items = cartdata.items;
+
+                $.each(cart_items, function(key, item) {
+                  var temp = [];
+
+                  temp['quantity'] = item.quantity;
+                  temp['handle'] = item.handle;
+                  temp['Vid'] = item.variant_id;
+
+                  if (item.variant_title == null) {
+                    item.variant_title = "Default Title";
+                  }
+
+                  temp['variant_title'] = item.variant_title;
+                  item_json.push(temp);
+                })
+
+                if (item_json.length != '0') {
+                  loadMultiCart(item_json);
+                  
+                } else {
+                  {% if template contains 'cart' %}
+                    $('form.cart').find('table').hide();
+                    $('.page-header , .cart__footer').hide();
+
+                    if ($('form.cart').find('.empty_div').length == 0) {
+                      $('form.cart').append('<div class="empty_div" style="text-align:center">Not available in this currency</div>');
+                    }
+                  {% endif %}
+                }
+              }
+            })
+          }
+
+      function loadMultiCart(items) {
+            var cart_json = [];
+            var c_shop = $('select.currency-picker').find('option:selected').attr('link-s');
+            var curr = $('select.currency-picker').val();
+            var c_total = 0;
+            var C = 0;
+            var F_str = '';
+            var str = '';
+        
+            detectReCharge = false; {% comment %}reset the detectReCharge before checking the products{% endcomment %}
+
+            $.each(items, function(key, vl) {
+              if($.trim(c_shop).indexOf('liveinnermost.myshopify') > -1){
+              if(vl.handle.endsWith('-1')){ 
+                vl.handle = vl.handle.replace('-1','');
+                detectReCharge = true; {% comment %}at least one item is found on recharge{% endcomment %}
+              }
+                
+              }
+              else { 
+                detectReCharge = false; 
+              } 
+              
+              
+              loadJSON('https://' + $.trim(c_shop) + '/products/' + vl.handle + '.json', function(data) { 
+                $('form.cart,#CartContainer').show();
+  
+                var pro = data.product;
+                var pro_vari = pro.variants;
+                var v_id = 0;
+                var temp = new Array();
+                c_total = c_total;
+                
+                showCarbonClickWrapper(curr);
+                
+
+                $.each(pro_vari, function(k, v) {
+                  if (v.title == vl.variant_title) {
+                    v_id = v.id;
+                    C++;
+                    str += v_id + ':' + vl.quantity + ',';
+
+                    var pro_div = $(document).find("a[href $='/products/" + pro.handle + "?variant=" + vl.Vid + "']").closest('div.ajaxcart__row');
+
+                    pro_div.show();
+                    Currency_SP.convertAll(v.price, curr, curr, pro_div.find('span.money'));
+                    var sub_t = (v.price * vl.quantity);
+
+                    c_total = c_total + sub_t;
+                    var cart_div = $(document).find("a[href $='/products/" + pro.handle + "?variant=" + vl.Vid + "']").closest('.cart__row');
+
+                    cart_div.show();
+       
+                    Currency_SP.convertAll(v.price,curr,curr,pro_div.find('.ajaxcart__product-price span.money'));
+                    Currency_SP.convertAll(v.price,curr,curr,cart_div.find('.cart_price span.money'));
+                    Currency_SP.convertAll(sub_t.toFixed(2),curr,curr,cart_div.find('.cart_line_price span.money'));
+
+                    if (C == items.length) {
+                      if(detectReCharge != true){
+                      Currency_SP.convertAll(c_total.toFixed(2),curr,curr,$(document).find('.ajaxcart__footer span.money'));
+                      Currency_SP.convertAll(c_total.toFixed(2),curr,curr,$(document).find('.cart__subtotal span.money'));
+                    }
+
+                      setButtonLink(c_shop, str);
+                    }
+                  }
+                });
+
+                temp['qunatity'] = vl.quantity;
+                temp['id'] = v_id;
+                cart_json.push(str);    
+              }, function(xhr) {
+                C++;
+
+                // if(xhr.status == 404){
+                var url = xhr._url;
+                var url_arr = url.split("/products/");
+                var pbox_temp = url_arr[1].replace(".json", "");
+                var li = $('a[href^="/products/' + pbox_temp + '"]').parents('div.ajaxcart__row');
+
+                $('a[href^="/products/'+pbox_temp+'"]').parents('div.cart__row').hide();
+                $(li).hide();
+
+                Currency_SP.convertAll(c_total.toFixed(2),curr,curr,$(document).find('.ajaxcart__footer span.money'));
+                Currency_SP.convertAll(c_total.toFixed(2),curr,curr,$(document).find('.cart__subtotal span.money'));
+                setButtonLink(c_shop, str);
+ 
+                {% if template contains 'cart' %}
+                  $(document).find('div.empty_div').remove();
+
+                  if ($('div.cart_row_price:visible').length == 0) {
+                    $('form.cart,#CartContainer').hide();
+                    $('.content-wrapper--title').append('<div class="empty_div" style="text-align:center">Not available in this currency</div>');
+                  }
+                {% endif %}
+              })
+            })
+          }
+
+          
+          
+          function createCookie_SP(name, value, days) {
+            var date, expires;
+            if (days) {
+              date = new Date();
+              date.setTime(date.getTime()+(days*24*60*60*1000));
+              expires = "; expires="+date.toGMTString();
+            } else {
+              expires = "";
+            }
+
+            document.cookie = name+"="+value+expires+"; path=/";
+
+          }
+
+          function getCookie_SP(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+              var c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return "";
+          }
+          
+          
+          
+          /*     
+ $(window).on('load',function(){
+
+     setTimeout(function(){  
+  var region_EUR,region_spain,region_USD,region_GBP;
+      jQuery.ajax({
+        url: 'https://api.ipstack.com/check?access_key=e66117bd4de1ddbb8689490adb445691',  
+        type: 'POST', 
+        dataType: 'jsonp',
+        success: function(location) {
+         //console.log(location.country_code,'code');
+          if(location.country_code=='GR' 
+              || location.country_code=='AL' 
+              || location.country_code=='AD' 
+              || location.country_code=='AT' 
+              || location.country_code=='BY'
+              || location.country_code=='BE' 
+              || location.country_code=='BA'
+              || location.country_code=='BG' 
+              || location.country_code=='HR' 
+              || location.country_code=='CY' 
+              || location.country_code=='CZ' 
+              || location.country_code=='DK'
+              || location.country_code=='EE'
+              || location.country_code=='EL'
+              || location.country_code=='FO'
+              || location.country_code=='FI'
+              || location.country_code=='FR'
+              || location.country_code=='DE'
+              || location.country_code=='GI'
+              || location.country_code=='HR'
+              || location.country_code=='HU'
+              || location.country_code=='IS'
+              || location.country_code=='IE'
+              || location.country_code=='IM'
+              || location.country_code=='IT'
+              || location.country_code=='RS'
+              || location.country_code=='LV'
+              || location.country_code=='LI'
+              || location.country_code=='LT'
+              || location.country_code=='LU'
+              || location.country_code=='MK'
+              || location.country_code=='MT'	
+              || location.country_code=='MD'
+              || location.country_code=='MC'	
+              || location.country_code=='ME'	
+              || location.country_code=='NL'
+              || location.country_code=='PL'
+              || location.country_code=='PT'
+              || location.country_code=='RO'
+              || location.country_code=='RU'
+              || location.country_code=='SM'
+              || location.country_code=='RS'
+              || location.country_code=='SK'
+              || location.country_code=='SI'
+              || location.country_code=='SE'
+              || location.country_code=='CH'
+              || location.country_code=='UA'  
+              || location.country_code=='VA'
+              || location.country_code=='RS'
+            ){
+            $('.cart_banner').hide();
+            $('#eurpoe_banner').show();
+            //region_EUR = $('.currency-picker').val('EUR').trigger('change');
+
+			//$('.currency-picker').val('EUR').trigger('change');
+            //$('.currency-picker').attr('selected',true);
+            $('.currency-picker option:eq(1)').val('EUR').attr('selected',true);
+            $('.currency-picker option:eq(1)').val('EUR').trigger('change');            
+            //console.log($('.currency-picker option:eq(1)'),'1');
+            LoadCurrency();
+          }else if(location.country_code=='GB')
+          {
+            $('.cart_banner').hide();
+            $('#uk_banner').show();
+            $('.currency-picker').val('GBP').trigger('change');
+            //region_GBP = $('.currency-picker').attr('selected',true);
+            LoadCurrency();  
+          }
+          else if(location.country_code=='ES')
+          { 
+            $('.cart_banner').hide();
+            $('#spain_banner').show();
+            //region_spain = $('.currency-picker').val('ES').trigger('change');
+            //$('.currency-picker').val('ES').trigger('change');
+            //$('.currency-picker option:eq(0)').attr('selected',true);
+            $('.currency-picker option:eq(0)').val('EUR').trigger('change');
+           // console.log($('.currency-picker option:eq(0)'),'value');
+            LoadCurrency();
+          }
+          else if(location.country_code=='CO')
+          {
+            $('.cart_banner').hide();
+            $('#international_banner').show();
+            $('.currency-picker').val('USD').trigger('change');
+            //region_USD = $('.currency-picker').attr('selected',true);
+            LoadCurrency();
+          }
+          else
+          {
+            $('.cart_banner').hide();
+            $('#international_banner').show();
+            $('.currency-picker').val('USD').trigger('change');
+            //region_USD = $('.currency-picker').attr('selected',true);
+            LoadCurrency();
+
+          }
+        }
+     });
+    },2000);
+        });
+        */
+
+</script>

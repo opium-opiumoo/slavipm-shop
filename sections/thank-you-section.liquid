@@ -1,0 +1,151 @@
+<!-- /templates/page.liquid -->
+{% comment %}
+<script>
+  $(document).ready(function(){
+    setTimeout(function(){
+    	window.location="https://www.liveinnermost.com/";
+    },10000);
+  })	
+</script>
+{% endcomment %}
+<div class="About_page">
+  
+  {% for block in section.blocks %}
+  <div class="about-grid aos-init" data-aos="fade-in">
+    <div class="About_page_left About_page_left_2 thank-you-left-side">
+    {% if block.settings.About_subtitle != blank %}<h2>{{ block.settings.About_subtitle }}</h2>{% endif %}
+      {% if block.settings.About_heading-top != blank or block.settings.About_heading-bottom != blank %}
+        <h3 style="max-width: 460px; margin-bottom: 30px;" class="{% if forloop.index == 1 %} About_page_left_heading {% endif %}">
+          <span style="text-align: left">{{ block.settings.About_heading-top }}</span>
+          <span style="text-align: right">{{ block.settings.About_heading-bottom }}</span>
+        </h3>
+      {% endif %}
+      {% if block.settings.About_heading-small %}
+        <h3 class="heading-small" style="font-size:{{ block.settings.About_heading-font }}px; line-height:{{ block.settings.About_heading-font }}px">{{ block.settings.About_heading-small }}</h3>
+      {% endif %}
+      {% if block.settings.About_para_1 %}
+        <h4>{{ block.settings.About_para_1 }}</h4>
+      {% endif %}
+      
+      {% if block.settings.About_para_1 %}
+        <h5>{{ block.settings.About_para_2 }}</h5>
+      {% endif %}
+      
+      {% if block.settings.About_para_1 %}
+        <h6>{{ block.settings.About_para_3 }}</h6>
+      {% endif %}
+      <div class="btns-wrapper">
+      {% if block.settings.url1 and block.settings.btn1 != blank %}
+      <div class="btn1-wrapper">
+        <a class="btn" style="border-radius: 0px" href="{{ block.settings.url1 }}">{{ block.settings.btn1 }}</a>
+      </div>
+      {% endif %}
+      {% if block.settings.url2 and block.settings.btn2 != blank %}
+      <div class="btn2-wrapper">
+        <a class="btn" style="border-radius: 0px" href="{{ block.settings.url2 }}">{{ block.settings.btn2 }}</a>
+      </div>
+      {% endif %}
+      </div>
+    </div>
+    
+    <div class="About_page_right">
+      {% if block.settings.About_img %}
+        <img data-src="{{ block.settings.About_img | img_url : 'master' }}" class="lazyload">
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  
+</div>
+
+
+{% schema %}
+  {
+    "name": "Thank You Section",
+    "settings": [
+      
+    ],
+	"blocks": [
+      {
+        "type": "feature",
+        "name": "About Text with Image",
+        "settings": [
+          
+          {
+            "type":"textarea",
+            "id":"About_subtitle",
+            "label":"Subtitle"
+          },
+          {
+            "type":"text",
+            "id":"About_heading-top",
+            "label":"Heading Line 1 Right"
+          },
+          {
+            "type":"text",
+            "id":"About_heading-bottom",
+            "label":"Heading Line 2 Left"
+          },
+		  {
+            "type":"text",
+            "id":"About_heading-small",
+            "label":"Heading small"
+          },
+		  {
+            "type": "range",
+            "id": "About_heading-font",
+            "min": 30,
+            "max": 110,
+            "step": 1,
+            "unit": "px",
+            "label": "heading small font size",
+			"default": 54
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_1",
+            "label":"Paragraph 1"
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_2",
+            "label":"Paragraph 2"
+          },
+          {
+            "type":"richtext",
+            "id":"About_para_3",
+            "label":"Paragraph 3"
+          },
+		  {
+			"type": "url",
+			"id": "url1",
+			"label": "Button 1 Link" 
+		  },
+		  {
+		 	"type": "text",
+			"id": "btn1",
+			"label": "Button 1 Text"
+		  },
+		  {
+			"type": "url",
+			"id": "url2",
+			"label": "Button 2 Link"
+		  },
+		  {
+			"type": "text",
+			"id": "btn2",
+			"label": "Button 2 Text"
+		  },
+          {
+            "type":"image_picker",
+            "id":"About_img",
+            "label":"Right Side Image"
+          }
+          
+        ]
+      }
+    ]
+  }
+
+{% endschema %}
+

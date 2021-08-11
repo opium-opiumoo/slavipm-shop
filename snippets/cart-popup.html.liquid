@@ -1,0 +1,66 @@
+<div class="cart-popup-backdrop"></div>
+<div
+  class="cart-popup-wrapper cart-popup-wrapper--hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="CartPopupHeading"
+  data-cart-popup-wrapper
+>
+  <div class="cart-popup cart-popup-flex" data-cart-popup tabindex="-1">
+    <div class="cart-popup__header">
+      <button
+        class="cart-popup__close"
+        aria-label="Close cart"
+        data-cart-popup-close
+      >
+        <svg><use xlink:href="#icon-close"></use></svg>
+        {% comment %}<span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>{% endcomment %}
+      </button>
+      <h2 id="CartPopupHeading" class="cart-popup__heading text-center">
+        {{ "cart.popup.added_to_cart" | t }}
+      </h2>
+    </div>
+    <div class="cart-popup__body with-items">
+      <div class="cart-popup-shipping">
+        <div class="progress-bar">
+          <div class="current-progress"></div>
+          <div class="progress-bar-text">LOADING...</div>
+        </div>
+      </div>
+      {% if settings.enable_gifts %}
+      <p class="cart-popup-x-items-to-gift" style="visibility:hidden;">Get a free mystery gift for orders $<span></span>+</p>
+      {% endif %}
+      <div class="cart-popup-item-wrapper">
+      </div>
+      <div class="cart-popup-checkout">
+        <div class="cart-popup-checkout-totals">
+          <p class="checkout_subtotal">Subtotal<span class="pull-right"></span></p>
+          <p class="checkout_promo_discount_row" style="display:none">Promo applied (<span class="checkout_promo_discount_percent"></span>% off)<span class="amount pull-right"></span></p>
+          <p class="checkout_shipping">Shipping<span class="shipping-price pull-right"></span></p>
+          <strong class="checkout_total">Estimated Total<span class="pull-right"></span></strong>
+        </div>
+        <div class="cart-popup-checkout-button">
+          <a href="/checkout" class="btn btn--full cart__checkout"> Secure checkout </a>
+        </div>
+      </div>
+      <div class="splide cart-upsell-splide-container">
+        <h3 class="cart-upsell-main-title" style="display: none;"></h3>
+
+        <div class="splide__track cart-upsell-splide-track">
+          <!-- <button class="glider-prev">X</button> -->
+          <div class="cart-upsell splide__list"></div>
+          <!-- <button class="glider-next">X</button> -->
+          <!-- <div id="dots" class="glider-dots"></div> -->
+        </div>
+      </div>
+    </div>
+    <div class="cart-popup__body blank">
+      <div class="content">
+        <div class="">
+          <h3 class="h3-moderat empty-cart-message">Looks like your cart is empty. <br> Let's fill it.</h3>
+        </div>
+        <a href="/collections/all" class="btn btn--secondary"> Shop Our Bestsellers </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="marquee-wrapper blog-marquee">
+	<ul id="marquee_crawler_category" class="marquee marquee-1" aria-hidden="true" onmouseover="this.stop()" onmouseout="this.start()">
+      {% comment %}
+      	the outer "for" is when the sum of the article.titles length is less than the Display width
+      	so we are repeating manualy the listed titles to make the whole width x2
+      {% endcomment %}
+      
+      {% for i in (1..2) %}  
+        {% for article in articles %}
+          <li>
+            <a href="{{ article.url }}" class="marquee-item">{{ article.title }}</a>
+            {% if forloop.index0 == 9 %}
+              {% break %}
+            {% endif %}
+          </li>
+        {% endfor %}
+      {% endfor %}
+	</ul>
+</div>
+
+{% comment %} The main script 'marquee_crawler.js' is included in templates/blog.liquid {% endcomment %}
+<script type="text/javascript">
+marqueeInit({
+	uniqueid: 'marquee_crawler_category',
+	style: {
+		'padding': '0px',
+		'width': '100%',
+		//'height': '180px'
+	},
+    inc: 3, //speed - pixel increment for each iteration of this marquee's movement
+	mouse: 'pause', //mouseover behavior ('pause' 'cursor driven' or false)
+	moveatleast: 2,
+	neutral: 150,
+	savedirection: true,
+	random: true
+});
+</script>

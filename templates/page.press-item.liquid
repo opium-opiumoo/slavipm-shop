@@ -1,0 +1,27 @@
+<!-- /templates/page.liquid -->
+<div class="grid--full contact_fulls_main">
+  <div>
+    <div class="text-center content-wrapper--horizontal section-header">
+      <div class="display-table-cell">
+        {% if page.title == "DELIVERY" %}
+        <h1 class="delivery">
+          <span>DELI</span>
+          <span>VERY</span>
+        </h1>
+        {% elsif page.title == "RETURNS" %}
+          <h1 class="returns">
+          <span>RET</span>
+          <span>URNS</span>
+        </h1>
+        {% else %}
+        {% endif %}
+        {% include 'breadcrumb' %}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="rte" style="margin-top:40px;">
+      {{ page.content }}
+    </div>
+   </div>
+</div>

@@ -1,0 +1,155 @@
+<div class="ambassadors">
+  <div class="ambassadors_main">
+     {% include 'breadcrumb' %}
+    <h1>{{ section.settings.Ambassadors_heading }}</h1>
+    <p>{{ section.settings.Ambassadors_para_1 }}</p>
+    <p>{{ section.settings.Ambassadors_para_2 }}</p>
+  </div>
+</div>
+<div class="ambassadors_bottom">
+  <div class="ambassadors_bottom_main">
+    {% for article in blogs.News.articles %}
+    {% for tag in article.tags %}
+     {%assign taghand =  tag | handle %}
+     {% if taghand == "ambassadors" %}
+       <a href="{{ article.url }}" title="{{ article.title | escape }}"> 
+      <div class="ambassadors_content">
+      <div class="ambassadors_content_hover">
+        {% if article.image %}
+        {% include "filter-rias-img-url-with-height" input: article.image %}
+        {% assign image_url = output %}
+        <img
+             data-src="{{ image_url }}"
+             data-ratio="{{ article.image.aspect_ratio }}"
+             data-sizes="auto"
+             data-parent-fit="cover"
+             class="lazyload lazyload-fade"
+             alt="{{ article.image.alt | escape }}">   
+        {% else %}
+        {% if article.content contains "<img " %}
+        {% assign src = article.content | split: 'src="' %}
+        {% assign src = src[1] | split: '"' | first | replace: '//cdn', 'http://cdn' | replace: 'http:http://', 'http://' | remove: 'https:' %}
+        <img data-src="{{ src }}" alt="{{ article.title | escape }}" class="lazyload" />
+        {% endif %}    
+        {% endif %}
+      </div>
+
+      <div class="ambassadors_content_white">
+          <h3>{{ article.title | truncate: 25 }}</h3>
+          <p> {{ article.excerpt_or_content | truncate: 180 }} </p>
+        </div>
+      </div>
+        </a> 
+     {% endif %}
+  {% endfor %}
+  {% endfor %}
+  </div>
+</div>
+
+<style>
+  .ambassadors
+{
+  width:100%;
+  background:url('{{ section.settings.Ambassadors_image | img_url : 'master' }}');
+    background-size: cover;
+    background-repeat:no-repeat;
+}
+</style>
+
+
+{% schema %}
+  {
+    "name": "Ambassadors Section",
+    "settings": [
+      {
+        "type":"header",
+        "content":"Ambassadors Top Section"
+      },
+      {
+        "type": "image_picker",
+        "id": "Ambassadors_image",
+        "label": "Ambassadors Background Image"
+      },
+      {
+        "type": "text",
+        "id": "Ambassadors_heading",
+        "label": "Ambassadors Heading"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_para_1",
+        "label": "Ambassadors Content Line 1"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_para_2",
+        "label": "Ambassadors Content Line 2"
+      },
+      {
+        "type":"header",
+        "content":"Ambassadors Grid Section"
+      },
+	  {
+        "type": "image_picker",
+        "id": "Ambassadors_grid_1",
+        "label": "Ambassadors Grid Image 1"
+      },
+      {
+        "type": "text",
+        "id": "Ambassadors_grid_heading_1",
+        "label": "Ambassadors Grid Heading 1"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_grid_para_1",
+        "label": "Ambassadors Grid Content 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "Ambassadors_grid_2",
+        "label": "Ambassadors Grid Image 2"
+      },
+      {
+        "type": "text",
+        "id": "Ambassadors_grid_heading_2",
+        "label": "Ambassadors Grid Heading 2"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_grid_para_2",
+        "label": "Ambassadors Grid Content 2"
+      },
+      {
+        "type": "image_picker",
+        "id": "Ambassadors_grid_3",
+        "label": "Ambassadors Grid Image 3"
+      },
+      {
+        "type": "text",
+        "id": "Ambassadors_grid_heading_3",
+        "label": "Ambassadors Grid Heading 3"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_grid_para_3",
+        "label": "Ambassadors Grid Content 3"
+      },
+      {
+        "type": "image_picker",
+        "id": "Ambassadors_grid_4",
+        "label": "Ambassadors Grid Image 4"
+      },
+      {
+        "type": "text",
+        "id": "Ambassadors_grid_heading_4",
+        "label": "Ambassadors Grid Heading 4"
+      },
+      {
+        "type": "textarea",
+        "id": "Ambassadors_grid_para_4",
+        "label": "Ambassadors Grid Content 4"
+      }
+]
+  }
+{% endschema %}
+

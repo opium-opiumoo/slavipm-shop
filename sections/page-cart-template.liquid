@@ -1,0 +1,212 @@
+<script>
+  window.location.replace("/#cart-open");
+</script>
+
+{%- assign existing_categories = '' -%}
+
+{%- for item in cart.items -%}
+  {%- assign product = item.product -%}
+  {% if product.handle contains '-1' %}
+    {% assign temp_newhandle = product.handle | replace: "-1","" %}
+    {% assign product = all_products[temp_newhandle] %}
+  {% endif %}
+  {%- for tag in product.tags -%}
+    {%- if tag contains 'collection_' -%}
+      {%- unless existing_categories contains tag -%}
+        {%- assign existing_categories = existing_categories | append: tag | append: '|' -%}
+      {%- endunless -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- assign existing_categories = existing_categories | split: '|' -%}
+
+<div class="cart-template__wrapper" data-default-currency="{{- settings.default_currency | default: shop.currency -}}" data-shop-currency="{{- settings.default_currency | default: shop.currency -}}">
+  <div class="cart-empty"{% if cart.item_count > 0 %} style="display: none;"{% endif %}>
+    <span>Cart is empty</span>
+    <a href="/collections/all">SHOP NOW</a>
+
+    {% if cart.item_count == 0 %}
+      <script>
+        setTimeout(() => {
+//           window.location.href = '/collections/all';
+        }, 5000)
+      </script>
+    {% endif %}
+  </div>
+  
+  <div class="cart-template__header" style="background-color: {{- section.settings.background_color -}};{% if cart.item_count == 0 %} display: none;{% endif %}">
+    {%- if section.settings.title != blank -%}
+      <h4 class="cart-template__header-title">{{- section.settings.title -}}{%- if customer -%}, {{- customer.first_name -}}{%- endif -%}!</h4>
+    {%- else -%}
+      <h4 class="cart-template__header-title">Hello{%- if customer -%}, {{- customer.first_name -}}{%- endif -%}!</h4>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <div class="cart-template__header-text">{{- section.settings.text -}}</div>
+    {%- endif -%}
+  </div>
+
+  <div class="cart-template__content"{% if cart.item_count == 0 %} style="display: none;"{% endif %}>
+    <div class="cart-template__content-left">
+      {% assign cart_items_rendered_array = "" %}
+      {% assign cart_items_rendered_delimiter = "|" %}
+      
+      {%- for category in existing_categories -%}
+        <div data-category="{{- category | replace: 'collection_', '' | handleize -}}">
+          <h2 class="content-left__category-title">
+            {%- assign category_name = category | replace: 'collection_', '' -%}
+
+            {{- category_name | capitalize -}}
+            <a href="/collections/{{- category_name | downcase -}}" target="_blank">{{- 'layout.cart.browse' | t -}}</a>
+          </h2>
+
+          {%- for item in cart.items -%}
+          {% if item.product.handle contains "-1" %}
+          {% assign newhandle = item.product.handle | replace: "-1","" %}
+          {% assign item_product = all_products[newhandle] %}
+          {% else %}
+		{%- assign item_product = item.product -%}
+          {% endif %}
+            {%- if item_product.tags contains category -%}
+              {%- include 'page-cart-item' -%}
+              {% assign cart_items_rendered_array = cart_items_rendered_array | append: cart_items_rendered_delimiter | append: item.id  %}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+      
+      {% comment %} items without category {% endcomment %}
+      {% assign cart_items_rendered_delimiter = cart_items_rendered_delimiter | split: cart_items_rendered_delimiter %}
+      <div data-category="">
+          {%- for item in cart.items -%}
+            {% if item.product.handle contains "-1" %}
+              {% assign newhandle = item.product.handle | replace: "-1","" %}
+              {% assign item_product = all_products[newhandle] %}
+            {% else %}
+		      {%- assign item_product = item.product -%}
+            {% endif %}
+            {%- unless cart_items_rendered_array contains item.id  -%} {% comment %} !!! this check is for item from cart, NOT the direct product {% endcomment %}
+            
+              {%- include 'page-cart-item' -%}
+
+            {%- endunless -%}
+          {%- endfor -%}
+      </div>
+      
+      <div class="ajaxcart__carbonclick-cart-wrapper " style="{% if cart.currency.iso_code != "GBP" %}display:none{% endif %}">
+         {% render 'carbonclick-cart', type: 'compressed' %}  
+      </div>
+    </div>
+
+    <div class="cart-template__content-right">
+      <h2 class="content-right__title">{{- 'layout.cart.order_details' | t -}}</h2>
+      <div class="content-right__box" style="background-color: {{- section.settings.background_color -}};">
+        <h3 class="box__title">{{- 'layout.cart.your_plan' | t -}}</h3>
+        <ul class="box__list-items">
+          
+          {%- for category in existing_categories -%}
+            {%- assign category_total = 0 -%}
+
+            {%- for item in cart.items -%}
+              {%- if item.product.tags contains category or item_product.tags contains category -%}
+                {%- assign category_total = category_total | plus: item.final_line_price -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            <li class="box__item">
+              <p class="box__item-title" data-name="{{- category | replace: 'collection_', '' | handleize -}}">{{- category | replace: 'collection_', '' | capitalize -}}</p>
+              <p class="box__item-price">{{- category_total | money -}}</p>
+            </li>
+          {%- endfor -%}
+
+          <li class="box__item subtotla">
+            <p class="box__item-title">{{- 'cart.general.subtotal' | t -}}</p>
+            <p class="box__item-price">{{- cart.items_subtotal_price | money -}}</p>
+          </li>
+          <li class="box__item shipping">
+            <p class="box__item-title">{{- 'cart.general.shipping' | t -}}</p>
+            <p class="box__item-price">{{- 0 | money -}}</p>
+          </li>
+          <li class="box__item total hide">
+            <p class="box__item-title">{{- 'cart.general.total' | t -}}</p>
+            <p class="box__item-price">{{- cart.total_price | money -}}</p>
+          </li>
+        </ul>
+
+        <a href="#checkout" class="btn btn-checkout">{{- 'layout.cart.button_text' | t -}}</a>
+
+        <div class="box__bottom-items">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'checkout_info' -%}
+              <div class="box__bottom-item">
+                {%- if block.settings.image != blank -%}
+                  <img data-src="{{- block.settings.image | img_url: '100x100' -}}" alt="icon" class="item-image lazyload">
+                {%- endif -%}
+
+                {%- if block.settings.title != blank -%}
+                  <h6 class="item-title">{{- block.settings.title -}}</h6>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <p class="item-text">{{- block.settings.text -}}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Partner Section",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Here is your plan"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "checkout_info",
+        "name": "Checkout info",
+        "limit": 2,
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "default": "Some title..",
+            "label": "Title"
+          },
+          {
+            "type": "textarea",
+            "id": "text",
+            "default": "Some text..",
+            "label": "Text"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

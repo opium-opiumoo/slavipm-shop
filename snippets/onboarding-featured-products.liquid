@@ -1,0 +1,30 @@
+<!-- snippets/onboarding-featured-products.liquid -->
+
+{{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+
+<div class="grid__item">
+  <div class="grid--full grid--featured-products text-center helper-content">
+    {% assign count = 1 %}
+
+    {% for i in (1..15) limit: limit %}
+      <div class="grid__item  grid__image {{ hover_class }} {{ grid_item_width }} {{ product_class }} placeholder">
+        <a href="#" class="">
+          <div class="cell-wrapper">
+            {% capture placeholder %}product-{{ count }}{% endcapture %}
+            {{ placeholder | placeholder_svg_tag }}
+          </div>
+        </a>
+        <span class="product_image_caption">
+              <h6>{{ 'homepage.onboarding.product_title' | t }}</h6>
+              <span class="price">{{ 99 | money }}</span>
+        </span>
+      </div>
+
+      {% assign count = count | plus: 1 %}
+
+      {% if count > 6 %}
+        {% assign count = 1 %}
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>

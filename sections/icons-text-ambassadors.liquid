@@ -1,0 +1,137 @@
+<div class="icons-text__wrapper"{% if section.settings.background %} style="padding-top: {{ section.settings.padding_vertical }}px; padding-bottom: {{ section.settings.padding_vertical }}px; background-color: {{ section.settings.background }};"{% endif %}>
+  <div class="icons-text__inner">
+    {% if section.settings.title != blank %}
+    <div class="icons-text__heading">
+      <h2 style="font-size:{{ section.settings.title-font }}px; line-height:{{ section.settings.title-font }}px">{{ section.settings.title }}</h2>
+    </div>
+	{% endif %}
+    {% if section.settings.subtitle != blank %}
+    <div class="icons-text__subheading">
+      {{ section.settings.subtitle }}
+    </div>
+    {% endif %}
+    {% if section.blocks.size > 0 %}
+    <div class="icons__wrapper">
+      <div class="icon-row">
+      {% for block in section.blocks %}
+        
+      {% if block.type == 'icon' %}
+      <div class="icon-block">
+		<div class="icon__wrapper">
+          {% if block.settings.icon_svg_code != blank %}
+          	{{ block.settings.icon_svg_code }}
+          {% elsif block.settings.icon_svg_link != blank %}
+          	<img data-src="{{ block.settings.icon_svg_link }}" class="lazyload">
+          {% elsif block.settings.icon_img != blank %}
+          	<img data-src="{{ block.settings.icon_img | img_url: 'x100' }}" class="lazyload">
+          {% endif %}
+        </div>
+        
+        {% if block.settings.icon_subheading != blank or block.settings.icon_subtext != blank %}
+        <div class="icon__meta">
+          {% if block.settings.icon_subheading != blank %}
+          <div class="icon__meta-subheading" style=""><h6>{{ block.settings.icon_subheading | split: ' ' | first }}</h6></div>
+          <div class="icon__meta-subheading" style="margin-top: -10px; margin-bottom: 0px;"><h6>{{ block.settings.icon_subheading | split: ' ' | last }}</h6></div>
+          {% endif %}
+          {% if block.settings.icon_subtext != blank %}
+          <div class="icon__meta-subtext">{{ block.settings.icon_subtext }}{% if block.settings.show_star %}<span class="star-custom">*</span>{% endif %}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+        
+      {% if forloop.last %}</div>{% endif %}
+      {% elsif block.type == 'row-end' %}
+      </div>{% unless forloop.last %}<div class="icon-row">{% endunless %}
+      {% endif %}
+      
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Benefits",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+	{
+		"type": "richtext",
+		"id": "subtitle",
+		"label": "Subtitle",
+"default": "<p>As an Innermost Ambassador, you'll get amazing benefits, complymentary products and 10% cash commision on every qualifying purchase! And we'll even hook up your friends, family and followers with a cool 20% off their purchase, too!</p>"
+	},
+	{
+      "type": "range",
+      "id": "title-font",
+      "min": 30,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "icon",
+      "name": "Icon",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icon Image"
+        },
+        {
+          "type": "textarea",
+          "id": "icon_svg_code",
+          "label": "SVG Code"
+        },
+        {
+          "type": "text",
+          "id": "icon_svg_link",
+          "label": "SVG Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_img",
+          "label": "Icon Image"
+        },
+        {
+          "type": "header",
+          "content": "Meta Texts"
+        },
+        {
+          "type": "text",
+          "id": "icon_subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "icon_subtext",
+          "label": "Subtext"
+        },
+		{
+		  "type": "checkbox", 
+		  "id" :  "show_star",
+		  "label": "Show star?",
+		  "default" : false
+		}
+      ]
+    },
+    {
+      "type": "row-end",
+      "name": "Row End"
+    }
+  ]
+}
+{% endschema %}

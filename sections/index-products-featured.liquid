@@ -1,0 +1,118 @@
+{%- assign collection = collections[section.settings.collection] -%}
+<div class="index-section-products index-section-default {% if section.settings.subtitle != blank %}index-section-has-subtitle{% endif %}">
+  <div class="index-products-wrapper-arrows">
+    <a href"#" class="cb-slide-arrow-prev"></a>
+    <a href"#" class="cb-slide-arrow-next"></a>
+  </div>
+  
+  {% if section.settings.title != blank %}
+    <h2 class="section-title">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.subtitle != blank %}
+    <div class="section-subtitle">{{ section.settings.subtitle }}</div>
+  {% endif %}
+  
+  <div id="index-products-wrapper"
+       class="grid--full grid--products"
+       data-slides-to-show="{{ section.settings.slides_to_show }}"
+       data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+  >
+    {% for product in collection.products %}
+      <div class="product-grid-item-wrapper large--one-quarter medium--one-third small--one-whole">
+        {% include 'product-grid-item-small', product: product, is_slider: true, homepage: true %}
+      </div>
+    {% endfor %}
+  </div>
+  
+  {% if section.settings.link and section.settings.link_text != blank %}
+    <a id="dolor_sit_btn" class="innermost_front_btn btn" href="{{ section.settings.link }}">{{ section.settings.link_text }}</a>
+  {% endif %}
+</div>
+
+<style>
+  #shopify-section-{{ section.id }}
+  {
+    background-color:{{ section.settings.dolor_color }};
+    {% if section.settings.dolor_color_text %}
+      color: {{ section.settings.dolor_color_text }};
+    {% endif %}
+  }
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Collection - index page",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Our products"
+      },
+      {
+        "type":"textarea",
+        "id":"subtitle",
+        "label":"Subheading"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color",
+        "label":"Background Color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color_text",
+        "label":"Text Color",
+        "default": "#525252"
+      },
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "range",
+        "id": "slides_to_show",
+        "min": 1,
+        "max": 6,
+        "default": 4,
+        "label": "Slides to show"
+      },
+      {
+        "type": "range",
+        "id": "autoplay_speed",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "default": 5,
+        "label": "Autoplay speed [seconds]"
+      },
+	  {
+		"type": "url",
+		"id": "link",
+		"label": "Button Link",
+        "info": "Leave blank to hide the button"
+	  },
+	  {
+		"type": "text",
+		"id": "link_text",
+		"default": "Learn More",
+		"label": "Button Text"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collection - index page",
+        "category": "Collection"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

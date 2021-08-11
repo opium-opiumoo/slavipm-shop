@@ -1,0 +1,625 @@
+{% comment %} CLS Fixes {% endcomment %}
+<style>
+  .accordion_content{
+    display: none;
+  }
+</style>
+
+
+{% assign quote_additional_class = " small--hide " %}
+<div class="product-desc-img-wrapper">
+  <div class="product-description-image">
+    <div class="grid--full ">
+      <div class="grid__item one-half pid-small--one-whole medium-up--push--one-half ">
+        <div class="product-desc-img-img">
+          {% for field in product.metafields.image-desc-first %}
+          <img class="right-side-image one-whole lazyload" data-src="{{ field | last | split: "*half-side-image" | last | split: "*end-half-side-image" | first }}"/>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="grid__item one-half pid-small--one-whole medium-up--pull--one-half ">
+        <div class="product-desc-img-desc left-text">
+          {% for field in product.metafields.image-desc-first %}
+          {% assign title = field | last | split: "*title" | last | split: "*end-title" | first %}
+          {% assign text = field | last | split: "*text" | last | split: "*end-text" | first %}
+          {% if field.last contains "*every-bolder-colour" %}
+          {% assign all-boulder-colour = field | lasat | split: "*every-bolder-colour" | last | split: "*end-every-bolder-colour" | first %}
+          {% endif %}
+          <h2>{{ title | replace: "*bolder", "<span class='bolder bolder-colour-1'>" | replace: "*end-bolder", "</span>" }}</h2>
+          <p>{{ text | replace: "*bolder", "<strong>" | replace: "*end-bolder", "</strong>" | replace: "*smaller-text", "<p class='smaller-text'>" | replace: "*end-smaller-text", "</p>" }}</p>
+          {% for block in section.blocks %}
+          {% if block.type == "Text" %}
+          {% if product.tags contains block.settings.products_selector %}
+          {% if block.settings.section_id == '1' %}
+          <div class="accord accord-faq accord-faq-1">
+            <div class="accord_main">
+              {% if block.settings.question1 != blank %}
+              <h6>{{ block.settings.question1 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer1 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question2 != blank %}
+              <h6>{{ block.settings.question2 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer2 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question3 != blank %}
+              <h6>{{ block.settings.question3 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer3 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question4 != blank %}
+              <h6>{{ block.settings.question4 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer4 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question5 != blank %}
+              <h6>{{ block.settings.question5 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer5 }}
+              </div>                     
+              {% endif %}
+              {% if block.settings.qustion6 != blank %}
+              <h6>{{ block.settings.question6 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer6 }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% if field.last contains '*addStars' %}
+          {% assign addStars = true %}
+          {% endif %}
+          {% if field.last contains '*addBulletPoints' %}
+          {% assign bulletPoints = true %}
+          {% endif %}
+          {% if field.last contains '*addQuote' %}
+          {% assign addQuote = true %}
+          {% endif %}
+          {% if field.last contains '*addDescriptions' %}
+          {% assign addDescriptions = true %}
+          {% endif %}
+          {% if bulletPoints == true %}
+          <div class="pro_box1 grid">
+            {%- if product.metafields.claims.claims-1 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-1 }}</h6>
+            </div>
+            {%- endif -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              {%- if product.metafields.claims.claims-2 != blank -%}
+              <h6>{{ product.metafields.claims.claims-2    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-3 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-3   }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-4 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-4    }}</h6>
+            </div>
+            {%- endif -%}
+
+            {%- if product.metafields.claims.claims-5 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-5    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-6 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-6    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-7 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-7   }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-8 != blank -%}
+            <div class="grid__item  one-third">      
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-8    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-9 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-9    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-10 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-10     }}</h6>
+            </div>
+            {%- endif -%}
+          </div>
+          {% endif %}
+          {% if addQuote == true %}
+          <div class="quote {{ quote_additional_class }}">
+            <img class="lazyload vquotemark" data-src="{{ 'newQuote.png' | asset_img_url: '100x' }}">
+            <p class="quotetext" >{{ field | last | split: "*quote" | last | split: "*end-quote" | first }}</p>
+            {% if field.last contains '*logo-image' %}
+            <img class="lazyload logo" data-src="{{ field | last | split: "*logo-image" | last | split: "*end-logo-image" | first }}">
+            {% endif %}
+            {% if addStars == true %}
+            <div class="jdgm-rev-widg__summary-stars image-desc-stars" aria-label="Average rating is 5.00 stars"> <a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a> </div>         
+            {% endif %}
+            {% if field.last contains '*name' %}
+            <p class="quote-said">{{ field | last | split: "*name" | last | split: "*end-name" | first }}</p>
+            {% endif %}
+
+          </div>
+          {% endif %}
+          {% if addDescriptions == true %}
+          <div class="product-descriptions">
+            {% if product.metafields.image-desc-second != blank %}
+            {{ Description[1] }}
+            {% endif %}
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% assign addQuote = false %}
+          {% assign addDescriptions = false %}
+          {% assign bulletPoints = false %}
+          {% assign addStars = false %}
+
+        </div> 
+      </div>
+    </div>
+  </div>
+  {% if product.metafields.image-desc-second != blank %}
+  <div class="product-description-image-1">
+    <div class="grid--full ">
+      <div class="grid__item one-half pid-small--one-whole ">
+        <div class="product-desc-img-img">
+          {% for field in product.metafields.image-desc-second %}
+          <img class="right-side-image one-whole lazyload" data-src="{{ field | last | split: "*half-side-image" | last | split: "*end-half-side-image" | first }}"/>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="grid__item one-half pid-small--one-whole ">
+        <div class="product-desc-img-desc right-text">
+          {% for field in product.metafields.image-desc-second %}
+          {% assign title = field | last | split: "*title" | last | split: "*end-title" | first %}
+          {% assign text = field | last | split: "*text" | last | split: "*end-text" | first %}	
+          <h2>{{ title | replace: "*bolder", "<span class='bolder bolder-colour-2'>" | replace: "*end-bolder", "</span>" }}</h2>
+          <p>{{ text | replace: "*bolder", "<strong>" | replace: "*end-bolder", "</strong>" | replace: "*smaller-text", "<p class='smaller-text'>" | replace: "*end-smaller-text", "</p>" }}</p>
+          {% for block in section.blocks %}
+          {% if block.type == "Text" %}
+          {% if product.tags contains block.settings.products_selector %}
+          {% if block.settings.section_id == '2' %}
+          <div class="accord accord-faq accord-faq-2">
+            <div class="accord_main">
+              {% if block.settings.question1 != blank %}
+              <h6>{{ block.settings.question1 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer1 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question2 != blank %}
+              <h6>{{ block.settings.question2 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer2 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question3 != blank %}
+              <h6>{{ block.settings.question3 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer3 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question4 != blank %}
+              <h6>{{ block.settings.question4 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer4 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question5 != blank %}
+              <h6>{{ block.settings.question5 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer5 }}
+              </div>                     
+              {% endif %}
+              {% if block.settings.qustion6 != blank %}
+              <h6>{{ block.settings.question6 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer6 }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% if field.last contains '*addStars' %}
+          {% assign addStars = true %}
+          {% endif %}
+          {% if field.last contains '*addBulletPoints' %}
+          {% assign bulletPoints = true %}
+          {% endif %}
+          {% if field.last contains '*addQuote' %}
+          {% assign addQuote = true %}
+          {% endif %}
+          {% if field.last contains '*addDescriptions' %}
+          {% assign addDescriptions = true %}
+          {% endif %}
+          {% if bulletPoints == true %}
+          <div class="pro_box1 grid">
+            {%- if product.metafields.claims.claims-1 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-1 }}</h6>
+            </div>
+            {%- endif -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              {%- if product.metafields.claims.claims-2 != blank -%}
+              <h6>{{ product.metafields.claims.claims-2    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-3 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-3   }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-4 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-4    }}</h6>
+            </div>
+            {%- endif -%}
+
+            {%- if product.metafields.claims.claims-5 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-5    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-6 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-6    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-7 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-7   }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-8 != blank -%}
+            <div class="grid__item  one-third">      
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-8    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-9 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-9    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-10 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-10     }}</h6>
+            </div>
+            {%- endif -%}
+          </div>
+          {% endif %}
+          {% if addQuote == true %}
+          <div class="quote {{ quote_additional_class }}">
+            <img class="lazyload vquotemark" data-src="{{ 'newQuote.png' | asset_img_url: '100x' }}">
+            <p class="quotetext" >{{ field | last | split: "*quote" | last | split: "*end-quote" | first }}</p>
+            {% if field.last contains '*logo-image' %}
+            <img class="lazyload logo" data-src="{{ field | last | split: "*logo-image" | last | split: "*end-logo-image" | first }}">
+            {% endif %}
+            {% if addStars == true %}
+            <div class="jdgm-rev-widg__summary-stars image-desc-stars" aria-label="Average rating is 5.00 stars"> <a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a> </div>         
+            {% endif %}
+            {% if field.last contains '*name' %}
+            <p class="quote-said">{{ field | last | split: "*name" | last | split: "*end-name" | first }}</p>
+            {% endif %}
+
+          </div>
+          {% endif %}
+          {% if addDescriptions == true %}
+          <div class="product-descriptions">
+            {% if product.metafields.image-desc-second != blank %}
+            {{ Description[1] }}
+            {% endif %}
+          </div>
+          {% for block in section.blocks %}
+          {% if block.type == "Inisght" %}
+          {% if product.tags contains block.settings.products_selector_insight %}
+          {% assign article = articles[block.settings.article_selection] %}
+          <div class="article-container__link">
+            {% if block.settings.custom_title != blank %}
+             <span class="article-bold-title">{{ block.settings.text_before_article }}&nbsp; </span>
+            {% else %}
+            <span class="article-bold-title">{{ block.settings.text_before_article }}&nbsp; </span>
+            {% endif %}
+            <a  target="_blank" href="{% if block.settings.articles_custom_link != blank %}{{ block.settings.articles_custom_link }}{% else %}{{ article.url }}{% endif %}" class="product-descriptions-article {% unless forloop.last %}margin-bottom{% endunless %}">
+            {% if block.settings.custom_title != blank %}
+              {{ block.settings.custom_title }} `
+            {% else %}
+              {{ article.title }}
+            {% endif %}
+            </a>
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+          {% endfor %}
+          {% assign addQuote = false %}
+          {% assign addDescriptions = false %}
+          {% assign bulletPoints = false %}
+          {% assign addStars = false %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if product.metafields.image-desc-third != blank %}
+  <div class="product-description-image-2">
+    <div class="grid--full ">
+      <div class="grid__item one-half pid-small--one-whole medium-up--push--one-half ">
+        <div class="product-desc-img-img">
+          {% for field in product.metafields.image-desc-third %}
+          <img class="right-side-image one-whole lazyload" data-src="{{ field | last | split: "*half-side-image" | last | split: "*end-half-side-image" | first }}"/>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="grid__item one-half pid-small--one-whole medium-up--pull--one-half ">
+        <div class="product-desc-img-desc left-text">
+          {% for field in product.metafields.image-desc-third %}
+          {% assign title = field | last | split: "*title" | last | split: "*end-title" | first %}
+          {% assign text = field | last | split: "*text" | last | split: "*end-text" | first %}
+          <h2>{{ title | replace: "*bolder", "<span class='bolder bolder-colour-3'>" | replace: "*end-bolder", "</span>" }}</h2>
+          {% comment %}<p>{{ text | replace: "*bolder", "<strong>" | replace: "*end-bolder", "</strong>" | replace: "*smaller-text", "<p class='smaller-text'>" | replace: "*end-smaller-text", "</p>" }}</p>{% endcomment %}
+          {% for block in section.blocks %}
+          {% if block.type == "Paragraphs" %}
+          {% if product.tags contains block.settings.paragraph_identification %}
+          <div class="paragraphs">
+              {% if block.settings.title1 != blank %}
+              <h5>{{ block.settings.title1 }}</h5>
+              <div>{{ block.settings.paragraph1 }}</div>
+              {% endif %}
+              {% if block.settings.title2 != blank %}
+              <h5>{{ block.settings.title2 }}</h5>
+              <div>{{ block.settings.paragraph2 }}</div>
+              {% endif %}
+              {% if block.settings.title3 != blank %}
+              <h5>{{ block.settings.title3 }}</h5>
+              <div>{{ block.settings.paragraph3 }}</div>
+              {% endif %}
+              {% if block.settings.title4 != blank %}
+              <h5>{{ block.settings.title4 }}</h5>
+              <div>{{ block.settings.paragraph4 }}</div>
+              {% endif %}
+              {% if block.settings.title5 != blank %}
+              <h5>{{ block.settings.title5 }}</h5>
+              <div>{{ block.settings.paragraph5 }}</div>                     
+              {% endif %}
+              {% if block.settings.title6 != blank %}
+              <h5>{{ block.settings.title6 }}</h5>
+              <div>{{ block.settings.paragraph6 }}</div>
+              {% endif %}
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% if field.last contains '*addStars' %}
+          {% assign addStars = true %}
+          {% endif %}
+          {% if field.last contains '*addBulletPoints' %}
+          {% assign bulletPoints = true %}
+          {% endif %}
+          {% if field.last contains '*addQuote' %}
+          {% assign addQuote = true %}
+          {% endif %}
+          {% if field.last contains '*addDescriptions' %}
+          {% assign addDescriptions = true %}
+          {% endif %}
+          {% if addQuote == true %}
+          {% if bulletPoints == true %}
+          <div class="pro_box1 grid">
+            {%- if product.metafields.claims.claims-1 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-1 }}</h6>
+            </div>
+            {%- endif -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              {%- if product.metafields.claims.claims-2 != blank -%}
+              <h6>{{ product.metafields.claims.claims-2    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-3 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-3   }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-4 != blank -%}
+            <div class="grid__item  one-third">
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-4    }}</h6>
+            </div>
+            {%- endif -%}
+
+            {%- if product.metafields.claims.claims-5 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-5    }}</h6>
+            </div>
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-6 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-6    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-7 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %} 
+              <h6>{{ product.metafields.claims.claims-7   }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-8 != blank -%}
+            <div class="grid__item  one-third">      
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-8    }}</h6>
+            </div> 
+            {%- endif -%} 
+            {%- if product.metafields.claims.claims-9 != blank -%}
+            <div class="grid__item  one-third"> 
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-9    }}</h6>
+            </div> 
+            {%- endif -%}
+            {%- if product.metafields.claims.claims-10 != blank -%}
+            <div class="grid__item  one-third">  
+              {% render 'icon-checkbox', custom: true %}
+              <h6>{{ product.metafields.claims.claims-10     }}</h6>
+            </div>
+            {%- endif -%}
+          </div>
+          {% endif %}
+          {% for block in section.blocks %}
+          {% if block.type == "Text" %}
+          {% if product.tags contains block.settings.products_selector %}
+          {% if block.settings.section_id == '3' %}
+          <div class="accord accord-faq accord-faq-3">
+            <div class="accord_main">
+              {% if block.settings.question1 != blank %}
+              <h6>{{ block.settings.question1 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer1 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question2 != blank %}
+              <h6>{{ block.settings.question2 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer2 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question3 != blank %}
+              <h6>{{ block.settings.question3 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer3 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question4 != blank %}
+              <h6>{{ block.settings.question4 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer4 }}
+              </div>
+              {% endif %}
+              {% if block.settings.question5 != blank %}
+              <h6>{{ block.settings.question5 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer5 }}
+              </div>                     
+              {% endif %}
+              {% if block.settings.qustion6 != blank %}
+              <h6>{{ block.settings.question6 }}</h6>
+              <div class="accordion_content">
+                {{ block.settings.answer6 }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% comment %}
+          <div class="quote {{ quote_additional_class }}">
+            <img class="lazyload vquotemark" data-src="{{ 'newQuote.png' | asset_img_url: '100x' }}">
+            <p class="quotetext" >{{ field | last | split: "*quote" | last | split: "*end-quote" | first }}</p>
+            {% if field.last contains '*logo-image' %}
+            <img class="lazyload logo" data-src="{{ field | last | split: "*logo-image" | last | split: "*end-logo-image" | first }}">
+            {% endif %}
+            {% if addStars == true %}
+            <div class="jdgm-rev-widg__summary-stars image-desc-stars" aria-label="Average rating is 5.00 stars"> <a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a><a class="jdgm-star jdgm--on"></a> </div>         
+            {% endif %}
+            {% if field.last contains '*name' %}
+            <p class="quote-said">{{ field | last | split: "*name" | last | split: "*end-name" | first }}</p>
+            {% endif %}
+          </div>
+          {% endcomment %}
+          {% endif %}
+          {% if addDescriptions == true %}
+          {% if product.metafields.image-desc-second != blank %}
+          <div class="product-descriptions">
+            {{ Description[1] }}
+          </div>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% assign addQuote = false %}
+          {% assign addDescriptions = false %}
+          {% assign bulletPoints = false %}
+          {% assign addStars = false %} 
+          {% comment %}
+          <div class="back-to-top-btn">
+            <button onclick="scrollTopAnimated()" class="cta-button btn create_button">Buy Now</button>
+          </div>
+          {% endcomment %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  {% for field in product.metafields.image-desc-first %}
+  {% assign colour1 = field | last | split: "*bolder-colour" | last | split: "*end-bolder-colour" | first  %}
+  .bolder-colour-1 {
+    color: {{ colour1 }};
+  }
+  {% break %}
+  {% endfor %}
+  {% for field in product.metafields.image-desc-second %}
+  {% assign colour2 = field | last | split: "*bolder-colour" | last | split: "*end-bolder-colour" | first  %}
+  .bolder-colour-2 {
+    color: {{ colour2 }};
+  }
+  {% break %}
+  {% endfor %}
+  {% for field in product.metafields.image-desc-third %}
+  {% assign colour3 = field | last | split: "*bolder-colour" | last | split: "*end-bolder-colour" | first  %}
+  .bolder-colour-3 {
+    color: {{ colour3 }};
+  }
+  {% break %}
+  {% endfor %}
+  .bolder {
+    color: {{  all-boulder-colour }}!important;
+  }
+</style>
+

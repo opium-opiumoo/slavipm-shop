@@ -1,0 +1,37 @@
+<div class="grid--full contact_fulls_main">
+  <div>
+    <div class="text-center content-wrapper--horizontal section-header">
+      <div class="display-table-cell">
+        {% comment %}
+        <h1>{{ page.title }}</h1>
+        {% endcomment %}
+           {% if block.settings.About_subtitle != blank %}<h2>{{ block.settings.About_subtitle }}</h2>{% endif %}
+      {% if block.settings.About_heading-top != blank or block.settings.About_heading-bottom != blank %}
+        <h3>
+          <span>{{ block.settings.About_heading-top }}</span>
+          <span>{{ block.settings.About_heading-bottom }}</span>
+        </h3>
+      {% endif %}
+        {% include 'breadcrumb' %}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="rte" style="margin-top:40px;">
+      {{ page.content }}
+    </div>
+   </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Default Page",
+    "settings": []
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

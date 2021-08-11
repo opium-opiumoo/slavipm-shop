@@ -1,0 +1,7 @@
+{% comment %}
+  Create a placeholder image url for the lazySizes RIaS plugin.
+{% endcomment %}
+
+{% assign output = input | img_url: "777x666" %}
+{% assign output = output | replace: "777", "{width}" %}
+{% assign output = output | replace: "666", "{height}" %}

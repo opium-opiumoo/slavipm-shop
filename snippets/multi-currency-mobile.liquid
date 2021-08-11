@@ -1,0 +1,18 @@
+<li class="mobile-nav__item" aria-haspopup="true">
+  <div class="mobile-nav__has-sublist">
+    {% if footer == true %}
+     <h6 class="mobile-nav__item">COUNTRY</h6>
+	{% else %}
+    <a class="mobile-nav__link">COUNTRY</a>
+       <button type="button" class="icon-fallback-text mobile-nav__toggle">
+      <svg><use xlink:href="#icon-dropdown"></use></svg>     
+    </button>
+    {% endif %}
+ 
+  </div>
+
+  <ul class="mobile-nav__sublist currency-selector-mobile country-mobile">
+   
+  </ul>
+</li>
+

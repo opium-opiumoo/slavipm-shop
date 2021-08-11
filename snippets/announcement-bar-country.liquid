@@ -1,0 +1,23 @@
+{%- capture setting_desktop -%}notification_bar_text_{{country}}{%- endcapture -%}
+{%- capture setting_mobile -%}notification_bar_text_mobile_{{country}}{%- endcapture -%}
+{%- capture threshold -%}threshold_{{country}}{%- endcapture -%}
+{%- capture rate -%}rate_{{country}}{%- endcapture -%}
+
+{% if section.settings[threshold] != blank and section.settings[rate] != blank %}
+<span class="shipping-threshold hide" data-domain='{{domain}}' data-rate="{{section.settings[rate] | string}}">
+  {{- section.settings[threshold] -}}
+</span>
+{% endif %} 
+<div class="announcement-{{country}} announcement" style="display: none;"> 
+   
+  {% if section.settings[setting_desktop] != blank %}
+      <div class="desktop-header-message header-message-text">
+        {{ section.settings[setting_desktop] }}
+      </div>
+    {% endif %}
+
+    <div class="mobile-header-message header-message-text"> 
+      {{ section.settings[setting_mobile] }}
+    </div>
+   
+</div>

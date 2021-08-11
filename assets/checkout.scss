@@ -1,0 +1,333 @@
+$viewportIncrement: 1px; 
+
+$xsmall: 450px;
+$small: 700px;
+$medium: 840px;
+$large: 841px;
+$xlarge: 1000px;
+$xxlarge: 1200px;
+$xxxlarge: 1400px;
+
+$siteMaxWidth : none;
+
+
+$postSmall: $small + $viewportIncrement;
+$preMedium: $medium - $viewportIncrement;
+$preLarge: $large - $viewportIncrement;
+
+/*================ The following are dependencies of csswizardry grid ================*/
+$breakpoints: (
+  'small' '(max-width: #{$small})',
+  'medium' '(min-width: #{$postSmall}) and (max-width: #{$medium})',
+  'medium-down' '(max-width: #{$medium})',
+  'large' '(min-width: #{$large})',
+  'xlarge' '(min-width: #{$xlarge})',
+  'xxlarge' '(min-width: #{$xxlarge})'
+);
+$breakpoint-has-widths: ('small', 'medium', 'medium-down', 'large', 'xlarge', 'xxlarge');
+$breakpoint-has-push:  ('medium', 'medium-down', 'large');
+$breakpoint-has-pull:  ('medium', 'medium-down', 'large');
+
+/*
+.section--contact-information .section__header p.layout-flex__item {
+  display:none !important;
+} 
+      
+
+[data-step = "contact_information"] .step__footer__previous-link {
+  display:none !important;
+}
+
+*/
+html .btn,
+html .btn--subdued {
+  background-color: #3C3D3D;
+  color: #fff;
+  
+  /*fix line height*/
+  padding-top: 18px!important;
+  padding-bottom: 14px!important;
+  line-height: 1!important;
+
+  &:hover {
+    background-color: black !important;
+    color: #fff;
+  }
+}
+
+.policy-list {
+  text-align: left;
+}
+
+.new_arrive_signup_form {
+  .field {
+    width: 100%!important;
+  }
+}
+
+/* popup / klaviyo modal*/
+.welcome-popup { 
+  transition: 0.3s ease all;
+  
+  .success_message { 
+   	.klaviyo_header { 
+      @media (min-width: $medium){
+       margin-top: 170px;
+      }
+    }
+  }
+}
+
+.klaviyo_modal { 
+  background-color: rgba(79, 79, 79, 0.6)!important;
+  .klaviyo_inner { 
+    border-radius: 0!important; 
+    padding-left: 20px!important; 
+    padding-right: 20px!important; 
+    max-height: 550px!important;
+    form { 
+      max-height: 520px!important; 
+    }
+  }
+  h6 { 
+    margin-bottom: 10px;
+    font-size: 12px !important;
+    @media(max-width: $small) {
+      font-size: 11px!important;
+    }
+    text-align: center;
+    font-family: 'Raleway';
+    margin-top: 10px !important;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+
+  }
+
+  .klaviyo_header {
+    //color: #414042!important;
+    color: #525252!important; 
+    letter-spacing: 2px!important;
+  }
+
+  .success_message {
+    .klaviyo_header { 
+      font-size: 26px!important; 
+      //color: #414042!important;
+      color: #525252!important;
+      letter-spacing: 2px!important;
+      text-transform: uppercase;
+
+    }
+
+    .klaviyo_subheader { 
+      font-size: 15px;
+      line-height: 1.6;
+      font-family: Raleway,sans-serif;
+      //color: #414042;
+      color: #525252;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+  }
+
+
+  .create_button { 
+    display: block;
+    margin: auto; 
+  } 
+
+  label { 
+    p{
+      font-family: 'Raleway', sans-serif!important;
+      font-size: 9.5px!important;
+      font-weight: normal!important;
+      //color: #414042!important;
+      color: #525252!important;
+      letter-spacing: 0.1px!important;
+      line-height: 1.4!important;
+      padding-top: 10px !important;
+      display: block!important;
+      opacity: 1;
+      display: inline-block!important;
+      width: calc(96% - 15px);
+      margin-top: 0; 
+    }
+
+    input[type="checkbox"]{ 
+      width: 15px!important; 
+      display: inline-block!important; 
+      vertical-align: top!important;
+    }
+  }
+  .klaviyo_inner { 
+    background: #F6F6F6!important;
+  }
+
+  input, select { 
+    height: 37px!important;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px!important;
+    font-weight: normal;
+    //color: #414042!important;
+    color: #525252!important;
+    padding: 8px 17px;
+    padding-left: 17px !Important;
+    border: none !important;
+    outline: none;
+    box-shadow: none!important;
+    margin-bottom: 10px!important
+  }
+  select {  
+    width: 32.4%;
+    background-color: white;
+    &.newsletter_country { 
+      width: 100%; 
+    }
+  }
+
+  .klaviyo_form_actions, .klaviyo_fieldset { 
+    border-top: 0!important;
+    padding-top: 0!important;
+  }
+
+  .success_message, .error_message { 
+    padding: 0!important; 
+  }
+}
+
+.klaviyo_inner.welcome { 
+  @media(max-width: $medium){
+    padding-top: 10px;
+
+    .klaviyo_header_close { 
+      top: 0;
+    }
+
+  }
+
+  @media (min-width: $medium){
+    width: 750px!important; 
+    margin-left: 0!important; 
+    transform: translateX(-50%);
+    padding: 0!important;
+
+    .klaviyo_subscription_form  {
+      padding: 10px 30px 0px 0 !important
+    }
+  }
+  p.heading { 
+    font-family: Raleway;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  img { 
+    vertical-align: bottom; 
+  } 
+  label p { 
+    font-size: 8.5px!important; 
+  } 
+}
+
+@media only screen and (max-width: 480px) { 
+  .klaviyo_modal .klaviyo_inner {
+    top: 50%!important;
+    transform: translateY(-50%)!important;
+  }
+}
+
+@media (min-width: 840px){
+  .phone-form-modal.klaviyo_inner.welcome {
+    width: 905px!important;
+  }
+  .klaviyo_inner.welcome {
+    width: 820px!important;
+  }
+}
+
+.welcome-popup {
+  .grid {
+    display: flex;
+    flex-flow: row;
+  }
+  
+  .grid__item {
+    box-sizing: border-box;
+  }
+  .one-half {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+  
+  .medium-down--one-whole {
+    @media (max-width: $medium){
+      flex: 0 0 auto;
+      width: 100%;
+    }
+  }
+  .small--one-whole {
+    @media (max-width: $small){
+      flex: 0 0 auto;
+      width: 100%;
+    }
+  }
+
+  .medium-down--hide {
+    @media (max-width: $medium){
+      display: none!important;
+    }
+  }
+  .small--hide {
+    @media (max-width: $small){
+      display: none!important;
+    }
+  }
+  
+  .welcome-popup--text-content-wrapper {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    padding: 40px;
+    text-align: center;
+    @media (max-width: $small){
+      padding-left: 0;
+      padding-right: 0;
+    }
+    
+    .welcome-popup--text-title {
+      font-family: jaapokki;
+      text-transform: uppercase;
+      font-size: 60px;
+      font-weight: 400;
+      color: #525252;
+      letter-spacing: 3px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      
+      @media (max-width: $small){
+        font-size: 42px;
+      }
+    }
+    .welcome-popup--text-content {
+      font-size: 18px;
+      line-height: 1.4;
+      p + p {
+        padding-top: 10px;
+      }
+    }
+    
+  }
+  
+  .welcome-popup-cta-btn {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    margin-top: 45px;
+    padding-left: 36px;
+    padding-right: 36px;
+    
+  }
+}
+/* end popup / klaviyo modal*/

@@ -1,0 +1,51 @@
+const progressBarClasses = {
+  progressBar: `progress-bar`,
+  currentProgress: `current-progress`,
+  text: `progress-bar-text`,
+};
+const $progressBarSelectors = {
+  $progressBar: $(`.${progressBarClasses.progressBar}`),
+  $currentProgress: $(`.${progressBarClasses.currentProgress}`),
+  $text: $(`.${progressBarClasses.text}`),
+};
+
+const progressBarColors = {
+  currentProgress: "#f2d439",
+  background: "#f2e0d6",
+};
+
+const freeShippingText = `Nice! You qualify for free shipping.`;
+const calculatingText = `Calculating...`;
+
+const cartPopupProgressBarText = () => {
+  const formattedMoney = cartBill.currency +(cartBill.freeShippingThreshold - cartBill.subtotalWithCurrencyUpdate).toFixed(2)
+  const leftMoneyToFreeShippingText = `You’re ${formattedMoney} away from free shipping`; 
+  
+  $progressBarSelectors.$text.html(leftMoneyToFreeShippingText);
+};
+
+function cartPopupProgressBarFill(updatedCurrency) {
+  const calculateFillPercentage = () => {
+    return cartBill.freeShippingThreshold > 100 ? 100 : 100 - updatedCurrency ;
+  };
+  const fillProgressPercentage = updatedCurrency >= 0 ? calculateFillPercentage() : 100;
+  $progressBarSelectors.$currentProgress.css({ width: `${fillProgressPercentage}%` });
+}
+
+function cartPopupProgressBarUpdate() {
+  //cartBill.moneyLeftForFreeShipping > 0 ? cartPopupProgressBarText() : cartPopupProgressBarSetFreeShipping();
+  const updatedCurrency = +(cartBill.freeShippingThreshold - cartBill.subtotalWithCurrencyUpdate).toFixed(2);
+  
+  // After currency update
+  updatedCurrency > 0 ? cartPopupProgressBarText() : cartPopupProgressBarSetFreeShipping();
+  
+  cartPopupProgressBarFill(updatedCurrency);
+}
+
+function cartPopupProgressBarSetCalculating() {
+  $progressBarSelectors.$text.html(calculatingText);
+}
+
+function cartPopupProgressBarSetFreeShipping() {
+  $progressBarSelectors.$text.html(freeShippingText);
+}

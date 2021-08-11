@@ -1,0 +1,103 @@
+function cartPopupUpdateItemQuantity(newCartItem) {
+  const newQuantity = newCartItem.quantity;
+  const $itemToModify = $itemSelectors.$quantity(newCartItem.key);
+
+  $itemToModify.html(newQuantity);
+}
+
+function cartObjUpdateItemQuantity(newItem) {
+  const cartItemIndex = cart.items.findIndex((item) => item.key === newItem.key);
+  cart.items[cartItemIndex] = newItem;
+}
+
+function cartDecreaseItemQuantityEvent(itemKEY) {
+  const cartItem = cart.items.find((item) => item.key === itemKEY);
+  const newQuantity = cartItem.quantity - 1;
+
+  cartPopupItemLoading(itemKEY);
+  cartPopupProgressBarSetCalculating();
+  
+  $('html, body').css('pointer-events', 'none');
+  $('html, body').css('cursor', 'wait')
+
+
+  const onSuccess = (cart) => {
+    const newCartItem = cart.items.find((item) => item.key === itemKEY);
+
+    cartObjUpdateItemQuantity(newCartItem);
+    cartPopupUpdateItemQuantity(newCartItem);
+    cartPopupItemLoaded(itemKEY);
+    calculateCartTotals();
+    updateCartTotals();
+
+
+    $('html, body').css('pointer-events', '');
+    $('html, body').css('cursor', '')
+    //cartPopupProgressBarUpdate();
+  };
+  const onFail = (res) => {
+    console.log("decreasing item quantity failed");
+    console.log(res);
+    cartPopupItemLoaded(itemKEY);
+    
+    $('html, body').css('pointer-events', '');
+    $('html, body').css('cursor', '')
+  };
+
+  if (cartItem.quantity === 1) {
+    $itemSelectors.$decreaseQuantity(itemKEY).trigger(cartEvents.item.remove, { itemKEY });
+    return;
+  }
+
+  cartUpdateItemQuantity(itemKEY, newQuantity, onSuccess, onFail);
+}
+
+function cartIncreaseItemQuantityEvent(itemKEY) {
+  const cartItem = cart.items.find((item) => item.key === itemKEY);
+  const newQuantity = cartItem.quantity + 1;
+
+  cartPopupItemLoading(itemKEY);
+  cartPopupProgressBarSetCalculating();
+  
+  $('html, body').css('pointer-events', 'none');
+  $('html, body').css('cursor', 'wait')
+
+  const onSuccess = (cart) => {
+    const newCartItem = cart.items.find((item) => item.key === itemKEY);
+
+    const quantitySuccessfulyUpdated = newQuantity === newCartItem.quantity;
+
+    if (quantitySuccessfulyUpdated) {
+      cartObjUpdateItemQuantity(newCartItem);
+      cartPopupUpdateItemQuantity(newCartItem);
+      cartPopupItemLoaded(itemKEY);
+      calculateCartTotals();
+      updateCartTotals();
+      $('html, body').css('pointer-events', '');
+      $('html, body').css('cursor', '')
+
+      //cartPopupProgressBarUpdate();
+    } else {
+      cartPopupItemLoaded(itemKEY);
+      cartPopupItemMaxQuantityReached(newCartItem);
+      console.log("max quantity");
+      $('html, body').css('pointer-events', '');
+      $('html, body').css('cursor', '')
+
+      //cartPopupProgressBarUpdate();
+    }
+  };
+
+  const onFail = (res) => {
+    console.log("increasing item quantity failed");
+    console.log(res);
+    cartPopupItemLoaded(itemKEY);
+    $('html, body').css('pointer-events', '');
+    $('html, body').css('cursor', '')
+
+    //cartPopupProgressBarUpdate();
+
+  };
+
+  cartUpdateItemQuantity(itemKEY, newQuantity, onSuccess, onFail);
+}

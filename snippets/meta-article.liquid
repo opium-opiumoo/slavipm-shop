@@ -1,0 +1,99 @@
+     <div style="{% for tag in article.tags %}{% if tag contains "Questions" %}display: none;{% endif%}{% endfor %}" class="meta-article small--hide">
+        <div class="blockquote clone article_cont">
+    
+          </div>
+            
+       
+          <div class="Tags_blog Tags_blog-article ">
+         
+            
+              	<p class="article-tags">
+            {% for tag in article.tags %}
+            {% unless tag contains "author" or tag contains "custom_"  or tag contains "hide_image" or tag contains "article_" or tag contains "border_" or tag contains "custom_" or tag contains "product_spotlight_" %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="main-category">{{ tag | capitalise }}</a>{% unless forloop.last %} {% endunless %}
+               
+                  {% endunless %}
+            {% endfor %}
+                  
+                  {% comment %}
+          {% for tag in article.tags %}             
+            {% unless tag contains "author" %}
+                  {% if tag contains "custom_" %}
+                  {% assign thistag = tag | replace: "custom_", ""  %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ thistag | capitalise }}</a>{% unless forloop.last %}, {% endunless %}
+                  {% endif %}
+                  {% endunless %}
+          {% endfor %}
+			{% endcomment %}
+            </p>         
+        </div>
+       
+
+         
+       
+       
+          {% capture date %}
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+            {{ article.published_at | date: format: 'month_day_year' }}
+          </time>
+          {% endcapture %}
+          
+          
+           {% unless article.tags contains "Listen" %}
+          <p class="light h6-article">
+            {% assign d = article.published_at | date: "%-d" %}
+            {% case d %}
+              {% when "1" or "21" or "31" %}{{ d }}st
+              {% when "2" or "22" %}{{ d }}nd
+              {% when "3" or "23" %}{{ d }}rd
+              {% else %}{{ d }}th
+            {% endcase %}
+            {{ article.published_at | date: "%B %Y" }}
+            
+            {% comment %}
+            {{ "blogs.article.author_on_date_html" | t: author: author, date: date }}
+            {% endcomment %}
+          </p>
+       {% endunless %}
+        {%- capture author_new -%}{%- for tag in article.tags -%}{%- if tag contains "author_" -%}{{- tag | split: "_" | last -}}{% break %}{% endif %}{% endfor %}{%- endcapture -%}
+        {%- capture author_image -%}{%- for tag in article.tags -%}{%- if tag contains "authorimage_" -%}{{- tag | split: "_" | last -}}{% break %}{% endif %}{% endfor %}{%- endcapture -%}
+           {% if author_image %}
+           <img data-src="{{author_image}}" class="author_image lazyload">
+       	   {% endif %}
+       	   {% if author_new != "" %}
+          <p>By  <a href="{{ blog.url }}/tagged/author_{{ author_new | handle }}" class="inside-articles-author">{{ author_new | capitalise }}</a> </p>
+           {% endif %}
+        <div class="arti_shares anti_shares--desktop">
+          {% liquid
+            assign share_internal_url = ""
+            assign share_page_title = ""
+            if product
+              assign share_internal_url = product.url
+              assign share_page_title = product.title
+            elsif article
+              assign share_internal_url = article.url
+              assign share_page_title = article.title
+            endif
+          %}
+            <ul>
+              {% comment %}
+              <li><a href="">SHARE</a></li>
+              {% endcomment %}
+              <li>
+                <a href="https://twitter.com/intent/tweet?url={{ shop.url }}{{ share_internal_url }}&text={{ share_page_title }}" target="_blank" class='twitter'>
+                  <i class="fa fa-twitter" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ share_internal_url }}" target="_blank" class='facebook'>
+                  <i class="fa fa-facebook" aria-hidden="true"></i>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:?subject=Liveinnermost&amp;body={{ shop.url }}{{ share_internal_url }}" title="Share by Email">
+                  <i class="fa fa-envelope" aria-hidden="true"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>

@@ -1,0 +1,113 @@
+<div class="index-section-multiple_products index-section-reviews index-section-default section-has-slider {% if section.settings.subtitle != blank %}index-section-has-subtitle{% endif %}">
+  
+  <div class="index-products-wrapper-arrows {% if section.settings.slides_continuously == true %}cb-slide-arrow-continuously{% endif %}">
+    <a href"#" class="cb-slide-arrow-prev"></a>
+    <a href"#" class="cb-slide-arrow-next"></a>
+  </div>
+  
+  
+  {% if section.settings.title != blank %}
+    <h2 class="section-title">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.subtitle != blank %}
+    <div class="section-subtitle">{{ section.settings.subtitle }}</div>
+  {% endif %}
+
+  {% comment%}
+  {% include 'judgeme_all_reviews' %}
+  {% endcomment%}
+  <div id="index-reviews-wrapper-nootropics" class="jdgm-a2ll-reviews__body"
+       data-continuously="{% if section.settings.slides_continuously == true %}1{% else %}0{% endif %}"
+       data-slides-to-show="{{ section.settings.slides_to_show }}"
+       data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+  >
+  </div>
+
+</div>
+
+<style>
+  #shopify-section-{{ section.id }}
+  {
+    background-color:{{ section.settings.dolor_color }};
+    {% if section.settings.dolor_color_text %}
+      color: {{ section.settings.dolor_color_text }};
+    {% endif %}
+  }
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Reviews - Nootropics page",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Insight"
+      },
+      {
+        "type":"textarea",
+        "id":"subtitle",
+        "label":"Subheading"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color",
+        "label":"Background Color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type":"color",
+        "id":"dolor_color_text",
+        "label":"Text Color",
+        "default": "#525252"
+      },
+      {
+        "type": "checkbox",
+        "id": "slides_continuously",
+        "label": "The slider scrolls continuously?",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "reviews_to_show",
+        "min": 1,
+        "max": 6,
+        "default": 4,
+        "label": "Reviews groups to show",
+        "info": "The count of the reviews group to be loaded. Every gorup has about 5 review."
+      },
+      {
+        "type": "range",
+        "id": "slides_to_show",
+        "min": 1,
+        "max": 6,
+        "default": 4,
+        "label": "Slides to show",
+        "info": "Reviews per slide."
+      },
+      {
+        "type": "range",
+        "id": "autoplay_speed",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "default": 5,
+        "label": "Autoplay speed [seconds]"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Reviews - Nootropics Page",
+        "category": "Judge.me Sections"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

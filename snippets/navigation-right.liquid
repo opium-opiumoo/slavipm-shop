@@ -1,0 +1,9 @@
+<nav class="main-navigation nav-loading" role="navigation" aria-label="main-navigation">
+  <ul>
+    {% assign mainMenu = section.settings.right-nav_linklist %}
+    {% assign topLevel = true %}
+    {% for link in linklists[mainMenu].links %}
+      {% include "navigation-item" %}
+    {% endfor %}
+  </ul>
+</nav>

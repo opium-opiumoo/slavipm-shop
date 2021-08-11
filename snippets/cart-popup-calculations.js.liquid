@@ -1,0 +1,299 @@
+const cartBill = {
+  subtotal: 0,
+  subtotalWithoutGifts: 0,
+  moneyLeftForFreeShipping: 0,
+  shipping: 0,
+  total: 0,
+  subtotalWithCurrencyUpdate: 0,
+  freeShippingThreshold: 0, 
+  domain: $('.currency-picker option:selected').attr('link-s'),
+  currency: getCurrencyNominal($('.currency-picker option:selected').val())
+};
+
+const billClasses = {
+  subtotal: `.checkout_subtotal > span`,
+  shipping: `.checkout_shipping > span`,
+  total: `.checkout_total > span`,
+};
+
+const $billSelectors = {
+  $subtotal: $(`${billClasses.subtotal}`),
+  $shipping: $(`${billClasses.shipping}`),
+  $total: $(`${billClasses.total}`),
+};
+
+const cartQuantityCounter = {
+  totalQuantity: 0,
+};
+
+
+function calculateCartTotal() {
+  cartBill.total = cartBill.shipping === "FREE" ? cartBill.subtotal : cartBill.subtotal + cartBill.shipping;
+  //extra discounts
+  var discount_amount = getUtmDiscountAmountByPercentage();
+  
+  if(discount_amount > 0){
+    cartBill.total = cartBill.total - discount_amount;
+  }
+}
+
+// TOD:
+// cart subtotal excluding gifts will work ONLY if the **title** property of the item object contains "gift" in any form
+function calculateCartSubtotal() {
+  const sum = cart.items.reduce(
+    ({ subtotal, subtotalWithoutGifts }, item) => {
+      subtotal = subtotal + item.price * item.quantity;
+      subtotalWithoutGifts = item.title.toLowerCase().includes("gift")
+        ? subtotalWithoutGifts
+        : subtotalWithoutGifts + item.price * item.quantity;
+
+      return { subtotal, subtotalWithoutGifts };
+    },
+    { subtotal: 0, subtotalWithoutGifts: 0 }
+  );
+
+  cartBill.subtotal = sum.subtotal;
+  cartBill.subtotalWithoutGifts = sum.subtotalWithoutGifts;
+}
+
+function calculateCartShipping() {
+  let minimumTotalForFreeShipping = freeShippingDetails.find(shipping => shipping.domain === $('.currency-picker option:selected').attr('link-s'));
+  shippingPriceFromShopify = 3.95;
+
+  if(minimumTotalForFreeShipping){
+    shippingPriceFromShopify = minimumTotalForFreeShipping.shipping_rate;
+    minimumTotalForFreeShipping = minimumTotalForFreeShipping.threshold    
+  } else {
+    shippingPriceFromShopify = 3.95;
+    minimumTotalForFreeShipping = 90
+  }
+  
+    
+  var temp_subtotalWithoutGifts = cartBill.subtotalWithoutGifts;
+  //extra when discount code
+  var discount_amount = getUtmDiscountAmountByPercentage();
+ 
+  if(discount_amount > 0){
+    temp_subtotalWithoutGifts = temp_subtotalWithoutGifts - discount_amount;
+  }
+  cartBill.shipping = shippingPriceFromShopify
+
+  //extra when free shipping code
+  var has_discount_free_shipping = getUtmDiscountShipping();
+  if(has_discount_free_shipping){
+    cartBill.shipping = "FREE";
+  }
+  cartBill.moneyLeftForFreeShipping = minimumTotalForFreeShipping - temp_subtotalWithoutGifts;
+  cartBill.freeShippingThreshold =  minimumTotalForFreeShipping;
+}
+
+function updateCartPopupShipping() {
+  const shipping = isNaN(cartBill.shipping) ? cartBill.shipping * 100: formatMoney(cartBill.shipping * 100, moneyFormatFull);
+  $billSelectors.$shipping.html(shipping);
+}
+
+function updateCartPopupSubtotal() {
+  $billSelectors.$subtotal.html(formatMoney(cartBill.subtotal, moneyFormatFull));
+}
+
+function updateCartPopupTotal() {
+  $billSelectors.$total.html(formatMoney(cartBill.total, moneyFormatFull));
+}
+
+function calculateCartTotalQuantity() {
+  cartQuantityCounter.totalQuantity = cart.items.reduce((sum, item) => {
+    return sum + item.quantity;
+  }, 0);
+}
+
+function updateCartIconTotalQuantity() {
+  const cartQuantityIconAttribute = `[data-cart-count]`;
+  const $cartIconCounter = $(`${cartQuantityIconAttribute}`);
+  $cartIconCounter.html(cartQuantityCounter.totalQuantity);
+}
+
+//
+//
+// Update the line item prices and set checkout link.
+//
+//
+function updatePriceCurrency(){
+  cartBill.domain = $('.currency-picker option:selected').attr('link-s');
+  cartBill.currency = getCurrencyNominal($('.currency-picker option:selected').val());
+    
+  const checkoutVariants = [];
+  const subtotalPrice = [];
+  let recharge = false;
+  
+  // Upsell items price
+  $(`.${upsellClasses.item}`).each(function(){
+    const productHandle = $(this).find(`.${upsellClasses.image} a`).attr("href");
+    if(!cartBill.domain || !productHandle ) return;
+    $.ajax({
+      method: 'GET',
+      url: `https://${ cartBill.domain }${productHandle}.json`,
+      dataType: 'json',
+      success: data => {
+        const variants = data.product.variants;
+        for (variant in variants) {
+          const price = variants[variant].price;
+          const total = `${cartBill.currency}${ price }`;
+          $(this).find(`.${upsellClasses.price}`).text(total);
+         }
+      }
+    })
+  })
+  
+  // Line items price
+  cart.items.forEach(function(item){
+    const productHandle = item.handle;
+    const quantity = item.quantity;
+    const popupItemByKey = $itemSelectors.$itemByKey(item.key);
+
+	const variant_title = item.variant_title;
+    let subscription = false;
+     
+    if(!cartBill.domain || !productHandle) return;
+    
+    if(productHandle.includes('-1')){
+      const samePrices = $(popupItemByKey).find(`.${itemClasses.price}`);
+      samePrices.each(function(){
+        const price = $(this).text();
+        const total = `${cartBill.currency}${ price.slice(1) }`;
+        $(this).text(total);
+        subtotalPrice.push(+price.slice(1) * quantity);
+      })
+      subscription = true;
+      recharge = true;
+    }
+  
+    if(!subscription){
+      $.ajax({
+        method: 'GET',
+        url: `https://${cartBill.domain}/products/${productHandle}.json`,
+        dataType: 'json',
+        success: data => {
+          const variants = data.product.variants;
+          let currentVariant = variants.find(variant => variant.title === variant_title);
+
+          if(!currentVariant) currentVariant = variants[0];
+
+          const total = `${cartBill.currency}${ currentVariant.price }`;
+          $(popupItemByKey).find(`.${itemClasses.price}`).text(total);
+          
+          checkoutVariants.push(`${currentVariant.id}:${quantity}`);
+          subtotalPrice.push(currentVariant.price * quantity);
+               
+        },
+        complete: data => {
+          updateCartValues(checkoutVariants, subtotalPrice, recharge)
+        }
+      });
+    }
+ 
+     updateCartValues(checkoutVariants, subtotalPrice, recharge)
+  })
+ 
+}
+
+function updateCartValues(checkoutVariants, subtotalPrice, recharge){
+  // Update the checkout link.
+  if(recharge){
+     $(`.${itemClasses.checkout} a`).attr('href', reChargeProcessCart());
+  } else {
+    const variants = checkoutVariants.join(',');
+    $(`.${itemClasses.checkout} a`).attr('href',`https://${cartBill.domain}/cart/${variants}`)
+
+  }
+  
+  if(!subtotalPrice.length) return;
+
+  // Update the subtotal price.
+  let subtotal = subtotalPrice.reduce((acc, price) => {
+    return acc+= price
+  }, 0);
+
+  cartBill.subtotalWithCurrencyUpdate = +subtotal.toFixed(2);       
+
+  cartBill.shipping = subtotal >= cartBill.freeShippingThreshold
+  ? "FREE"
+  : `${ cartBill.currency }${shippingPriceFromShopify.toFixed(2)}`;
+
+  $billSelectors.$subtotal.html(`${ cartBill.currency }${subtotal.toFixed(2)}`);
+  $billSelectors.$shipping.html(cartBill.shipping);
+
+  subtotal = cartBill.shipping !== 'FREE' ? subtotal + shippingPriceFromShopify : subtotal;
+
+  $billSelectors.$total.html(`${ cartBill.currency }${subtotal.toFixed(2)}`)
+    
+  setTimeout(() => cartPopupProgressBarUpdate(), 400)
+  
+ 
+}
+
+function calculateCartTotals() {
+  //calculateCartSubtotal();  
+  calculateCartShipping();
+  //calculateCartTotal();
+  calculateCartTotalQuantity();
+  updatePriceCurrency();
+  
+
+  
+  {% if settings.enable_stock_up_sale %}
+  	addDiscounts(cartBill.shipping);
+  {% endif %}
+ 
+}
+
+function updateCartTotals() {
+  //updateCartPopupSubtotal();
+  //updateCartPopupShipping();
+  //updateCartPopupTotal();
+  updateCartIconTotalQuantity();
+
+  {% if settings.enable_gifts %}
+  	detectGift(cartBill.subtotalWithoutGifts);
+  {% endif %}
+ 
+}
+
+
+//check for utm discount code
+function getUtmDiscountShipping(){
+  if($('.announcement-bar').length < 1) return false;
+  var utm_discount_type = $('.announcement-bar').data('discount-type');
+  if(typeof utm_discount_type == 'undefined') return false;
+  if(utm_discount_type != 'free_shipping') return false;
+  
+  $('.cart-popup-shipping').hide();
+  return true;
+}
+ 
+function getUtmDiscountAmountByPercentage(){
+  /*calculated at the subtotal*/
+  $('.checkout_promo_discount_row').hide();
+ 
+  if($('.announcement-bar').length < 1) return false;
+  
+  if($('.announcement-bar').data('discount-name') == "flash20"){
+    {% comment %} Special case when the discount code conditions are complicated - then do not show discounts in cart, only at checkout. {% endcomment %}
+    return false;
+  }
+  
+  var utm_discount_type = $('.announcement-bar').data('discount-type');
+  if(typeof utm_discount_type == 'undefined') return false;
+  if(utm_discount_type.indexOf('percentage') <= -1) return false;
+  
+  var percentage = utm_discount_type.split('=')[1];
+  if(!percentage || typeof percentage == 'undefined') return false;
+  percentage = parseInt(percentage);
+  var discount_amount = cartBill.subtotal * percentage / 100;
+      
+  $('.checkout_promo_discount_percent').text(percentage);
+  $('.checkout_promo_discount_row').show();
+  $('.checkout_promo_discount_row').find('.amount').text('-'+ formatMoney(discount_amount, moneyFormatFull) );
+  
+  return discount_amount;
+}
+ 

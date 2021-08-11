@@ -1,6 +1,4 @@
-{% comment %}
-  The contents of the cart.liquid template can be found in /sections/cart-template.liquid
-{% endcomment %}
+{% section 'page-cart-template' %}
 
-{% section 'cart-template' %}
-
+{{ 'jquery.currencies.min.js' | asset_url | script_tag }}
+{{ 'cartTemplate.js' | asset_url | script_tag }}

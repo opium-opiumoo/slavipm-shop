@@ -1,0 +1,14 @@
+{% comment %} 
+Pixel tracking event 
+{% endcomment %}
+<script>
+  $(document).ready(function(){
+fbq('trackCustom');
+  })
+
+</script>
+
+{% section 'first-result-header' %}
+{% section 'first-result-products' %}
+
+{{ 'questionizer.js' | asset_url | script_tag }}

@@ -1,0 +1,108 @@
+<!-- UK  List id: NLLgWk --> 
+<!-- US  List ID: H7ezA3 -->
+<!-- EU List ID: KitYzY --> 
+<!-- AU List ID: LGfA9h -->
+<!-- CA List ID: JJAbKW-->
+<!-- ME List ID: NC4e6t -->
+<script>
+  $(document).ready(function(){
+    
+          
+  function dynamicallyLoadKlaviyo1(val){ 
+        var ukScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PGhkN2",
+        euScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kb7J4f",
+        auScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kmtuzb" , 
+        caScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PPuj6j", 
+        meScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PfxLKY", 
+        usScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=NZQ2jY";
+     if ( val == "EU" ){
+        url = euScript;
+       }
+    else if ( val == "AU"){
+      	url = auScript;
+        }
+    else if (val == "CA") {
+      url = caScript;
+    }
+    else if (val == "ME"){
+      url = meScript;
+    }
+    else if ( val == "US"){
+      url = usScript;
+    }
+    else { 
+      url = ukScript;
+    }
+    
+         $.getScript( url , function( data, textStatus, jqxhr ) {
+           /*
+ 	 console.log( data ); // Data returned
+	  console.log( textStatus ); // Success
+	  console.log( jqxhr.status ); // 200
+	  console.log( "Load was performed. " + url );
+           */
+	});
+  }
+  
+    
+    	$(document).click(function(event) {
+  			if (!$(event.target).closest(".klaviyo_inner, .trigger-popup").length) {
+    		$("body").find(".klaviyo_modal").hide();
+  			}
+		});
+    
+  $('.klaviyo_header_close').click(function(e){
+    e.preventDefault();
+    //console.log('detected');
+    $(this).closest('.klaviyo_modal').hide();
+  })
+  
+      $('.modal_name').focusout(function(){
+      $('.modal_name').val($(this).val());
+    })
+      
+     $('.modal_email').focusout(function(){
+      $('.modal_email').val($(this).val());
+    })
+          
+     $('select[name="Birthday_month"]').focusout(function(){
+      $('select[name="Birthday_month"]').val($(this).val());
+    })
+     
+      $('select[name="Birthday_day"]').focusout(function(){
+      $('select[name="Birthday_day"]').val($(this).val());
+    })
+
+      $('select[name="Birthday_year"]').focusout(function(){
+      $('select[name="Birthday_year"]').val($(this).val());
+    })
+     
+  
+     $('.klaviyo-form-join .klaviyo_modal select.newsletter_country').on('change', function() {
+      var country = this.value;
+      dynamicallyLoadKlaviyo1(country);
+      $('.klaviyo-form-join .klaviyo_modal select.newsletter_country').val(country);
+      $('.custom-footer-form').hide();
+      $('.custom-footer-form.email_signup-f-' + country).show();
+      $('.klaviyo-form-join .klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_'+ country).show();
+      $('.trigger_popup').remove().clone().appendTo('.cta-section__content');
+      $('.trigger-popup').click(function(e){ 
+      $('.klaviyo-form-join .klaviyo_modal').hide();
+      $('.klaviyo-form-join .k_id_modal_'+ country).show();
+      }) 
+      
+	});
+  })
+</script>
+
+<div class="klaviyo-form-join">
+{% render 'klaviyo-form-modal', country: 'UK', country_full: "United Kingdom", list: 'NLLgWk', phone: true %}
+{% render 'klaviyo-form-modal', country: 'US', country_full: "United States", list: 'H7ezA3' %}
+{% render 'klaviyo-form-modal', country: 'EU', country_full: "Europe",  list: 'KitYzY' %}
+{% render 'klaviyo-form-modal', country: 'AU', country_full: "Australia",  list: 'LGfA9h' %}
+{% render 'klaviyo-form-modal', country: 'CA', country_full: "Canada",  list: 'JJAbKW' %}
+{% render 'klaviyo-form-modal', country: 'ME', country_full: "Middle East",    list: 'NC4e6t' %}
+{% render 'klaviyo-form-modal', country: 'AS', country: 'AS', country_full: "Singapore", list: 'XDdcLE' %}
+
+</div>

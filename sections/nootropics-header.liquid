@@ -1,0 +1,47 @@
+<div class="article-hero-wrapper">
+  <div class="article-new-right">
+    <picture>
+      <source class="lazyload" media="(max-width:768px)" data-srcset={{ section.settings.nootropics_header_background | img_url: '570x', scale: 2}}>
+      <img class="image-article lazyload" data-src={{ section.settings.nootropics_header_background | img_url: 'x1900', scale: 2}}>
+    </picture>
+  </div>
+</div>
+<div class="nootropics-article-hero-wrapper">
+    <div class="nootropics-article-hero three-quarters medium--two-thirds small--one-whole">
+      <div class="nootropic-header-text">
+        <h2>{{ section.settings.nootropics_header_title }}</h2>
+      </div>
+      <div class="nootropic-description-text">
+        {{ section.settings.nootropics_header_content | replace: " newlinedesktop ", "<br class='small--hide'>"}}
+      </div>
+    </div>
+  </div>
+
+{% schema %}
+  {
+    "name": "Nootropics Header",
+    "settings": [
+      {
+        "id": "nootropics_header_title",
+        "type": "text",
+        "label": "Nootropics Header Title"
+      },
+      {
+        "id": "nootropics_header_background",
+        "type": "image_picker",
+        "label": "Header Background Image"
+      },
+      {
+        "id": "nootropics_header_content",
+        "type": "richtext",
+        "label": "Nootropics Header Content"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

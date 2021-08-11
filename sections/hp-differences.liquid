@@ -1,0 +1,171 @@
+<div class="index-section-default index-section-differences {% if section.settings.subtitle != blank %}index-section-has-subtitle{% endif %}">
+  {% if section.settings.title != blank %}
+  <h2 class="section-title">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if section.settings.subtitle != blank %}
+  <div class="section-subtitle">{{ section.settings.subtitle }}</div>
+  {% endif %}
+  <div class="grid--full medium-up--grid--table small--hide">
+    <div class="grid__item one-half custom--two-thirds">
+      <div class="label-wrapper">
+        {% for block in section.blocks %}
+        <div class="label-holder">
+          <h4 class="label-title lable-title-line--{{ forloop.index }}">{{ block.settings.label_title }}</h4>
+          <div class="label-subtitle">{{ block.settings.label_subtitle | replace: "desktopnewline", "<br class='small--hide'/>" | replace: "mobilenewline", "<br class='medium-up--hide'/>" }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="grid__item one-half custom--one-third vertical-align-bottom">
+      {% if section.settings.big_image != blank %}
+      <img class="lazyload difference-image" data-src="{{ section.settings.big_image | img_url: "1200x" }}"/>
+      {% endif %}
+    </div>
+  </div>
+  <div class="difference-slider-wrapper">
+    {% for block in section.blocks %}
+    <div class="difference-slide-holder">
+      {% if block.settings.icon != blank %}
+      <div class="difference-mobile-img">
+        <img data-src="{{ block.settings.icon | img_url: "300x" }}" class="lazyload"/>
+      </div>
+      {% endif %}
+      <h4>{{ block.settings.label_title }}</h4>
+      <div class="label-subtitle">{{ block.settings.label_subtitle | replace: "desktopnewline", "<br class='small--hide'/>" | replace: "mobilenewline", "<br class='medium-up--hide'/>" }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .index-section-differences {
+    background-color: {{ section.settings.background_desk }};
+  }
+  @media(max-width: 700px) {
+    .index-section-differences {
+      background-color: {{ section.settings.background_mob }};
+    }
+  }
+  {% for block in section.blocks %}
+  .lable-title-line--{{ forloop.index }}::before {
+    content: "";
+    width: {{ block.settings.line_width }}%;
+    height: 2px;
+    position: absolute;
+    background: #525252;
+    top: 35px;
+    left: 0;
+  }
+  {% if block.settings.line_width > 0 %}
+  .lable-title-line--{{ forloop.index }}::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background: #0000;
+    top: 27px;
+    left: {{ block.settings.line_width }}%;
+    border: 2px solid #525252;
+    border-radius: 50%;
+  }
+  @media(max-width: 840px) {
+    .lable-title-line--{{ forloop.index }}::after {
+      top: 22px;
+    }
+    .lable-title-line--{{ forloop.index }}::before {
+      top: 30px;
+    }
+  }
+  {% endif %}
+  {% endfor %}
+</style>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(".difference-slider-wrapper").slick({
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1
+    });
+  });
+</script>
+
+{% schema %}
+{
+"name": "Differences",
+"settings": [
+{
+"type": "color",
+"label": "Section color (desktop)",
+"id": "background_desk",
+"default": "#FFFFFF"
+},
+{
+"type": "color",
+"label": "Section color (mobile)",
+"id": "background_mob",
+"default": "#FFFFFF"
+},
+{
+"type": "text",
+"label": "Section title",
+"id": "title"
+},
+{
+"type": "richtext",
+"label": "Section subtitle",
+"id": "subtitle"
+},
+{
+"type": "image_picker",
+"label": "Big image (desktop)",
+"id": "big_image"
+}
+],
+"blocks": [
+{
+"type": "Image",
+"name": "Point",
+"settings": [
+{
+"type": "text",
+"id": "label_title",
+"label": "Title"
+},
+{
+"type": "range",
+"id": "line_width",
+"min": 0,
+"max": 100,
+"step": 1,
+"unit": "%",
+"label": "Line width",
+"default": 0
+},
+{
+"type": "richtext",
+"id": "label_subtitle",
+"label": "Subtitle"
+},
+{
+"type": "image_picker",
+"id": "icon",
+"label": "Icon (mobile)"
+}
+]
+}
+],
+"presets": [
+{
+"name": "Differences",
+"category": "Image"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

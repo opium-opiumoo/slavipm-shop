@@ -1,0 +1,114 @@
+<div id="press" class="press-section">
+<div class="grid wrapper">
+      {% for block in section.blocks %}
+        <div class="grid__item small--one-whole medium--one-half large--one-third pressItems ">
+          <div class="press-item">
+          <a href="{{ block.settings.url }}" {% if block.settings.external %} target="_blank" {% endif %} title="{{ block.settings.title | escape }}"> 
+            <div class="blog_image">
+                {% if block.settings.image %}
+               		<img
+                    src="{{ block.settings.image | img_url: '200x' }}"
+                    data-ratio="{{ block.settings.image.aspect_ratio }}"
+                    data-sizes="auto"
+                    alt="{{ block.settings.image.alt | escape }}">   
+                {% else %}
+              
+                {% endif %}
+            </div>
+            <div class="blog_details">
+              <span class="excerpt-1" data-href="{{ article.url }}">
+                {{ block.settings.quote }}
+              </span>               
+            </div>
+          </a>
+          </div>
+        </div>
+{% endfor %}
+    
+
+</div>
+<style>
+  .press-section { 
+  background: {{ section.settings.background }} 
+  }
+</style>
+  
+  <script>
+    $(document).ready(function(){
+      function setHeight(){
+       
+      var height = 0 ; 
+      $('.press-item').each(function(){ 
+        if($(this).outerHeight() > height){
+          height = $(this).outerHeight();
+        }
+      })
+      $('.press-item').css('height',height);
+      }
+      if($(window).width() > 700){
+      setHeight();
+      }
+      else { 
+        $('.press-item').css('height','auto');
+      }
+      
+      $(window).resize(function(){
+      if($(window).width() > 700){
+        setHeight(); 
+      }
+        else { 
+        $('.press-item').css('height','auto');
+      }
+      })
+    })
+  </script>
+{% schema %}
+  {
+    "name": "Press Items",
+    "settings": [
+  	{
+  	  "type": "color",
+  	  "id" : "background",
+ 	  "label" : "Background Color", 
+ 	  "default" : "#f6f6f6" 	
+ 	}
+	],
+    "blocks" : [
+ 
+    {
+	"type": "press",
+        "name": "Press",
+        "settings": [
+  	{
+  	  "type": "url", 
+  	  "id": "url",
+  	  "label": "Press URL"
+  	},
+  	{
+      "type": "checkbox", 
+  	  "id": "external",
+  	  "label": "Open In a New Tab?"
+  
+  	},
+	{
+      "type": "image_picker",
+      "id": "image",
+      "label": "Press Image"
+    }, 
+	{
+      "type": "richtext",
+      "id": "quote",
+      "label": "Press Quote"
+    }
+   ]
+  }
+  ]
+  }
+
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,85 @@
+function cartPopupRemoveItem(itemKEY) {
+  const $itemToRemove = $itemSelectors.$itemByKey(itemKEY);
+ 
+  $itemToRemove.remove();
+}
+
+function cartObjRemoveItem(itemKEY) {
+  const itemToRemoveIndex = cart.items.findIndex((item) => item.key === itemKEY);
+  cart.items.splice(itemToRemoveIndex, 1);
+}
+
+function cartRemoveItemEvent(itemKEY) {
+  const removedItem = cart.items.find((item) => item.key === itemKEY);
+  
+  const removedItemIsFromUpsell =
+    removedItem.properties && removedItem.properties._fromUpsell && removedItem.properties._fromUpsell === "true";
+
+  cartPopupItemLoading(itemKEY);
+  cartPopupProgressBarSetCalculating();
+  
+  $('html, body').css('pointer-events', 'none');
+  $('html, body').css('cursor', 'wait')
+  
+  const onSuccess = (cart) => {
+    cartPopupRemoveItem(itemKEY);
+    cartObjRemoveItem(itemKEY);
+
+    removedItemIsFromUpsell && $(document).trigger(cartEvents.upsell.removedFromCart, removedItem);
+    {% comment %} Repopulate the upsell wrapper to catch the changes triggering different upsells (default, based on bra option). If only one type of upsell is used - the refresh is not mandatory {% endcomment %}
+    refreshCartUpsell();
+
+    if (!cart.items.length) {
+      cartFilled = false;
+      setCartPopupBlank();
+    }
+    calculateCartTotals();
+    updateCartTotals();
+    $('html, body').css('pointer-events', '');
+    $('html, body').css('cursor', '')
+    //cartPopupProgressBarUpdate();
+  };
+
+  const onFail = (res) => {
+    console.log("removing item from the cart failed");
+    console.log(res);
+    cartPopupItemLoaded(itemKEY);
+    $('html, body').css('pointer-events', '');
+    $('html, body').css('cursor', '')
+  };
+
+  cartRemoveItem(itemKEY, onSuccess, onFail);
+}
+
+
+
+function removeAllRechargeProducts(itemsKeys){
+ 
+  var data = { updates: {} };
+  for (i = 0; i < itemsKeys.length; i++) {
+    data.updates[itemsKeys[i]] = 0;
+  }
+  
+  jQuery.ajax({
+    type: 'POST',
+    url: '/cart/update.js',
+    data: data,
+    dataType: 'json',
+    success: function(newestcart) {
+      itemsKeys.forEach(key => {
+        cartPopupRemoveItem(key) 
+        cartObjRemoveItem(key);
+        if (!cart.items.length) {
+          cartFilled = false;
+          setCartPopupBlank();
+        }
+        calculateCartTotals();
+        updateCartTotals();
+      })
+ 
+    },
+    error: function(res) {
+      console.error("Remove recharge items error", res )
+    }
+  });
+}

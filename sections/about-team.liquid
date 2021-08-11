@@ -1,0 +1,81 @@
+<div class="about-team" style="padding-top: {{ section.settings.padding_vertical }}px; padding-bottom: {{ section.settings.padding_vertical }}px; background-color: {{ section.settings.background }};">
+<div class="wrapper"> 
+  
+  {% if section.settings.heading %}
+  <h2 style="font-size:{{ section.settings.title-font }}px; line-height:{{ section.settings.title-font }}px" class="text-center meet-heading heading-small">{{ section.settings.heading }}</h2>
+  {% endif %}
+  
+{% if section.settings.team_copy %}
+  <div class="text-center meet-copy">
+  {{ section.settings.team_copy }}
+  </div>
+{% endif %}
+
+  
+  {% if section.settings.image %} 
+  <div class="meet-image">
+  <img
+                    data-src="{{ section.settings.image | img_url: 'master' }}"
+                    data-ratio="{{ section.settings.image.aspect_ratio }}"
+                    data-sizes="auto"
+                    data-parent-fit="cover"
+                    class="lazyload lazyload-fade"
+                    alt="{{ section.settings.image.alt | escape }}"> 
+  </div>
+  {% endif %}
+  
+</div>
+</div>
+{% schema %}
+  {
+    "name": "About Team",
+    "settings": [
+	  {
+       "type": "range",
+       "id": "padding_vertical",
+       "min": 0,
+       "max": 100,
+       "step": 1,
+       "unit": "px",
+       "label": "Vertical Padding",
+	   "default": 20
+    },   
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+	{
+      "type": "range",
+      "id": "title-font",
+      "min": 30,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 54
+    },
+	{
+	  "type": "richtext",
+	  "id": "team_copy",
+	  "label": "Copy"
+	},
+	{
+          "type": "image_picker",
+          "id": "image",
+          "label": "Icon Image"
+     }
+]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

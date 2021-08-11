@@ -1,40 +1,91 @@
 {%- style -%}
   {% assign cart_popup_box_shadow = settings.color_borders | color_modify: 'alpha', 0.5 %}
-
-  .cart-popup {
-    box-shadow: 1px 1px 10px 2px {{ cart_popup_box_shadow }};
-  }
 {%- endstyle -%}
 
-<div class="cart-popup-wrapper cart-popup-wrapper--hidden critical-hidden" role="dialog" aria-modal="true" aria-labelledby="CartPopupHeading" data-cart-popup-wrapper>
-  <div class="cart-popup" data-cart-popup tabindex="-1">
-    <div class="cart-popup__header">
-      <h2 id="CartPopupHeading" class="cart-popup__heading">{{ 'cart.popup.added_to_cart' | t }}</h2>
-      <button class="cart-popup__close" aria-label="{{ 'general.accessibility.close_modal' | t }}" data-cart-popup-close>{% include 'icon-close' %}</button>
-    </div>
-    <div class="cart-popup-item">
-      <div class="cart-popup-item__image-wrapper hide" data-cart-popup-image-wrapper data-image-loading-animation></div>
-      <div class="cart-popup-item__description">
-        <div>
-          <h3 class="cart-popup-item__title" data-cart-popup-title></h3>
-          <ul class="product-details" aria-label="{{ 'cart.popup.product_details' | t }}" data-cart-popup-product-details></ul>
-        </div>
-        <div class="cart-popup-item__quantity">
-          <span class="visually-hidden" data-cart-popup-quantity-label></span>
-          <span aria-hidden="true">{{ 'cart.popup.quantity' | t }}:</span>
-          <span aria-hidden="true" data-cart-popup-quantity></span>
-        </div>
-      </div>
-    </div>
+{% comment %}
 
-    <a href="{{ routes.cart_url }}" class="cart-popup__cta-link btn btn--secondary-accent">
-      {{ 'products.product.view_cart' | t }} (<span data-cart-popup-cart-quantity></span>)
-    </a>
+{% assign shipping_threshold = section.settings.threshold | times: 1000 %}
+{% assign shipping_threshold = 90 %}
+{% assign shipping_price = section.settings.shipping_price %}
+{% endcomment %}
 
-    <div class="cart-popup__dismiss">
-      <button class="cart-popup__dismiss-button text-link text-link--accent" data-cart-popup-dismiss>
-        {{ 'cart.general.continue_shopping' | t }}
-      </button>
-    </div>
-  </div>
-</div>
+{% assign shipping_price = 7 | times: 100 %}
+
+
+
+{% render 'cart-popup.html' %}
+
+<style>
+  {% render 'cart-popup.css' %}
+  {% render 'cart-popup-splide.min.css' %}
+</style>
+
+
+<script>
+  /* Jonathan Snook - MIT License - https://github.com/snookca/prepareTransition */
+!function(n){n.fn.prepareTransition=function(){return this.each(function(){var i=n(this);i.one("TransitionEnd webkitTransitionEnd transitionend oTransitionEnd",function(){i.removeClass("is-transitioning")});var t=["transition-duration","-moz-transition-duration","-webkit-transition-duration","-o-transition-duration"],o=0;n.each(t,function(n,t){o||(o=parseFloat(i.css(t)))}),0!=o&&(i.addClass("is-transitioning"),i[0].offsetWidth)})}}(jQuery);
+  
+    {% raw %}
+   var moneyFormat = '${{amount_no_decimals}}';
+   var moneyFormatFull = '${{amount}}'
+   {% endraw %}
+     
+  // TOD:
+  // Upsell products must NOT be available for normal purchase, they must be strictly for the upsell
+  const upsellProducts = {{collections['upsell-products'].products | json}};
+  //const upsellProductsRelatedByOption = {{collections['upsell-products-related-by-option'].products | json}};
+  const upsellProductsRelatedByOption = activateUpsellProductsRelatedByOption();
+  const upsell_main_title_default = 'Don’t forget to add';
+  const upsell_main_title_related_by_option = 'You might also like';
+  
+  const freeShippingDetails = [];
+  let shippingPriceFromShopify = 0;
+ 
+  $(`.announcement-bar-selector .shipping-threshold`).each(function(){
+    const domain = $(this).data('domain');
+    const shipping_rate = $(this).data('rate');
+    const threshold = parseInt($(this).text());
+    freeShippingDetails.push({domain, threshold, shipping_rate})
+  })
+ 
+
+  
+  {% comment %} creates array with the base prices of the cart product variants on sale {% endcomment %}
+  {% liquid
+    assign variant_compare_at_price = '';
+    for cart_item in cart.items
+      if cart_item.product.available
+        assign assign variant_compare_at_price = variant_compare_at_price | append: '"' | append: cart_item.product.id | append: '":{'
+        for loop_variant in cart_item.product.variants
+          if loop_variant.compare_at_price > 0 and loop_variant.compare_at_price > loop_variant.price
+            assign assign variant_compare_at_price = variant_compare_at_price | append: '"' | append: loop_variant.id | append: '":' | append: loop_variant.compare_at_price | append: ','
+          endif
+        endfor
+        assign assign variant_compare_at_price = variant_compare_at_price | append: '},'
+      endif
+    endfor
+  %}
+    
+  var variant_compare_at_price = {
+    {{variant_compare_at_price}}
+  };
+
+
+  {% render 'cart-popup-requests.js' %}
+  {% render 'cart-popup-helper-functions.js' %}
+
+  {% render 'cart-popup-entry-point.js' %}
+  {% render 'cart-popup-render.js' %}
+
+  {% render 'cart-popup-add-items.js' %}
+  {% render 'cart-popup-remove-items.js' %}
+  {% render 'cart-popup-update-items.js' %}
+
+  {% render 'cart-popup-calculations.js' %}
+  {% render 'cart-popup-progress-bar.js' %}
+
+  {% render 'cart-popup-splide.min.js' %}
+  {% render 'cart-popup-upsell.js' %}
+
+ 
+</script>

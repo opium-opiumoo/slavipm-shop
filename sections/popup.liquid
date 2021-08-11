@@ -1,0 +1,78 @@
+
+{% if section.settings.title == blank and section.settings.exit_intent_body == blank %}
+  {% assign useExitIntentPlaceholder = true %}
+{% else %}
+  {% assign useExitIntentPlaceholder = false %}
+{% endif %}
+
+{% assign form_action = settings.newsletter_form_action %}
+
+{% if section.settings.enable_exit_intent %} 
+<div class="exit-intent-overlay" {% if section.settings.enable_exit_intent %}data-exit-intent-overlay{% endif %}>
+  <section class='exit-intent inline-subscribe {% if section.settings.exit_intent_image != blank %} exit-intent--large {% endif %} {% if useExitIntentPlaceholder  %}no-top{% endif %}'>
+    {% if section.settings.exit_intent_image != blank %}
+      <div class="exit-intent__image" {% if section.settings.exit_intent_image != blank %} role="img" aria-label="{{- section.settings.exit_intent_image.alt -}}" {% endif %} ></div>
+
+      <style>
+        .exit-intent__image {
+          background-image: url('{{ section.settings.exit_intent_image | img_url: '800x1200' }}');
+        }
+      </style>
+    {% endif %}
+    
+   
+    
+
+    <div class="display-table-cell exit-intent__content">
+        
+       <h2 class="exit-intent-header">
+              {{ section.settings.title | escape }}
+            </h2>
+       {{ section.settings.exit_intent_body }}
+      
+      <div class="klaviyo-form-MFbG3B"></div> 
+      <div class="newsletter-check">
+        <input type="checkbox" class="radio_bt1" name="confirm_check" disabled> <span class="check_text">{{ section.settings.newsletter_checkbox }}</span>
+      </div>
+    </div>
+  </section>
+</div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Popup",
+    "class": "popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_exit_intent",
+        "default": false,
+        "label": "Enable exit intent",
+        "info": "Automatically triggers the newsletter popup if it detects that your customer intends to leave your site."
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading text",
+        "placeholder": "Join our newsletter"
+      },
+      {
+        "type": "richtext",
+        "id": "exit_intent_body",
+        "label": "Text"
+      },
+      {
+        "type": "image_picker",
+        "id": "exit_intent_image",
+        "label": "Feature image",
+        "info": "400 x 600px recommended"
+      },
+	  {
+        "type": "richtext",
+        "id": "newsletter_checkbox",
+        "label": "Checkbox Text"
+      }
+    ]
+  }
+{% endschema %}

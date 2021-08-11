@@ -1,5 +1,53 @@
-{% comment %}
-  The contents of the lists-collections.liquid template can be found in /sections/lists-collections-template.liquid
-{% endcomment %}
 
-{% section 'list-collections-template' %}
+{% assign gridLayoutStyle = settings.collection_layout_style %}
+{% if gridLayoutStyle == "twoByThree"  %}
+  {% assign productLimit = 4 %}
+  {% assign grid_item_width = 'large--one-half medium--one-half' %}
+{% else %}
+  {% assign productLimit = 6 %}
+  {% assign grid_item_width = 'large--one-third medium--one-third' %}
+{% endif %}
+<div class="grid collection_main_new">
+{% for collection in collections %}
+  
+  {% unless collection.handle == 'frontpage' %}
+    {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+  <div class="grid__item collection_urls">
+    <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">
+      <div class="image-crossfade">
+        {% assign collection = link.object %}
+        {% if collection.image %}
+        <img data-src="{{ collection | img_url: 'master' }}"  alt="{{ collection.title | escape }}" class="lazyload" />
+        {% else %}
+          {% assign first_primage = "" %}
+        	{% for product in collection.products %}
+             {% if product.images.size > 0 %}
+        		{% assign first_primage = product.featured_image.src %}
+        		{% break %}
+        	 {% endif %}
+            {% endfor %}    
+           <img data-src="{{ first_primage | img_url: 'master' }}"  alt="{{ collection.title | escape }}" class="lazyload"/>
+        {% endif %}
+      </div>
+    </a>
+    <div class="product_image_caption">
+      <h6>{{ collection_title }}</h6>
+    </div>
+    <div class="product_image_caption_new">
+      <a href="{{ collection.url }}" class="shop-now" title="{{ 'collections.general.link_title' | t: title: collection_title }}">SHOP NOW</a>
+    </div>
+  </div>
+    {% comment %}
+    <div class="grid--products grid--full">
+      {% for product in collection.products limit:productLimit %}
+        {% assign hover_class = "grid__image--caption" %}
+        {% assign fit_image_class = 'grid__item--variable-height grid__image' %}
+        {% include 'product-grid-item' %}
+      {% endfor %}
+    </div>
+    {% unless forloop.last %}<div class='clearfix'></div>{% endunless %}
+   {% endcomment %}
+  {% endunless %}
+  
+{% endfor %}
+</div>

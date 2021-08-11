@@ -1,0 +1,119 @@
+<div id="NavDrawer" class="drawer fixed-overlay">
+  <div class="fixed-overlay--content">
+    <div class="drawer__header medium-down--hide">
+      <div class="drawer__close">
+        <button type="button" class="icon-fallback-text js-drawer-close">
+          <svg><use xlink:href="#icon-close"></use></svg>
+          <span class="fallback-text">{{ 'layout.drawers.close_menu' | t }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- begin mobile-nav -->
+    <ul class="mobile-nav" role="navigation" aria-label="mobile-nav">
+      {% assign usePlaceholderNavbar = true %}
+
+      {% assign mainMenu = section.settings.mobile-nav_linklist %}
+      {% if linklists[mainMenu].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[mainMenu].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[mainMenu].links %}
+            {% include "drawer-nav-menu" %}
+            {% if forloop.last %}
+              {% if linklists[section.settings.nav_linklist_2].links.size != 0 or linklists[section.settings.nav_linklist_2].links.size == 0 and linklists[section.settings.nav_linklist_3].links.size != 0  %}
+              <hr class='medium-down--show large--hide'>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% include 'multi-currency-mobile' %}
+        </ul>
+      {% endif %}
+
+      {% if linklists[section.settings.nav_linklist_2].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[section.settings.nav_linklist_2].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[section.settings.nav_linklist_2].links %}
+            {% include "drawer-nav-menu" %}
+            {% if forloop.last and linklists[section.settings.nav_linklist_3].links.size != 0  %}<hr class='medium-down--show large--hide'>{% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if linklists[section.settings.nav_linklist_3].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[section.settings.nav_linklist_3].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[section.settings.nav_linklist_3].links %}
+            {% include "drawer-nav-menu" %}
+          {% endfor %}
+          
+        </ul>
+      {% endif %}
+
+      {% comment %}
+      {% if shop.customer_accounts_enabled %}
+        {% assign usePlaceholderNavbar = false %}
+        <li class="mobile-nav__item">
+          <hr class='medium-down--show large--hide'>
+          <div class="mobile-nav__header">{{ 'customer.account.title' | t }}</div>
+          <ul class="mobile-nav">
+            {% if customer %}
+              <li class="mobile-nav__item">
+                {% if customer.first_name != blank %}
+                  {% capture first_name %}{{ customer.first_name }}{% endcapture %}
+                  <a href="/account">{{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}</a>
+                {% else %}
+                  <a href="/account">{{ 'layout.customer.account' | t }}</a>
+                {% endif %}
+              </li>
+              <li class="mobile-nav__item">
+                {{ 'layout.customer.log_out' | t | customer_logout_link }}
+              </li>
+            {% else %}
+              <li class="mobile-nav__item">
+                {{ 'layout.customer.log_in' | t | customer_login_link }}
+              </li>
+              {% if shop.customer_accounts_enabled %}
+                <li class="mobile-nav__item">
+                  {{ 'layout.customer.create_account' | t | customer_register_link }}
+                </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        </li>
+      {% endif %}
+      
+      {% endcomment %}
+
+      {% if usePlaceholderNavbar %}
+        {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+        <p class='nav-placeholder'>
+          <strong>{{ 'homepage.onboarding.navbar_bold' | t }}</strong>
+          <br>{{ 'homepage.onboarding.navbar' | t }}
+        </p>
+      {% endif %}
+
+    </ul>
+    
+    {% if settings.show_multiple_currencies %}
+      <div class="mobile-header-message-currency">
+        <label class="currency-picker__wrapper">
+          <span class="header-message-label currency-picker__label">Currency</span>
+          <select class="currency-picker" name="currencies" style="display: inline; width: auto; vertical-align: inherit;">
+          {% assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' %}
+          {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+          <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+          {% for code in supported_codes %}
+            {% if code != shop.currency and codes contains code %}
+            <option value="{{ code }}">{{ code }}</option>
+            {% endif %}
+          {% endfor %}
+          </select>
+        </label>
+      </div>
+    {% endif %}
+  </div>
+  <!-- //mobile-nav -->
+</div>

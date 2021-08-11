@@ -1,0 +1,150 @@
+{% comment %}
+parameter 'homepage' -> bool -> detemines which metafield to show for short description
+{% endcomment %}
+
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% unless hide_on_sale_badge %}
+    {% assign on_sale = true %}
+  {% endunless %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+{% unless hover_class %}
+  {% assign hover_class = 'product_image focus_image' %}
+{% endunless %}
+
+{% unless fit_image_class %}
+  {% assign fit_image_class = 'grid__image' %}
+{% endunless %}
+
+{% assign variant_image = product.images[1] | default: false %}
+
+{% assign image = product.featured_image %}
+{% include "attribute-image-box-ratio" %}
+
+{% assign vegan = false %}
+{% if product.tags contains 'vegan_label' %}
+  {% assign vegan = true %}
+{% endif %}
+
+{% assign bg_color = false %}
+{% if product.metafields["global"]["bg-color"] != blank %}
+  {% assign bg_color = product.metafields["global"]["bg-color"] %}
+{% endif %}
+
+{% if bg_color == false %}
+  {% for sn_tag in product.tags %}
+    {% if sn_tag contains "color_"%}
+      {% assign bg_color = sn_tag | split: "_" | last %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+
+{% comment %}
+for product-grid-small 
+{% unless is_slider %}animation-sequence-{{ forloop.index0 }} aos-init{% endunless %}" {% unless is_slider %}data-aos="fade-in"{% endunless %}
+{% endcomment %}
+
+<div class="product-grid-small {{ fit_image_class }} ">
+  
+  
+  
+  <a href="{{ product.url }}" class="block" tabindex='0'>
+
+    {% if vegan %}
+      <div class="vegan-badge">{{ 'products.product.vegan' | t }}</div>
+    {% elsif on_sale %}
+      <div class="sale-badge">{{ 'products.product.on_sale' | t }}</div>
+    {% endif %}
+
+    <div class="box-ratio image-crossfade" style="{% if bg_color %}background-image: linear-gradient(0, #fff 20%, {{bg_color}} 0%);{% endif %}">
+      {% if product.images.size == 0 %}
+        <img data-src="//cdn.shopify.com/s/images/themes/product-1.png">
+      {% endif %}
+      {% if product.featured_image %}
+        {% include "filter-rias-img-url" input: product.featured_image %}
+        {% assign image_url = output %}
+          <img
+            {% if is_slider %}
+              {% comment %}The lazyload will not work with the cloned items in the slide{% endcomment %}
+              src="{{ product.featured_image | img_url: '350x' }}" alt="{{- product.featured_image.alt -}}"
+            {% else %}
+              data-src="{{ image_url }}"
+              data-sizes="auto"
+              alt="{{ product.featured_image.alt | escape }}"
+              class="lazyload lazyload-fade"
+            {% endif %}
+          >
+
+        <noscript>
+          <img data-src="{{ product.featured_image | img_url: '350x' }}" alt="{{ product.featured_image.alt }}" class="lazyload" />
+        </noscript>
+      {% endif %}
+    </div>
+
+    <span class="product_image_caption">
+      <h3 class="text-left">{{ product.title }}</h3>
+    </span>
+   
+    <div class="product_image_caption_new">
+      <div class="product_meta-info text-left">
+        {% if product.metafields["global"]["description_tag"] != blank and homepage == true %}
+          {{ product.metafields["global"]["description_tag"] }}
+        {% else %}
+          {{ product.metafields["global"]["product-info"] }}
+        {% endif %}
+      </div>
+      
+      {% comment %}
+      <div class="product_price-info price-row no-flex">
+        {% if product.tags contains "out_of_stock" %}
+		{% assign bis = true %}
+        {% endif %}
+        {% capture price %}
+          <span class="money">
+            {% if settings.currency_format == "money_format" %}
+              {{ product.price | money }}
+            {% else %}
+              {{ product.price | money }}
+            {% endif %}
+          </span>
+        {% endcapture %}
+
+        {% if on_sale %}
+          <s class="red-price"><span class="price money price__strike">{{ product.compare_at_price | money }}</span></s>
+        {% endif %}
+
+        {% if sold_out and bis != true %}
+          <strong>
+            {{ 'products.product.sold_out' | t }}
+          </strong>
+        {% else %}
+          {% if on_sale and product.price_varies %}
+            {{ 'products.product.on_sale_from_html' | t: price: price }}
+          {% elsif product.price_varies %}
+            {{ 'products.general.from_text_html' | t: price: price }}
+          {% else %}
+            {{ price }}
+          {% endif %}
+        {% endif %}
+      </div>
+      {% endcomment %}
+      
+      {% comment %}
+      <div class="text-center height-fixed">
+      {% comment %}   {% include 'okendo-reviews-product-rating-summary'%} {% endcomment %}
+      </div>
+      <a href="{{ product.url }}" class="shop-now">SHOP NOW</a>
+      {% endcomment %}
+      {% comment %}
+      <a class="innermost_front_btn btn" href="{{ product.url }}">Learn more</a>
+      {% endcomment %}
+    </div>
+  </a>
+</div>

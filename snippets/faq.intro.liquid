@@ -1,0 +1,8 @@
+<div class="faq-intro press-holder">
+  <div class="wrapper">
+      {% if section.settings.faq_title != blank %}
+        <h3 class="heading-small">{{ section.settings.faq_title }}</h3>
+      {% endif %}
+      <p>{{ section.settings.faq_subtitle | newline_to_br }}</p>
+  </div>
+</div>

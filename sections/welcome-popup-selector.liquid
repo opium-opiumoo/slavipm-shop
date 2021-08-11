@@ -1,0 +1,215 @@
+<!-- RULES: 
+ONCE PER SESSION - V
+SHOW AGAIN 6 hours after showing the popup first " 
+
+URL RULES: 
+* DOES NOT CONTAIN: 
+ -CART 
+ -CHECKOUT
+ -QUESTIONNAIRE
+ -SIGNUP.LIVEINNERMOST.COM
+
+THEY HAVE NOT: 
+ -CLOSED THIS POPUP
+ -HAVE NOT ENGAGED WITH THE FORM 
+
+ FIRST URL DOES NOT CONTAIN utm_medium=email
+  
+LOCATED:
+ - in their region
+
+
+
+
+-->
+
+<div style="display: none;" class="welcome-popup">
+{% render 'klaviyo-form-modal', country: 'UK', country_full: "United Kingdom", list: 'NLLgWk', welcome: true, phone: true %}
+{% render 'klaviyo-form-modal', country: 'US', country_full: "United States", list: 'H7ezA3', welcome: true %}
+{% render 'klaviyo-form-modal', country: 'EU', country_full: "Europe",  list: 'KitYzY', welcome: true %}
+{% render 'klaviyo-form-modal', country: 'AU', country_full: "Australia",  list: 'LGfA9h', welcome: true %}
+{% render 'klaviyo-form-modal', country: 'CA', country_full: "Canada",  list: 'JJAbKW', welcome: true %}
+{% render 'klaviyo-form-modal', country: 'ME', country_full: "Middle East",    list: 'NC4e6t', welcome: true %}
+{% render 'klaviyo-form-modal', country: 'AS', country_full: "Asia",    list: 'NC4e6t', welcome: true %}
+
+</div>
+
+ 
+{%- capture arrayliquid -%}{% assign arrayraw = section.settings.url_rules | split: "," %}{%- for item in arrayraw  -%}{%- if forloop.first -%}["{{- item -}}",{%- elsif forloop.last %}"{{- item -}}"] {%- else -%}"{{- item -}}",{%- endif -%}{%- endfor -%}{%- endcapture -%}           
+<script> 
+  
+  $(document).ready(function(){ 
+    function showPopup(){ 
+      //console.log('show');
+      setTimeout(function(){
+        $('.welcome-popup').show();}, 
+                 {{ section.settings.show_after | times: 1000 }} );
+         }
+    
+                 
+  function dynamicallyLoadKlaviyo1(val){ 
+        var ukScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PGhkN2",
+        euScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kb7J4f",
+        auScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=Kmtuzb" , 
+        caScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PPuj6j", 
+        meScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=PfxLKY", 
+        usScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=NZQ2jY",
+        asScript = "//static.klaviyo.com/onsite/js/klaviyo.js?company_id=R9V3Fy";
+     if ( val == "EU" ){
+        url = euScript;
+       }
+    else if ( val == "AU"){
+      	url = auScript;
+        }
+    else if (val == "CA") {
+      url = caScript;
+    }
+    else if (val == "ME"){
+      url = meScript;
+    }
+    else if ( val == "US"){
+      url = usScript;
+    }
+    else if ( val == "AS"){
+      url = asScript;
+    }
+    else { 
+      url = ukScript;
+    }
+    
+         $.getScript( url , function( data, textStatus, jqxhr ) {
+         /*
+ 	 console.log( data ); // Data returned
+	  console.log( textStatus ); // Success
+	  console.log( jqxhr.status ); // 200
+	  console.log( "Load was performed. " + url );
+         */
+	});
+  }
+  
+   function urlParameterContains(utm_tag, utm_val){
+     var result = false;
+     var url = window.location.href;
+     
+     if( url.indexOf(utm_tag + "=" + utm_val) > -1){
+       result = true;
+       
+       if(utm_val == "email"){
+         {% comment %}From email do not show again the popup with a newsletter form{% endcomment %}
+         $.cookie('seenpopup', 'true', { expires: {{ section.settings.show_again | divided_by: 24 }} });
+         $.cookie('shownpopup', 'true');
+       }
+     }
+     
+     return result;
+   }  
+      
+   function urlContains(checkURL){ 
+      var result = false  
+      var url = window.location.href;
+
+	  var Matches = RegExp(checkURL.join('|')).exec(url);
+		
+	if (Matches) {
+    result = true;
+	}
+      return result;  
+      }
+
+  /* showPopup(); */
+                                                                                                                                            
+                                                                                                                                                      
+       
+        //console.log("urlcheck: " + urlContains({{- arrayliquid -}}));
+    
+      if(!$.cookie('shownpopup') && !$.cookie('seenpopup') && urlContains({{- arrayliquid -}}) != true && urlParameterContains('utm_medium','email') != true ){
+      showPopup();
+      $.cookie('seenpopup', 'true', { expires: {{ section.settings.show_again | divided_by: 24 }} });
+      $.cookie('shownpopup', 'true'); 
+    }
+    
+               if(window.location.href.indexOf('testpopup') > -1 ) {
+        showPopup();
+    
+        
+      }
+               
+    $('.welcome-popup .klaviyo_modal select.newsletter_country').on('change', function() {
+      var country = this.value;
+      dynamicallyLoadKlaviyo1(country);
+      $('.welcome-popup select.newsletter_country').val(country);
+      $('.welcome-popup .custom-footer-form').hide();
+      $('.welcome-popup .email_signup-f-' + country).show();
+      $('.welcome-popup .klaviyo_modal').hide();
+      $('.welcome-popup .k_id_modal_'+ country).show();
+   
+	});           
+               
+    //console.log($.cookie('shownpopup') + " shown");
+    
+    
+    
+    
+  })
+</script>
+{% schema %}
+  {
+    "name": "Welcome popup",
+    "settings": [
+     {
+      "type": "image_picker",
+      "id": "img_left",
+      "label": "Logo image"
+    },
+	{
+	  "type": "checkbox", 
+	  "label" : "Style top text as heading?",
+	  "id" : "heading",
+	  "default": false
+	},
+	{
+	  "type": "textarea",
+	  "id": "heading_text",
+	 "label": "Top text content"
+	},
+    {
+	  "type": "textarea",
+	  "id": "heading_text_non_uk",
+	 "label": "Top text content",
+	 "default": "Sign up for 10% off your first order and access to exclusive content and offers."
+	},
+	{
+    	"type":   "range",
+    	"id":     "show_after",
+    	"min":       0,
+    	"max":       60,
+    	"step":      5,
+    	"unit":      "sec",
+    	"label":     "Show Popup after",
+    	"default":   20
+    },
+	{
+    	"type":   "range",
+    	"id":     "show_again",
+    	"min":       2,
+    	"max":       72,
+    	"step":      1,
+    	"unit":      "hrs",
+    	"label":     "Once popup has been closed, show again after",
+    	"default":   6
+    },
+	{
+	  "type": "textarea",
+	  "id": "url_rules",
+	  "label": "URL does not contain ( coma separated values )",
+	  "default": "cart, checkout, questionnaire, signup"
+	}
+  ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

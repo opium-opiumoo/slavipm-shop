@@ -1,0 +1,59 @@
+<div class="press {% if section.settings.pocket_hide == false %}small--hide{% endif %}">
+  <div class="custom-wrapper">
+  <div class="grid grid-custom-press">
+  {% for block in section.blocks %}
+  <div class="grid__item press-item one-sixth text-center">
+    <img class="logo-{{block.id}} logos-for-mobile lazyload" style="height: {{ block.settings.logo-height }}px" data-src="{{ block.settings.logo | img_url: '200x' }}" alt="{{- block.settings.logo.alt -}}">
+  </div>
+ {% endfor %}
+  </div>  
+  </div>
+</div> 
+
+
+
+{% schema %}
+  {
+    "name": "Press/Logos",
+    "settings": [
+		{
+			"type": "checkbox",
+			"id": "pocket_hide",
+			"label": "Show on mobile?",
+			"default": true
+		}
+	],
+	"blocks": [
+	  {
+        "type": "logo",
+        "name": "logo",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo"
+          },
+		{ 
+		   	"type":"text",
+			"id": "logo-height",
+			"label" : "Logo Height",
+			"default": "30"
+		}
+        ]
+
+      }
+	],
+	 "presets": [
+      {
+        "name": "Press/Logos",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

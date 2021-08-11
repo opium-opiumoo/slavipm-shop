@@ -1,0 +1,82 @@
+function cartPopupAddItem(item, newItem = false) {
+  const imgSize = 200;
+  let itemUrl = item.url.split("?")[0];
+  
+  if(itemUrl){
+     itemUrl = itemUrl.split('-').pop() === '1' ? itemUrl.slice(0, -2) : itemUrl;
+  }
+  
+ 
+  const flavorAndSizeCases = item.options_with_values.length === 1
+      ? item.options_with_values[0].name === "Size" ? `<div class="cart-item-option ${itemClasses.size}"><span class="cart-item-option-label">Size: </span>${item.options_with_values[0].value}</div>`
+      : `<div class="cart-item-option ${itemClasses.flavor}"><span class="cart-item-option-label">Flavour: </span>${item.options_with_values[0].value}</div>`
+      : `<div class="cart-item-option ${itemClasses.flavor}"><span class="cart-item-option-label">Flavour: </span>${item.options_with_values[1].value}</div>
+         <div class="cart-item-option ${itemClasses.size}"><span class="cart-item-option-label">Size: </span>${item.options_with_values[0].value}</div>
+      `
+  const showFlavorAndSizes =  item.variant_options[0] !== "Default Title" && !item.gift_card ? flavorAndSizeCases : ``;
+ 
+   
+  const ifGiftCard = item.gift_card 
+  		? `
+          <div class="${itemClasses.amount}">Amount: ${item.variant_options}</div>
+          <div class="${itemClasses.property}">Gift card ${item.properties["Gift card"] }</div>
+		  `
+        : "";
+  
+  const itemHtml = `
+	<div key=${item.key} class="${cartPopupItemClass}">
+        <div class="${itemClasses.image}">
+		 <a href="${itemUrl ? itemUrl : item.url}">
+            <img data-src="${getImageCustomSize(item.image, imgSize)}" class="lazyload" alt="${item.product_title} item image"/>
+          </a>
+        </div>
+        <div class="${itemClasses.controls}">
+          <div class="${itemClasses.remove}" tabindex="0" aria-label="Remove item from cart">Remove</div>
+          <div class="${itemClasses.title}">
+            <a href="${itemUrl ? itemUrl : item.url}">
+              ${item.product_title}
+            </a>
+          </div>
+		  ${ifGiftCard}
+		  ${showFlavorAndSizes}
+          <div class="${itemClasses.price}">${formatMoney(item.price, moneyFormatFull)}</div>
+          <div class="${itemClasses.quantity}-wrapper">
+            <div class="${itemClasses.decreaseQuantity}" tabindex="0" aria-label="Decrease item quantity">-</div>
+            <div class="${itemClasses.quantity}">${item.quantity}</div>
+            <div class="${itemClasses.increaseQuantity}" tabindex="0" aria-label="Increase item quantity">+</div>
+          </div>
+         </div>
+      </div>
+     `;
+
+  newItem ? $cartPopupItemWrapper.prepend(itemHtml) : $cartPopupItemWrapper.append(itemHtml);
+
+  attachOnClicksToCartItemControls(item);   
+}
+ 
+
+function cartObjAddItem(itemToAdd) {
+  const foundItemIndex = cart.items.findIndex((item) => item.key === itemToAdd.key);
+  
+  if (foundItemIndex !== -1) {
+    cart.items[foundItemIndex].quantity = itemToAdd.quantity;
+  } else {
+    cart.items = [itemToAdd, ...cart.items];
+  }
+}
+
+function cartAddItemEvent(item) {
+  !cartOpened && setCartPopupWithItems();
+  !cartOpened && showCartPopup();
+  cart.items.length === 0 && cartPopupUpsellSetLoaded();
+ 
+
+  cartPopupIsUpsellEmpty(upsellItemsInCart, upsellItemsAvailable) &&
+    $(document).trigger(cartEvents.upsell.upsellIsEmpty);
+  
+  cartObjAddItem(item);
+  cartPopupCheckIfItemExists(item) ? cartPopupUpdateItemQuantity(item) : cartPopupAddItem(item, true);
+  calculateCartTotals();
+  updateCartTotals();
+  refreshCartUpsell();
+}
